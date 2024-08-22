@@ -1,0 +1,81 @@
+generator client {
+   provider = "prisma-client-js"
+}
+
+datasource db {
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
+}
+
+model Account {
+   id                String  @id @default(cuid())
+   userId            Int
+   type              String
+   provider          String
+   providerAccountId String
+   refresh_token     String?
+   access_token      String?
+   expires_at        Int?
+   token_type        String?
+   scope             String?
+   id_token          String?
+   session_state     String?
+   user              users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+   @@unique([provider, providerAccountId])
+}
+
+model Session {
+   id           String   @id @default(cuid())
+   sessionToken String   @unique
+   userId       Int
+   expires      DateTime
+   user         users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+//NOTE - Подразделение
+model division {
+   id            Int         @id @default(autoincrement())
+   name          String?     @unique(map: "division_u_ind") @db.VarChar(200)
+   parent_id     Int?
+   parent        division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   childrens     division[]  @relation("divisionTodivision")
+   users         users[]
+}
+//NOTE - Пользователи системы
+model users {
+   id            Int         @id @default(autoincrement())
+   email         String      @unique(map: "users_email_u_ind") @db.VarChar(50)
+   name          String?     @db.VarChar(100)
+   begin_date    DateTime    @db.Timestamp(6)
+   end_date      DateTime?   @db.Timestamp(6)
+   password      String?     @db.VarChar(255)
+   division_id   Int
+   roles         Json?       @db.Json
+   attachment_id Int?
+   emailVerified DateTime?
+   contacts      String?     @db.VarChar(50)
+   accounts      Account[]
+   sessions      Session[]
+   avatar        attachment? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division      division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   restoreGuid   String?     @db.VarChar(32)
+   restoreTime   DateTime?
+}
+//NOTE - Вложения
+model attachment {
+   id             Int        @id @default(autoincrement())
+   filename       String     @db.VarChar(100)
+   body           Bytes
+   date           DateTime   @db.Timestamp(6)
+   size           Int
+   type           String     @db.VarChar(100)
+   md5            String     @db.VarChar(32)
+   users          users[]
+}
+//NOTE - Проекты
+model project {
+   id                Int       @id @default(autoincrement   ())
+   code              String    @unique @db.VarChar(3)
+   name              String    @db.VarChar(120)
+   begin_date        DateTime  @default(now()) @db.Timestamp(6)
+   end_date          DateTime  @db.Timestamp(6)
+}

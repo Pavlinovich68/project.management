@@ -1,0 +1,35 @@
+.targetYearValueTable {
+   width: 100%;
+   vertical-align: middle;
+   border-style: solid;
+   border-width: 1px;
+   border-color: #4D5158;
+   overflow-y: scroll;
+   height: 130px;
+   display: block;
+   .tdHeader {
+      width: 33%;
+      text-align: center;
+   }
+   .tdRowCenter {
+      text-align: center;
+      border-style: solid;
+      border-width: 0 1px 0 0;
+      border-color: #4D5158;
+   }   
+   .tdRowRight {
+      text-align: right;
+      border-style: solid;
+      border-width: 0 1px 0 0;
+      border-color: #4D5158;
+   }
+}
+.textRight {
+   input {
+      text-align: right;
+   }
+}
+
+.uploadToolbar {
+   width: 100%;
+}

@@ -1,0 +1,29 @@
+.passInput {
+   input {
+      width: 100% !important;
+   }
+}
+
+.container {
+   display: grid;      
+   grid-template-columns: auto 450px auto;
+   grid-template-rows: 30vh 40vh 30vh;
+   grid-template-areas:
+      "header header header"
+      "left content right"
+      "footer footer footer";
+   .contentCell {
+      grid-area: content;
+      padding: 15px;
+      .passInput {
+         margin-top: 1.5rem !important;
+         margin-bottom: 0.5rem !important;
+         .passLabel {
+            margin-left: 1rem;
+         }
+      }
+      .sendButton {
+         margin-top: 0.7rem;
+      }
+   }
+}

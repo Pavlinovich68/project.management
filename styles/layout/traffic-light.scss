@@ -1,0 +1,21 @@
+div.traffic-light {
+   width: 135px;
+   .p-button[aria-label="0"] {
+      background-color: var(--gray-100);
+   }
+   .p-button[aria-label="1"] {
+      background-color: var(--gray-100);
+   }
+   .p-button[aria-label="2"] {
+      background-color: var(--gray-100);
+   }
+   .p-highlight[aria-label="0"] {
+      background-color: var(--green-500)!important;
+   }
+   .p-highlight[aria-label="1"] {
+      background-color: var(--yellow-500)!important;
+   }
+   .p-highlight[aria-label="2"] {
+      background-color: var(--red-500)!important;
+   }
+}

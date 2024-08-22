@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "layout/AppMenu.jsx", "app/api/attachment/upsert/route.ts", "app/api/division/list/route.js", "prisma/data/contracts.js", "app/api/users/restore2/route.js", "prisma/drop.ts", "app/api/contract/eis/route.js", "app/api/helpers/contract/contract.extractor.js", "app/api/helpers/contract/contract.reader.js"],
+  "exclude": ["node_modules"]
+}
