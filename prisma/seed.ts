@@ -2,6 +2,7 @@ import prisma from "./client";
 import {appRoles} from "./roles";
 import bcrypt from "bcrypt";
 import divisions from "./data/divisions";
+import projects from "./data/projects.json";
 
 // TODO Seed
 async function main() {
@@ -72,6 +73,32 @@ async function main() {
    } else {
       throw new Error("Не удалось найти отдел автоматизации процессов и веб-технологий!");
    }   
+
+   const seedProjects = async () => {
+      try {
+         await prisma.$queryRaw`delete from project`;
+      
+         const _count = projects.length;
+         let _index = 0;
+         const _date = new Date(2024, 0, 1);
+         while (_index < _count) {
+            let _node = projects[_index];
+            await prisma.project.create({
+               data: {
+                  code: _node.code,
+                  name: _node.name,
+                  begin_date: _date
+               }
+            });
+            _index++;
+         }
+         return _index;  
+      } catch (error) {
+         throw error;
+      }      
+   }
+
+   await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`))
 }
 
 main().then(async () => {

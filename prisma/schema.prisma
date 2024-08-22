@@ -75,7 +75,7 @@ model attachment {
 model project {
    id                Int       @id @default(autoincrement   ())
    code              String    @unique @db.VarChar(3)
-   name              String    @db.VarChar(120)
+   name              String    @db.VarChar(250)
    begin_date        DateTime  @default(now()) @db.Timestamp(6)
-   end_date          DateTime  @db.Timestamp(6)
+   end_date          DateTime? @db.Timestamp(6)
 }
