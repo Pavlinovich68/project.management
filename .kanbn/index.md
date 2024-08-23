@@ -13,10 +13,9 @@ completedColumns:
 
 ## In Progress
 
-- [crud-проектов](tasks/crud-проектов.md)
-
 ## Done
 
 - [seed-проектов](tasks/seed-проектов.md)
+- [crud-проектов](tasks/crud-проектов.md)
 - [Грид-проектов](tasks/Грид-проектов.md)
 - [Карточка-проектов](tasks/Карточка-проектов.md)
