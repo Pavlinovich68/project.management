@@ -4,7 +4,7 @@ export interface IProject {
    id?: number | undefined | null,
    code: string,
    name: string,
-   division: IBaseEntity,
-   begin_date: Date,
+   division: IBaseEntity | undefined,
+   begin_date: Date | undefined,
    end_date?: Date | undefined | null
 }
