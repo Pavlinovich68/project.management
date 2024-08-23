@@ -39,6 +39,7 @@ model division {
    parent        division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    childrens     division[]  @relation("divisionTodivision")
    users         users[]
+   projects      project[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -76,6 +77,8 @@ model project {
    id                Int       @id @default(autoincrement   ())
    code              String    @unique @db.VarChar(3)
    name              String    @db.VarChar(250)
+   division_id       Int?
+   division          division? @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    begin_date        DateTime  @default(now()) @db.Timestamp(6)
    end_date          DateTime? @db.Timestamp(6)
 }

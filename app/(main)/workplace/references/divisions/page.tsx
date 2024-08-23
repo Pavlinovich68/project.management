@@ -6,7 +6,7 @@ import {Button} from 'primereact/button';
 import {InputText} from 'primereact/inputtext';
 import {ICardRef} from '../../../../../models/ICardRef'
 import {FormikErrors, useFormik} from "formik";
-import {Division} from "../../../../../models/Division";
+import {Division} from "../../../../../models/IDivision";
 import RecordState from "@/models/enums/record-state";
 import {Toast} from "primereact/toast";
 import {ConfirmDialog} from "primereact/confirmdialog";

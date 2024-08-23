@@ -1,9 +1,9 @@
-import {Division} from "@/models/Division";
+import {IDivision} from "@/models/IDivision";
 
-export interface User {
+export interface IUser {
    id?: number,
    email?: string,
-   division?: Division,
+   division?: IDivision,
    division_id?: number,
    name: string,
    contacts?: string,
