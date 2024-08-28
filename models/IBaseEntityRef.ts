@@ -1,5 +1,5 @@
-import { BaseEntity } from "./BaseEntity";
+import { IBaseEntity } from "./IBaseEntity";
 
 export interface IBaseEntityRef {
-   entity: (entity: BaseEntity | undefined) => void;
+   entity: (entity: IBaseEntity | undefined) => void;
 }

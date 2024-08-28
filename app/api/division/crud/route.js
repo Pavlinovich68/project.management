@@ -15,13 +15,10 @@ export const POST = async (request) => {
       const result = data.map((item) => {
          return {
             key: `${id??0}-${item.id}`,
-            label: item.short_name,
+            label: item.name,
             data: {
                id: item.id,
-               name: item.name,
-               short_name: item.short_name,
-               contacts: item.contacts,
-               attachment_id: item.attachment_id,
+               name: item.name
             }
          }
       });
@@ -37,10 +34,7 @@ export const POST = async (request) => {
       const result = await prisma.division.create({
          data: {
             name: model.name,
-            short_name: model.short_name,
-            contacts: model.contacts,
-            parent_id: model.parent_id,
-            attachment_id: model.attachment_id,
+            parent_id: model.parent_id
          }
       });
 
@@ -58,10 +52,7 @@ export const POST = async (request) => {
             id: model.id
          },
          data: {
-            name: model.name,
-            short_name: model.short_name,
-            contacts: model.contacts,
-            attachment_id: model.attachment_id,
+            name: model.name
          }
       });
 

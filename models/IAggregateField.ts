@@ -1,4 +1,4 @@
-export interface AggregateField {
+export interface IAggregateField {
    field: string,
    value?: number | undefined | null
 }
