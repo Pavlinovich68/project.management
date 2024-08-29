@@ -36,21 +36,60 @@ async function main() {
    if (division) {
       let hashPassword = await bcrypt.hashSync("Administrator1!", 8);
 
-      await prisma.users.upsert({
-         where: {email: 'administrator@localhost'},
-         update: {
-            name: 'Администратор системы',
-            roles: {"admin": "Администратор системы"}
-         },
-         create: {
-               email: 'administrator@localhost',
-               name: 'Администратор системы',
+      const profiles = ["Администратор системы",
+                        "Савельев Павел",   
+                        "Гажа Константин Владимирович",
+                        "Гореньков Аркадий Юрьевич",
+                        "Яхин Никита Артемович",
+                        "Зелениченко Арсений Алексеевич",
+                        "Кащеев Станислав Евгеньевич",
+                        "Максимова Мария Станиславовна",
+                        "Малясов Александр Евгеньевич",
+                        "Мезенцев Алексей Юрьевич",
+                        "Мезенцев Игорь Юрьевич",
+                        "Джанабаева Гульзат Рустамовна",
+                        "Павлов Сергей Павлинович",
+                        "Потапов Дмитрий Иванович",
+                        "Прокопенко Данил Евгеньевич",
+                        "Кирков Алексей Михайлович",
+                        "Окунев Александр Денисович"];
+      let index = 1
+      for (const profile of profiles){
+         const is_boss = profile === "Павлов Сергей Павлинович";
+         const email = `administrator${index}@localhost`;
+         const user = await prisma.users.upsert({
+            where: {email: email},
+            update: {
+               name: profile,
                begin_date: new Date(),
-               password: hashPassword,
                division_id: division.id,
-               roles: {"admin": "Администратор системы"}
-         }
-      }).finally(() => console.log(`\x1b[32mUser "Администратор системы" created\x1b[0m`));
+            },
+            create: {
+                  email: email,
+                  name: profile,
+                  begin_date: new Date(),
+                  password: hashPassword,
+                  division_id: division.id,
+                  roles: {"admin": "Администратор системы"}
+            }
+         }).finally(() => console.log(`\x1b[32mUser \"${profile}\" created\x1b[0m`));
+         
+         index++;
+         
+         await prisma.profile.upsert({
+            where: {user_id: user.id},
+            update: {
+               stack: 2,
+               is_boss: is_boss
+            },
+            create: {
+                  user_id: user.id,
+                  stack: 2,
+                  is_boss: is_boss
+            }
+
+         }).finally(() => console.log(`\x1b[32mProfile for user \"${profile}\" created\x1b[0m`));
+      }      
 
       hashPassword = await bcrypt.hashSync("Read_only1!", 8);
 

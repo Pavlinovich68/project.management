@@ -19,7 +19,7 @@
       "@emotion/react": "^11.11.4",
       "@emotion/styled": "^11.11.0",
       "@mui/icons-material": "^5.15.14",
-      "@prisma/client": "^5.18.0",
+      "@prisma/client": "^5.19.0",
       "@tabler/icons-react": "^3.5.0",
       "@types/formidable": "^3.4.5",
       "@types/jsonwebtoken": "^9.0.5",
@@ -60,7 +60,7 @@
       "eslint-config-next": "^0.2.4",
       "prettier": "^2.8.8",
       "prettier-plugin-prisma": "^5.0.0",
-      "prisma": "^5.18.0",
+      "prisma": "^5.19.0",
       "sass": "^1.69.5",
       "ts-node": "^10.9.1",
       "typescript": "^5.2.2"
