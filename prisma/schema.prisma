@@ -126,13 +126,14 @@ model exclusion {
 // 3 - unknown
 //!SECTION
 model profile {
-   id          Int      @id @default(autoincrement())
-   user_id     Int      @unique
+   id          Int         @id @default(autoincrement())
+   user_id     Int         @unique
    user        users?
    stack       Int
    is_boss     Boolean
-   begin_date  DateTime  @default(now()) @db.Timestamp(6)
-   end_date    DateTime? @db.Timestamp(6)
+   begin_date  DateTime    @default(now()) @db.Timestamp(6)
+   end_date    DateTime?   @db.Timestamp(6)
+   short_name  String?     @db.VarChar(8)
    vacations   vacation[]
 }
 //NOTE - График отпусков

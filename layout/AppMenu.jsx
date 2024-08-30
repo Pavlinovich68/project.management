@@ -7,6 +7,7 @@ import {useSession} from "next-auth/react";
 import { MenuProvider } from './context/menucontext';
 import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
 import { IconBooks, IconUsers, IconCube } from '@tabler/icons-react';
+import { IconCalendarWeek } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -26,6 +27,13 @@ const AppMenu = () => {
          label: 'Меню',
          visible: checkRoles(['admin', 'read_only']),
          items: [
+            {
+               label: 'Рабочий календарь',
+               icon: 'pi pi-fw pi-cog',
+               tabler: <IconCalendarWeek className='mr-1' stroke={1.5}/>,
+               visible: checkRoles(['developer', 'master']),
+               to: '/workplace/calendar',               
+            },
             {
                label: 'Администрирование',
                icon: 'pi pi-fw pi-cog',

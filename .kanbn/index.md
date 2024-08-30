@@ -15,6 +15,8 @@ completedColumns:
 
 ## In Progress
 
+- [seed-модулей](tasks/seed-модулей.md)
+
 ## Done
 
 - [seed-проектов](tasks/seed-проектов.md)

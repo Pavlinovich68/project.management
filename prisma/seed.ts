@@ -36,43 +36,46 @@ async function main() {
    if (division) {
       let hashPassword = await bcrypt.hashSync("Administrator1!", 8);
 
-      const profiles = ["Администратор системы",
-                        "Савельев Павел",   
-                        "Гажа Константин Владимирович",
-                        "Гореньков Аркадий Юрьевич",
-                        "Яхин Никита Артемович",
-                        "Зелениченко Арсений Алексеевич",
-                        "Кащеев Станислав Евгеньевич",
-                        "Максимова Мария Станиславовна",
-                        "Малясов Александр Евгеньевич",
-                        "Мезенцев Алексей Юрьевич",
-                        "Мезенцев Игорь Юрьевич",
-                        "Джанабаева Гульзат Рустамовна",
-                        "Павлов Сергей Павлинович",
-                        "Потапов Дмитрий Иванович",
-                        "Прокопенко Данил Евгеньевич",
-                        "Кирков Алексей Михайлович",
-                        "Окунев Александр Денисович"];
+      interface emp<T> { [index: string]: T }
+      const profiles: emp<string> = {  
+                                       "Савельев Павел":                   "Сав-ев",   
+                                       "Гажа Константин Владимирович":     "Гажа",
+                                       "Гореньков Аркадий Юрьевич":        "Гор-ков",
+                                       "Яхин Никита Артемович":            "Яхин",
+                                       "Зелениченко Арсений Алексеевич":   "Зел-ко",
+                                       "Кащеев Станислав Евгеньевич":      "Кащеев",
+                                       "Максимова Мария Станиславовна":    "Макс-ва",
+                                       "Малясов Александр Евгеньевич":     "Малясов",
+                                       "Мезенцев Алексей Юрьевич":         "Мез. А.",
+                                       "Мезенцев Игорь Юрьевич":           "Мез. И.",
+                                       "Джанабаева Гульзат Рустамовна":    "Джан-ва",
+                                       "Павлов Сергей Павлинович":         "Павлов",
+                                       "Потапов Дмитрий Иванович":         "Потапов",
+                                       "Прокопенко Данил Евгеньевич":      "Прок-ко",
+                                       "Кирков Алексей Михайлович":        "Кирков",
+                                       "Окунев Александр Денисович":       "Окунев"
+                                    };
       let index = 1
-      for (const profile of profiles){
-         const is_boss = profile === "Павлов Сергей Павлинович";
+      for (var key in profiles){
+         const is_boss = profiles[key] === "Павлов";
          const email = `administrator${index}@localhost`;
          const user = await prisma.users.upsert({
             where: {email: email},
             update: {
-               name: profile,
+               name: key,
+               roles: is_boss ? {"master": "Начальник отдела", "developer": "Разработчик", "admin": "Администратор"} : {"developer": "Разработчик"},
                begin_date: new Date(),
                division_id: division.id,
             },
             create: {
                   email: email,
-                  name: profile,
+                  name: key,
                   begin_date: new Date(),
                   password: hashPassword,
                   division_id: division.id,
-                  roles: {"admin": "Администратор системы"}
+                  roles: is_boss ? {"master": "Начальник отдела", "developer": "Разработчик"} : {"developer": "Разработчик"}
             }
-         }).finally(() => console.log(`\x1b[32mUser \"${profile}\" created\x1b[0m`));
+         }).finally(() => console.log(`\x1b[32mUser \"${key}\" created\x1b[0m`));
          
          index++;
          
@@ -80,15 +83,17 @@ async function main() {
             where: {user_id: user.id},
             update: {
                stack: 2,
+               short_name: profiles[key],
                is_boss: is_boss
             },
             create: {
                   user_id: user.id,
                   stack: 2,
+                  short_name: profiles[key],
                   is_boss: is_boss
             }
 
-         }).finally(() => console.log(`\x1b[32mProfile for user \"${profile}\" created\x1b[0m`));
+         }).finally(() => console.log(`\x1b[32mProfile for user \"${key}\" created\x1b[0m`));
       }      
 
       hashPassword = await bcrypt.hashSync("Read_only1!", 8);
