@@ -1,4 +1,3 @@
-import prismaHelper from "@/services/prisma.helpers";
 import prisma from "@/prisma/client";
 import {NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type.ts";
