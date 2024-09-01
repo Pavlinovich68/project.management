@@ -1,0 +1,1 @@
+type Month = {name: string, quarter: string};

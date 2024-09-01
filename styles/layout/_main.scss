@@ -289,3 +289,33 @@ tr.node-closed-color {
 .p-datatable {
    height: auto;
 }
+
+.calendar-switch {
+   .center-area {      
+      width: 10em;
+      border-bottom: 1px solid #555;
+      border-top: 1px solid #555;
+      font-size: x-large;
+      text-align: center;
+   }   
+}
+.calendar {
+   .header {
+      .cell {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--surface-200);
+      }
+   }
+   .calendar-row {
+      .name-cell {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--surface-200);
+      }
+      .cell {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--surface-900);
+      }
+   }
+}

@@ -8,7 +8,7 @@ export default withAuth(
    async function middleware(request: NextRequestWithAuth) {
       if (!!request.nextauth.token) {         
          const session = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-         console.log(session);
+         console.log(`Session -> ${session}`);
          
          if (request.nextUrl.pathname.match('/crud') && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
             ['admin', 'rpo_user', 'oiv_user', 'mo_user']))

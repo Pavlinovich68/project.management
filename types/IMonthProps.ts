@@ -1,0 +1,1 @@
+interface IMonthProps<T> { [index: string]: T };
