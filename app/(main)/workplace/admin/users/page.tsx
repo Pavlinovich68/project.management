@@ -7,7 +7,7 @@ import {Row} from "primereact/row";
 import {Column} from "primereact/column";
 import {IGridRef} from "@/models/IGridRef";
 import DateHelper from "@/services/date.helpers";
-import {User} from "@/models/User";
+import {IUser} from "@/models/IUser";
 import {ConfirmDialog} from "primereact/confirmdialog";
 import ItrCard from "@/components/ItrCard";
 import {Toast} from "primereact/toast";
@@ -30,7 +30,7 @@ import AttachService from "@/services/attachment.service"
 
 const Users = () => {
    const controllerName = 'users';
-   const emptyUser: User = {name: '', begin_date: new Date, end_date: null, roles: [], attachment_id: null};
+   const emptyUser: IUser = {name: '', begin_date: new Date, end_date: null, roles: [], attachment_id: null};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -69,11 +69,11 @@ const Users = () => {
       </ColumnGroup>
    );
 
-   const beginDateTemplate = (rowData: User) => {
+   const beginDateTemplate = (rowData: IUser) => {
       return DateHelper.formatDate(rowData.begin_date);
    };
 
-   const endDateTemplate = (rowData: User) => {
+   const endDateTemplate = (rowData: IUser) => {
       return DateHelper.formatDate(rowData.end_date);
    };
    const gridColumns = [
@@ -139,10 +139,10 @@ const Users = () => {
       });
    }
 
-   const user = useFormik<User>({
+   const user = useFormik<IUser>({
       initialValues: emptyUser,
       validate: (data) => {
-         let errors: FormikErrors<User> = {};
+         let errors: FormikErrors<IUser> = {};
          if (!data.name){
             errors.name = "Наименование подразделения должно быть заполнено!";
          }
@@ -335,7 +335,7 @@ const Users = () => {
       }
    }
 
-   const updateUser = async (data: User) => {
+   const updateUser = async (data: IUser) => {
       setCardHeader('Редактирование пользователя');
       getDivisionsTree();
       user.setValues(data);

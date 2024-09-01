@@ -16,6 +16,7 @@ import ItrGrid from "@/components/ItrGrid";
 import ItrCard from "@/components/ItrCard";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { Calendar } from "primereact/calendar";
+import DateHelper from "@/services/date.helpers";
 
 const ProductionCalendar = () => {
    const controllerName = 'calendar/production';
@@ -41,17 +42,22 @@ const ProductionCalendar = () => {
    }
 
 //#region //SECTION - GRID
+const dateTemplate = (rowData: IProductionCalendar) => {
+   return DateHelper.formatDate(rowData.date);
+};
+
 const gridColumns = [
    <Column
       key="calendarGridColumn0"
-      field="month"
       sortable
+      field="date"
+      body={dateTemplate}
       header="Дата исключения"
       style={{ width: '50%' }}>
    </Column>,
    <Column
       key="calendarGridColumn1"
-      field="exclusion_name"
+      field="exclusion_type_name"
       sortable
       header="Тип исключения"
       style={{ width: '50%' }}>
@@ -132,7 +138,6 @@ const updateMethod = async (data: IProductionCalendar) => {
 }
 
 const deleteMethod = async (data: any) => {
-   debugger;
    return await CrudHelper.crud(controllerName, CRUD.delete, { id: data.id });
 }
 
@@ -195,6 +200,7 @@ const saveMethod = async () => {
                <ItrYearSwitsh year={year} onChange={changeYear}/>
                <ItrGrid
                   controller={controllerName}
+                  params={{year: year}}
                   create={createMethod}
                   update={updateMethod}
                   drop={deleteMethod}
@@ -202,6 +208,7 @@ const saveMethod = async () => {
                   showClosed={false}
                   columns={gridColumns}
                   sortMode="multiple"
+                  search={true}
                   ref={grid}/>
                <ItrCard
                   header={cardHeader}

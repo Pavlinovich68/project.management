@@ -110,8 +110,7 @@ model production_calendar {
 //!SECTION
 model exclusion {
    id                      Int @id @default(autoincrement())
-   month                   Int
-   day                     Int
+   date                    DateTime? @db.Timestamp(6)
    exclusion_type          Int
    production_calendar_id  Int
    production_calendar     production_calendar @relation(fields: [production_calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
