@@ -14,7 +14,9 @@ export const GET = async (request) => {
          const date = new Date(Date.UTC(year, month, i+1))
          const dayOfWeek = date.getDay();
          result.push({
-            date: date,
+            day: i+1,
+            background_class: (dayOfWeek === 0 || dayOfWeek === 6)? 'cell-red': 'cell-gray',
+            text_class: (dayOfWeek === 0 || dayOfWeek === 6)? 'text-red': 'text-gray',
             exclusion_type: (dayOfWeek === 0 || dayOfWeek === 6)? 0 : -1
          })
       }
@@ -31,10 +33,36 @@ export const GET = async (request) => {
                production_calendar_id: calendar.id
             }
          });
-         for (let i = 0; i < exclusions.length; i++) {
-            let elem = result.find(elem => elem.date.getTime() === exclusions[i].date.getTime());
-            if (elem && (elem.exclusion_type !== exclusions[i].exclusion_type)) {
-               elem.exclusion_type = exclusions[i].exclusion_type;
+
+         const filtered = exclusions.filter(elem => elem.date.getMonth() === month).map((i) => {
+            let background_class = 'cell-gray';
+            let text_class = 'cell-text';
+            switch (i.exclusion_type) {
+               case 0: {
+                  background_class = 'cell-red';
+                  text_class = 'cell-text-red';
+                  break;
+               }
+               case 1: {
+                  background_class = 'cell-pink';
+                  text_class = 'cell-text-pink';
+                  break;
+               }
+            }
+            return {               
+               day: i.date.getDate(),
+               exclusion_type: i.exclusion_type,
+               background_class: background_class,
+               text_class: text_class,
+            }
+         });
+
+         for (let i = 0; i < filtered.length; i++) {
+            let elem = result.find(elem => elem.day === filtered[i].day);
+            if (elem && (elem.exclusion_type !== filtered[i].exclusion_type)) {
+               elem.exclusion_type = filtered[i].exclusion_type;
+               elem.background_class = filtered[i].background_class;
+               elem.text_class = filtered[i].text_class;
             }
          }
       }

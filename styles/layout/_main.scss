@@ -301,9 +301,17 @@ tr.node-closed-color {
 }
 .calendar {
    .header {
-      .cell {
+      .cell-gray {
          border-right: 1px solid var(--surface-50);
          background-color: var(--surface-200);
+      }
+      .cell-red {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--red-500);
+      }
+      .cell-pink {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--red-300);
       }
    }
    .calendar-row {
@@ -312,10 +320,21 @@ tr.node-closed-color {
          border-top: 1px solid var(--surface-50);
          background-color: var(--surface-200);
       }
-      .cell {
+      .cell-gray {
          border-right: 1px solid var(--surface-50);
          border-top: 1px solid var(--surface-50);
+         color: var(--gray-600);
          background-color: var(--surface-900);
+      }
+      .cell-red {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--red-500);
+      }
+      .cell-pink {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--red-300);
       }
    }
 }

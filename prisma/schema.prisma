@@ -181,8 +181,9 @@ model control_point {
 // 3 - absenteeism   Прогул
 //!SECTION
 model days_off {
-   id       Int   @id @default(autoincrement())
-   date     DateTime @db.Timestamp(6)
-   type     Int
-   comment  String   @db.VarChar(150)
+   id          Int   @id @default(autoincrement())
+   start_date  DateTime @db.Timestamp(6)
+   end_date    DateTime @db.Timestamp(6)
+   type        Int
+   comment     String   @db.VarChar(150)
 }

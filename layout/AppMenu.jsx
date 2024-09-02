@@ -7,7 +7,7 @@ import {useSession} from "next-auth/react";
 import { MenuProvider } from './context/menucontext';
 import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
 import { IconBooks, IconUsers, IconCube } from '@tabler/icons-react';
-import { IconCalendarWeek, IconCalendarCog } from '@tabler/icons-react';
+import { IconCalendarWeek, IconCalendarCog, IconBeach } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -33,6 +33,12 @@ const AppMenu = () => {
                tabler: <IconCalendarWeek className='mr-1' stroke={1.5}/>,
                visible: checkRoles(['developer', 'master']),
                to: '/workplace/calendar',               
+            },
+            {
+               label: 'График отпусков',
+               tabler: <IconBeach className='mr-1' stroke={1.5}/>,
+               visible: checkRoles(['developer', 'master']),
+               to: '/workplace/vacantion',               
             },
             {
                label: 'Администрирование',
