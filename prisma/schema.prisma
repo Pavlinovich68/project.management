@@ -114,6 +114,7 @@ model exclusion {
    exclusion_type          Int
    production_calendar_id  Int
    production_calendar     production_calendar @relation(fields: [production_calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([date, production_calendar_id])
 }
 //NOTE - Профиль разработчика
 //SECTION

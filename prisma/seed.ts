@@ -3,6 +3,7 @@ import {appRoles} from "./roles";
 import bcrypt from "bcrypt";
 import divisions from "./data/divisions";
 import projects from "./data/projects.json";
+import production_calendar from "./data/calendar.json";
 
 // TODO Seed
 async function main() {
@@ -151,7 +152,46 @@ async function main() {
       }      
    }
 
+   const seedCalendar = async () => {
+      let calendar = await prisma.production_calendar.findFirst({ where: { year: 2024 } });
+      if (!calendar) {
+         calendar = await prisma.production_calendar.create({ data: { year: 2024 } });
+      }
+      const _count = production_calendar.length;
+      let _index = 0;
+      while (_index < _count) {         
+         let _node = production_calendar[_index];
+         try {
+            const _date = new Date(_node.date);
+            const exclusion = await prisma.exclusion.findFirst({ where: { production_calendar_id: calendar.id, date: _date } });
+            if (exclusion) {
+               await prisma.exclusion.update({
+                  where: {
+                     id: exclusion.id
+                  },
+                  data: {
+                     exclusion_type: _node.exclusion_type
+                  }
+               });
+            } else {
+               await prisma.exclusion.create({
+                  data: {
+                     production_calendar_id: calendar?.id,
+                     date: _date,
+                     exclusion_type: _node.exclusion_type
+                  }
+               });
+            }
+            _index++;
+         } catch (error) {
+            throw new Error(`Не удалось создать запись календаря: ${_node.date}`);
+         }
+      }
+      return _index;
+   }
+
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`))
+   await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`))
 }
 
 main().then(async () => {

@@ -73,9 +73,9 @@ const calendar = useFormik<IProductionCalendar>({
       if (!data.date){
          errors.date = "Месяц должен быть указан!";
       }
-      if (!data.exclusion_type){
-         errors.exclusion_type = "Тип исключения должен быть указан!";
-      }
+      // if (!data.exclusion_type){
+      //    errors.exclusion_type = "Тип исключения должен быть указан!";
+      // }
       return errors;
    },
    onSubmit: () => {
@@ -84,10 +84,10 @@ const calendar = useFormik<IProductionCalendar>({
 });
 
 const types = [
-   { name: 'Празничный день', code: 0 },
-   { name: 'Сокращенный рабочий день', code: 1 },
-   { name: 'Перенесенный праздничный день', code: 2 },
-   { name: 'Перенесенный рабочий день', code: 3 },
+   { exclusion_type_name: 'Празничный день', exclusion_type: 0 },
+   { exclusion_type_name: 'Сокращенный рабочий день', exclusion_type: 1 },
+   { exclusion_type_name: 'Перенесенный праздничный день', exclusion_type: 2 },
+   { exclusion_type_name: 'Перенесенный рабочий день', exclusion_type: 3 },
 ];
 
 const card = (
@@ -108,8 +108,14 @@ const card = (
          </div>
          <div className="field col-12">
             <label htmlFor="exclusion_type">Тип исключения</label>
-            <Dropdown value={calendar.values.exclusion_type} onChange={(e) => calendar.setFieldValue('exclusion_type', e.value)} options={types} optionLabel="name" 
-               placeholder="Выберите пип исключения" className="w-full" />
+            <Dropdown 
+               value={calendar.values.exclusion_type} 
+               onChange={(e) => calendar.setFieldValue('exclusion_type', e.value)}
+               optionValue="exclusion_type"
+               optionLabel="exclusion_type_name" 
+               options={types}                
+               placeholder="Выберите пип исключения" 
+               className="w-full" />
          </div>
       </div>
    </div>

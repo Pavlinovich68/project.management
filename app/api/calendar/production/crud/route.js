@@ -20,7 +20,7 @@ export const POST = async (request) => {
          where: {
             production_calendar_id: _calendar.id,
             date: new Date(model.date),
-            exclusion_type: model.exclusion_type.code,
+            exclusion_type: model.exclusion_type,
          }
       })
 
@@ -30,7 +30,7 @@ export const POST = async (request) => {
          data: {
             production_calendar_id: _calendar.id,
             date: new Date(model.date),
-            exclusion_type: model.exclusion_type.code,
+            exclusion_type: model.exclusion_type,
          }
       })
 
@@ -62,7 +62,7 @@ export const POST = async (request) => {
          let name = undefined;
          switch (item.exclusion_type) {            
             case 0:
-               name = 'Празничный день';
+               name = 'Праздничный день';
                break;
             case 1:
                name = 'Сокращенный рабочий день';
@@ -100,7 +100,7 @@ export const POST = async (request) => {
          },
          data: {
             date: new Date(model.date),
-            exclusion_type: model.exclusion_type.code,
+            exclusion_type: model.exclusion_type,
          }
       })
 
