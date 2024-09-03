@@ -19,6 +19,7 @@ import { Calendar } from "primereact/calendar";
 import DateHelper from "@/services/date.helpers";
 import { IVacation } from "@/models/IVacation";
 import { IBaseEntity } from "@/models/IBaseEntity";
+import styles from './styles.module.scss';
 
 const Vacations = () => {
    const controllerName = 'vacation';
@@ -216,10 +217,11 @@ const saveMethod = async () => {
    return (
       <div className="grid">
          <div className="col-12">
-            <div className="card">
+            <div className={classNames('card', styles.vacationsPage)}>
                <h3>График отпусков</h3>
                <ItrYearSwitsh year={year} onChange={changeYear}/>
-               <ItrGrid
+               <div className={classNames(styles.beforeGrid)}></div>
+               <ItrGrid                  
                   controller={controllerName}
                   params={{year: year}}
                   create={createMethod}

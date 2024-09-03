@@ -138,6 +138,7 @@ model profile {
 //NOTE - График отпусков
 model vacation {
    id          Int      @id @default(autoincrement())
+   year        Int
    start_date  DateTime @db.Timestamp(6)
    end_date    DateTime @db.Timestamp(6)
    profile_id  Int

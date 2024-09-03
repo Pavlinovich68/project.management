@@ -202,7 +202,7 @@ async function main() {
             const end_date = new Date(_node.end_date)
             const profile = await prisma.profile.findFirst({
                where: {
-                  user: {
+                  user: {                     
                      name: _node.name,
                   }
                }
@@ -210,6 +210,7 @@ async function main() {
             if (profile) {
                await prisma.vacation.create({
                   data: {
+                     year: 2024,
                      profile_id: profile?.id,
                      start_date: start_date,
                      end_date: end_date,
