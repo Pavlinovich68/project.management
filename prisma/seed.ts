@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import divisions from "./data/divisions";
 import projects from "./data/projects.json";
 import production_calendar from "./data/calendar.json";
+import vacations from "./data/vacation.json";
 
 // TODO Seed
 async function main() {
@@ -190,8 +191,41 @@ async function main() {
       return _index;
    }
 
-   await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`))
-   await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`))
+   const seedVacations = async () => {
+      try {
+         await prisma.$queryRaw`delete from vacation`;
+         const _count = vacations.length;
+         let _index = 0;
+         while (_index < _count) {
+            const _node = vacations[_index];
+            const start_date = new Date(_node.start_date)
+            const end_date = new Date(_node.end_date)
+            const profile = await prisma.profile.findFirst({
+               where: {
+                  user: {
+                     name: _node.name,
+                  }
+               }
+            });
+            if (profile) {
+               await prisma.vacation.create({
+                  data: {
+                     profile_id: profile?.id,
+                     start_date: start_date,
+                     end_date: end_date,
+                  }
+               });
+            };
+            _index++;
+         }         
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
+   await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
+   await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
 }
 
 main().then(async () => {

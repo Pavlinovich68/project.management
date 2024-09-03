@@ -35,12 +35,6 @@ const AppMenu = () => {
                to: '/workplace/calendar',               
             },
             {
-               label: 'График отпусков',
-               tabler: <IconBeach className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['developer', 'master']),
-               to: '/workplace/vacantion',               
-            },
-            {
                label: 'Администрирование',
                icon: 'pi pi-fw pi-cog',
                tabler: <IconAdjustmentsHorizontal className='mr-1' stroke={1.5}/>,
@@ -59,7 +53,7 @@ const AppMenu = () => {
                label: 'Справочники',
                icon: 'pi pi-fw pi-book',
                tabler: <IconBooks className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['admin']),
+               visible: checkRoles(['master']),
                items: [
                   {
                      label: 'Подразделения',
@@ -75,6 +69,11 @@ const AppMenu = () => {
                      label: 'Производственный календарь',
                      tabler: <IconCalendarCog className='mr-1' stroke={1.5}/>,
                      to: '/workplace/references/calendar'
+                  },
+                  {
+                     label: 'График отпусков',
+                     tabler: <IconBeach className='mr-1' stroke={1.5}/>,
+                     to: '/workplace/references/vacations',               
                   },
                ]
             }
