@@ -70,7 +70,7 @@ const ItrGrid = ({
             setRecords(data.result);
             gridTools.cleanOrders(`${controller}Grid`);
       });
-   }, [search]);
+   }, [search, params]);
 
    const fetchData = async (pageSize: number, pageNo: number, orderBy: any, searchStr: string, showClosed: boolean) => {
       if (!dataSource) {

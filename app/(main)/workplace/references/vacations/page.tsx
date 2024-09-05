@@ -3,7 +3,6 @@ import ItrYearSwitsh from "@/components/ItrYearSwitch";
 import RecordState from "@/models/enums/record-state";
 import { ICardRef } from "@/models/ICardRef";
 import { IGridRef } from "@/models/IGridRef";
-import { IProductionCalendar } from "@/models/IProductionCalendar";
 import { FormikErrors, useFormik } from "formik";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
@@ -15,11 +14,12 @@ import CRUD from "@/models/enums/crud-type";
 import ItrGrid from "@/components/ItrGrid";
 import ItrCard from "@/components/ItrCard";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { Calendar } from "primereact/calendar";
 import DateHelper from "@/services/date.helpers";
 import { IVacation } from "@/models/IVacation";
 import { IBaseEntity } from "@/models/IBaseEntity";
 import styles from './styles.module.scss';
+import { Calendar } from "primereact/calendar";
+import { getSession } from "next-auth/react";
 
 const Vacations = () => {
    const controllerName = 'vacation';
@@ -35,42 +35,65 @@ const Vacations = () => {
    const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
    const [submitted, setSubmitted] = useState(false);
    const [isLoading, setIsLoading] = useState<boolean>(false);
+   const [divisionId, setDivisionId] = useState<number | undefined>(0);
 
    useEffect(() => {
       changeYear(year);
+      const getDivisionId = async (): Promise<number | undefined> => {
+         const _session = await getSession();
+         return _session?.user?.division_id;
+      }
+      getDivisionId().then(
+         (n) => {
+            readProfiles(n);
+            setDivisionId(n);
+      });
    }, []);
+
+   const readProfiles = async (divisionId: number | undefined) => {
+      
+      const res = await fetch(`/api/profile/list?division=${divisionId}&begin_date=${minDate}&end_date=${maxDate}`, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+         }
+      });
+      const data = await res.json();
+      setProfiles(data.data);
+   }
    
    const changeYear = (val: number) => {
-      setMinDate(new Date(val, 0, 1));
-      setMaxDate(new Date(val, 11, 31));
+      setMinDate(new Date(val-1, 11, 1));
+      setMaxDate(new Date(val+1, 0, 31));
+      setYear(val);
    }
 
 //#region //SECTION - GRID
-const dateTemplate = (rowData: IProductionCalendar) => {
-   return DateHelper.formatDate(rowData.date);
+const dateTemplate1 = (rowData: IVacation) => {
+   return DateHelper.formatDate(rowData.start_date);
+};
+const dateTemplate2 = (rowData: IVacation) => {
+   return DateHelper.formatDate(rowData.end_date);
 };
 
 const gridColumns = [
    <Column
       key="calendarGridColumn0"
       field="name"
-      sortable
       header="Сотрудник"
       style={{ width: '50%' }}>
    </Column>,
    <Column
       key="calendarGridColumn1"
-      sortable
       field="start_date"
-      body={dateTemplate}
+      body={dateTemplate1}
       header="Дата начала"
       style={{ width: '25%' }}>
    </Column>,
    <Column
       key="calendarGridColumn2"
-      sortable
       field="end_date"
-      body={dateTemplate}
+      body={dateTemplate2}
       header="Дата окончания"
       style={{ width: '25%' }}>
    </Column>
@@ -110,7 +133,7 @@ const card = (
                   className={classNames({"p-invalid": submitted && !vacation.values.profile_id})} 
                   required 
                   optionLabel="name" 
-                  optionValue="project_id" 
+                  optionValue="id" 
                   options={profiles}
                   onChange={(e) => {
                      const item = profiles?.find(item => item.id === e.value);
@@ -121,17 +144,29 @@ const card = (
                />
             </div>
          </div>
-         <div className="field col-12">
-            <label htmlFor="month">Планируемый отпуск</label>
-            {/* <Calendar 
-               value={calendar.values.date ? new Date(calendar.values.date) : null}
-               className={classNames({"p-invalid": submitted && !calendar.values.date})} 
-               onChange={(e) => calendar.setFieldValue('date', e.target.value)}
+         <div className="field col-6">
+            <label htmlFor="start_date">Дата начала</label>
+            <Calendar 
+               value={vacation.values.start_date ? new Date(vacation.values.start_date) : new Date(year, 0, 1)}
+               className={classNames({"p-invalid": submitted && !vacation.values.start_date})} 
+               onChange={(e) => vacation.setFieldValue('start_date', e.target.value)}
+               dateFormat="dd MM yy"
+               locale="ru" 
+               showIcon required  showButtonBar
+               minDate={minDate} 
+               maxDate={maxDate} />
+         </div>         
+         <div className="field col-6">
+            <label htmlFor="end_date">Дата окончания</label>
+            <Calendar 
+               value={vacation.values.end_date ? new Date(vacation.values.end_date) : new Date(year, 0, 1)}
+               className={classNames({"p-invalid": submitted && !vacation.values.end_date})} 
+               onChange={(e) => vacation.setFieldValue('end_date', e.target.value)}
                dateFormat="dd MM yy" 
                locale="ru" 
                showIcon required  showButtonBar
                minDate={minDate} 
-               maxDate={maxDate} /> */}
+               maxDate={maxDate} />
          </div>         
       </div>
    </div>
@@ -193,7 +228,7 @@ const saveMethod = async () => {
    try {
       setIsLoading(true);
       const res = 
-         await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, vacation.values);
+         await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, vacation.values, {year: year});
 
       setIsLoading(false);
 
@@ -223,15 +258,13 @@ const saveMethod = async () => {
                <div className={classNames(styles.beforeGrid)}></div>
                <ItrGrid                  
                   controller={controllerName}
-                  params={{year: year}}
+                  params={{year: year, division: divisionId}}
                   create={createMethod}
                   update={updateMethod}
                   drop={deleteMethod}
                   tableStyle={{ minWidth: '50rem' }}
                   showClosed={false}
                   columns={gridColumns}
-                  sortMode="multiple"
-                  search={true}
                   ref={grid}/>
                <ItrCard
                   header={cardHeader}

@@ -66,6 +66,7 @@ export const authOptions = {
    },
    callbacks: {
       async jwt({token, user, session, account}){
+         console.log(`callback jwt: \n\ttoken-${token?.division_id}, \n\tuser-${user?.division_id}, \n\tsession-${session?.user?.division_id}, \n\taccount-${account?.division_id}`);
          if (user) {
             token.division_id = user.division_id;
             token.division_name = user.division?.name
@@ -76,6 +77,7 @@ export const authOptions = {
          return token;
       },
       async session({session, user, token}){
+         console.log(`callback session: \n\tsession-${session?.user.division_id}, \n\tuser-${user?.division_id}, \n\ttoken-${token?.division_id}`);
          if (token) {
             session.user.division_id = token.division_id;
             session.user.division_name = token.division_name;

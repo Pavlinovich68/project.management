@@ -10,6 +10,16 @@ export default class DateHelper {
       });
    };
 
+   static formatDateWithoutYear = (date?: Date | null | undefined) => {
+      if (!date || date === undefined) {
+         return '';
+      }
+      return new Date(date).toLocaleDateString('ru-RU', {
+         day: '2-digit',
+         month: 'long'
+      });
+   };
+
    static createDate = (date: string | null | undefined) => {
       if (!date || date === undefined) {
          return null;

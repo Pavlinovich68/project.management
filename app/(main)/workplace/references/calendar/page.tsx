@@ -39,11 +39,12 @@ const ProductionCalendar = () => {
    const changeYear = (val: number) => {
       setMinDate(new Date(val, 0, 1));
       setMaxDate(new Date(val, 11, 31));
+      setYear(val);
    }
 
 //#region //SECTION - GRID
 const dateTemplate = (rowData: IProductionCalendar) => {
-   return DateHelper.formatDate(rowData.date);
+   return DateHelper.formatDateWithoutYear(rowData.date);   
 };
 
 const gridColumns = [
@@ -100,7 +101,7 @@ const card = (
                value={calendar.values.date ? new Date(calendar.values.date) : null}
                className={classNames({"p-invalid": submitted && !calendar.values.date})} 
                onChange={(e) => calendar.setFieldValue('date', e.target.value)}
-               dateFormat="dd MM yy" 
+               dateFormat="dd MM" 
                locale="ru" 
                showIcon required  showButtonBar
                minDate={minDate} 

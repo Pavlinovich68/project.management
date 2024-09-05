@@ -25,7 +25,7 @@ const AppMenu = () => {
    const model = [
       {
          label: 'Меню',
-         visible: checkRoles(['admin', 'read_only']),
+         visible: checkRoles(['developer', 'read_only']),
          items: [
             {
                label: 'Рабочий календарь',
@@ -38,11 +38,11 @@ const AppMenu = () => {
                label: 'Администрирование',
                icon: 'pi pi-fw pi-cog',
                tabler: <IconAdjustmentsHorizontal className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['admin']),
+               visible: checkRoles(['developer']),
                items: [
                   {
                      label: 'Пользователи',
-                     visible: checkRoles(['admin']),
+                     visible: checkRoles(['developer']),
                      icon: 'pi pi-fw pi-user',
                      to: '/workplace/admin/users',
                      tabler: <IconUsers className='mr-1' stroke={1.5}/>

@@ -1,56 +1,59 @@
-import prismaHelper from "@/services/prisma.helpers";
 import prisma from "@/prisma/client";
 import {NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type.ts";
 
 export const POST = async (request) => {
-   const create = async (model) => {
+   const create = async (model, params) => {
       const result = await prisma.vacation.create({
          data: {
+            year: params.year,
             profile_id: model.profile_id,
-            start_date: model.start_date,
-            end_date: model.end_date,
+            start_date: new Date(model.start_date),
+            end_date: new Date(model.end_date),
          }
       })
 
       return result;
    }
 
-   const read = async (model, year) => {
-      let filter = {};
-      if (model.searchStr) {
-         filter['OR'] = prismaHelper.OR(['start_date', 'profile.user.name'], model.searchStr);
-         filter['AND'] = { year: year };
-      } else {
-         filter = {
-            year: year
-         }
-      }
-      
+   const read = async (model, year, division) => {
+      const count = await prisma.$queryRaw`
+         select
+            count(*)
+         from
+            vacation v
+            left join profile p on v.profile_id = p.id
+            left join users u on p.user_id = u.id
+         where
+            u.division_id = ${division}
+            and v.year = ${year}
+            and position(lower(${model.searchStr??''}) in lower(u.name)) > 0 
+      `;
 
-      const totalCount = await prisma.vacation.count({where: filter});
-      let result = await prisma.vacation.findMany({
-         skip: model.pageSize * (model.pageNo -1),
-         take: model.pageSize,
-         where: filter,
-         orderBy: model.orderBy,
-         include: {
-            profile: {
-               include: {
-                  user: true
-               }               
-            }
-         }});
+      const totalCount = Number(count[0]?.count);
 
-      result = result.map((item) => {
-         return {
-            id: item.id,
-            name: item.profile.user.name,
-            profile_id: item.profile_id,
-            start_date: item.start_date,
-            end_date: item.end_date
-         }   
-      });
+      const result = await prisma.$queryRaw`
+         select
+            v.id,
+            v.year,
+            v.profile_id,
+            v.start_date,
+            v.end_date,
+            u.name
+         from
+            vacation v
+            left join profile p on v.profile_id = p.id
+            left join users u on p.user_id = u.id
+         where
+            u.division_id = ${division}
+            and v.year = ${year}
+            and position(lower(${model.searchStr??''}) in lower(u.name)) > 0 
+         order by
+            u.name,
+            v.start_date
+         limit ${model.pageSize}
+         offset (${model.pageNo} -1) * ${model.pageSize}
+      `;
 
       let data = {
          recordCount: totalCount,
@@ -69,8 +72,8 @@ export const POST = async (request) => {
          },
          data: {
             profile_id: model.profile_id,
-            start_date: model.start_date,
-            end_date: model.end_date,
+            start_date: new Date(model.start_date),
+            end_date: new Date(model.end_date),
          }
       })
 
@@ -91,13 +94,13 @@ export const POST = async (request) => {
       let result = null;
       switch (operation) {
          case CRUD.read:
-            result = await read(model, params.year);
+            result = await read(model, params.year, params.division);
             break;
          case CRUD.create:
-            result = await create(model);
+            result = await create(model, params);
             break;
          case CRUD.update:
-            result = await update(model);
+            result = await update(model, params);
             break;
          case CRUD.delete:
             result = await drop(model);

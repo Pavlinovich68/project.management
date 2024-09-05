@@ -12,7 +12,7 @@ import AppFooter from "./AppFooter";
 import AppSidebar from "./AppSidebar";
 import AppTopbar from "./AppTopbar";
 import { LayoutContext } from "./context/layoutcontext";
-import { PrimeReactContext } from "primereact/api";
+//import { PrimeReactContext } from "primereact/api";
 import { ChildContainerProps, LayoutState, AppTopbarRef } from "../types/types";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useSession} from "next-auth/react";
@@ -26,7 +26,7 @@ const Layout = ({ children }: ChildContainerProps) => {
       router?.push('/login');
    }
    const { layoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
-   const { setRipple } = useContext(PrimeReactContext);
+   //const { setRipple } = useContext(PrimeReactContext);
    const topbarRef = useRef<AppTopbarRef>(null);
    const sidebarRef = useRef<HTMLDivElement>(null);
    const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] =
@@ -112,9 +112,9 @@ const Layout = ({ children }: ChildContainerProps) => {
       }
    };
 
-   useMountEffect(() => {
-      setRipple(layoutConfig.ripple);
-   });
+   // useMountEffect(() => {
+   //    setRipple(layoutConfig.ripple);
+   // });
 
    useEffect(() => {
       if (layoutState.overlayMenuActive || layoutState.staticMenuMobileActive) {
