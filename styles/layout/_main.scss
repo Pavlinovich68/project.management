@@ -300,7 +300,15 @@ tr.node-closed-color {
    }   
 }
 .calendar {
+   font-size: 14px;
    .header {
+      .data-cell {
+         height: 24px;
+         width: 24px;
+      }
+      .data-cell-h {
+         height: 24px;
+      }
       .cell-gray {
          border-right: 1px solid var(--surface-50);
          background-color: var(--surface-200);
@@ -315,6 +323,13 @@ tr.node-closed-color {
       }
    }
    .calendar-row {
+      .data-cell {
+         height: 24px;
+         width: 24px;
+      }
+      .data-cell-h {
+         height: 24px;
+      }
       .name-cell {
          border-right: 1px solid var(--surface-50);
          border-top: 1px solid var(--surface-50);
@@ -330,11 +345,18 @@ tr.node-closed-color {
          border-right: 1px solid var(--surface-50);
          border-top: 1px solid var(--surface-50);
          background-color: var(--red-500);
+         color: var(--red-500);
       }
       .cell-pink {
          border-right: 1px solid var(--surface-50);
          border-top: 1px solid var(--surface-50);
          background-color: var(--red-300);
+      }
+      .cell-yellow {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         color: var(--orange-500);
+         background-color: var(--orange-500);
       }
    }
 }

@@ -1,4 +1,3 @@
-'use client'
 import { Button } from "primereact/button";
 import React, {useState} from "react";
 
