@@ -224,9 +224,78 @@ async function main() {
       }
    }
 
+   const seedPosts = async () => {
+      try {
+         await prisma.$queryRaw`delete from post`;
+         const posts: string[] = ['Начальник отдела', 'Главный специалист', 'Ведущий техник-технолог'];
+         for (const post of posts){
+            await prisma.post.create({
+               data: {
+                  name: post
+               }
+            });
+         }
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   const seedStuffUnits = async () => {
+      try {
+         await prisma.$queryRaw`delete from stuff_unit`;
+         const division = await prisma.division.findUnique({
+            where: {
+               name: 'Отдел автоматизации процессов и веб-технологий'
+            }
+         });
+         if (!division) {
+            throw new Error('Не удалось найти подразделение');
+         }
+         const units: string[] = [
+            'Начальник отдела', 
+            'Главный специалист', 
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+            'Ведущий техник-технолог',
+         ];
+         for (const unit of units) {
+            const post = await prisma.post.findFirst({
+               where: {
+                  name: unit
+               }
+            });
+            if (!post) {
+               throw new Error('Не удалось найти должность');
+            }
+            await prisma.stuff_unit.create({
+               data: {
+                  post_id: post.id,
+                  division_id: division.id,
+                  begin_date: new Date('2024-01-01'),
+               }
+            });
+         }
+      } catch (error) {
+         throw error;
+      }
+   }
+
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
    await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
+   await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
+   await seedStuffUnits().finally(() => console.log(`\x1b[32mStuff units seeded\x1b[0m`));
 }
 
 main().then(async () => {
