@@ -1,0 +1,58 @@
+.monthCalendar {
+   margin-top: 1rem;
+   font-size: 14px;
+   .dataCell {
+      height: 24px;
+      width: 24px !important;
+   }
+   .calendarHeader {
+      .cellHeader {
+         height: 24px;
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--surface-200);
+      }
+      .cellWork {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--surface-200);
+      }
+      .cellHoliday {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--red-500);
+      }
+      .cellPreHoliday {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--red-300);
+      }
+   }
+   .calendarRow {
+      .cellHeader {         
+         height: 24px;
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--surface-200);
+      }
+      .cellWork {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         color: var(--gray-600);
+         background-color: var(--surface-900);
+      }
+      .cellHoliday {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--red-500);
+         color: var(--red-500);
+      }
+      .cellPreHoliday {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--red-300);
+      }
+      .cellVacancy {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         color: var(--orange-500);
+         background-color: var(--orange-500);
+      }
+   }
+}

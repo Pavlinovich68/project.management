@@ -1,69 +1,95 @@
 'use client'
-import React, {useRef, useState, useEffect} from "react";
-import ItrCalendarRow from "./ItrCalendarRow";
-import { useSession } from "next-auth/react";
+import React, {useRef, useState, useEffect, cache} from "react";
 import { classNames } from "primereact/utils";
+import styles from "@/app/(main)/workplace/calendar/styles.module.scss"
+import { Toast } from "primereact/toast";
+import { ICalendarData } from "@/types/ICalendarData";
 
-const ItrCalendar = ({year, month}: {year: number, month: number}) => {
-   const {data: session} = useSession();
-   const [days, setDays] = useState<number>();
-   const [profiles, setProfiles] = useState<any[]>([]);
-   const [daysData, setDaysData] = useState<any[]>([]);
+const ItrCalendar = ({year, month, division_id}: {year: number, month: number, division_id: number}) => {
+   const toast = useRef<Toast>(null);
+   const [data, setData] = useState<ICalendarData>();
 
    useEffect(() => {
-      setDays(new Date(year, month, 0).getDate());
-      readProfiles();
-      readDays();
-   }, [year, month]);
+      getCalendarData();
+   }, [year, month, division_id]);
 
-   const readProfiles = async () => {
-      const res = await fetch(`/api/calendar/division/profiles`, {
+   const getCalendarData = async () => {
+      if (!division_id) {
+         toast.current?.show({severity:'error', summary: 'Сессия приложения', detail: 'Идентификатор подразделения недоступен!', life: 3000});
+         return;
+      }
+      const res = await fetch(`/api/calendar/production/data`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",
          },
-         body: JSON.stringify({division: session?.user?.division_id, year: year, month: month})
+         body: JSON.stringify({
+            division: division_id, 
+            year: year, 
+            month: month}),
+         cache: 'force-cache'
       });
       const data = await res.json();
-      setProfiles(data.data);
-   }
-
-   
-
-   const readDays = async () => {
-      const res = await fetch(`/api/calendar/production/days`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({year: year, month: month-1})
-      });
-      const data = await res.json();
-      setDaysData(data.data);
+      setData(data.data);
    }
 
    return (
-      <div className="card calendar" style={{marginTop: "1em"}}>
-         <div className="flex justify-content-center header">
-            <div className="flex align-items-center justify-content-center w-12rem data-cell-h font-bold cell-gray">
-               Фамилия
+      <React.Fragment>
+         <div className={classNames('card', styles.monthCalendar)} style={{marginTop: "1em"}}>
+            <div className={classNames("flex justify-content-center", styles.calendarHeader)}>
+               <div className={classNames("flex align-items-center justify-content-center w-8rem font-bold cell-bl cell-bt", styles.cellHeader)}>
+                  Фамилия
+               </div>
+               {
+                  data?.header?.days?.map((day) => {
+                     return (
+                        <div key="calendar-header" className={classNames("flex align-items-center justify-content-center font-bold cell-bt", day.background_class === 0 ? styles.cellWork : (day.background_class === 1 ? styles.cellHoliday : styles.cellPreHoliday), styles.dataCell)}>
+                           {day.day}
+                        </div>
+                     )
+                  })
+               }
+               <div className={classNames("flex align-items-center justify-content-center w-4rem font-bold cell-br cell-bt", styles.cellHeader)}>
+                  Часов
+               </div>               
             </div>
-            {daysData.map((day) => {
-               return (
-                  <div key="calendar-header" className={classNames("flex align-items-center justify-content-center data-cell font-bold", day.background_class)}>
-                     {day.day}
-                  </div>
-               )
-            })}
-            <div className="flex align-items-center justify-content-center w-4rem data-cell-h font-bold cell-gray">
-               Часов
-            </div>         
+            {
+               data?.rows?.map((row) => {
+                  return (
+                     <div key="row" className={classNames("flex justify-content-center", styles.calendarRow)}>
+                        <div className={classNames("flex align-items-start justify-content-start w-8rem font-bold pl-2 cell-bl", styles.cellHeader)}>{row.name}</div>
+                        {
+                           row?.hours?.map((day) => {                                                            
+                              return (
+                                 <div key="calendar-row" className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell, day.background_class)}>{day.value}</div>
+                              )
+                           })
+                        }
+                        <div className={classNames("flex align-items-end justify-content-end w-4rem pr-2 font-bold cell-br", styles.cellHeader)}>{row.total}</div>
+                     </div>
+                  )
+               })
+            }
+            <div className={classNames("flex justify-content-center", styles.calendarHeader)}>
+               <div className={classNames("flex vertical-align-middle w-8rem font-bold pl-2 calendar-left-cell cell-bl cell-bl cell-bb cell-br")}>
+                  Итого:
+               </div>
+               {
+                  data?.footer?.days?.map((day) => {
+                     return (
+                        <div key="calendar-footer" className={classNames("flex align-items-center justify-content-center font-bold, cell-vertical cell-br cell-bb", day.background_class, styles.dataCell)}>
+                           {day.value}
+                        </div>
+                     )
+                  })
+               }
+               <div className={classNames("w-4rem font-bold pr-2 calendar-left-cell text-right cell-br cell-bb")}>
+                  {data?.footer?.total?.toLocaleString()}
+               </div>               
+            </div>
          </div>
-         {profiles.map((profile) => { return (
-               <ItrCalendarRow key="calendar-profile" id={profile.id} name={profile.short_name} year={year} month={month} days={days} colors={daysData} />
-            )
-         })}
-      </div>
+         <Toast ref={toast} />
+      </React.Fragment>
    );
 };
 

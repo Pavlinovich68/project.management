@@ -34,4 +34,16 @@ export default class DateHelper {
       const parts = date.split('.');
       return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
    }
+
+   static withoutTime = (date: string | null | undefined) => {
+      if (!date) {
+         return undefined;
+      }
+      const _date = new Date(date);
+      const year = _date.getFullYear();
+      const month = _date.getMonth();
+      const day = _date.getDate();
+      const xDate = new Date(year, month, day);
+      return xDate.toLocaleDateString('fr-CA');
+   }
 }

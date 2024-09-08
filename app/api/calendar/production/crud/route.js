@@ -1,10 +1,12 @@
 import prisma from "@/prisma/client";
 import {NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type.ts";
+import DateHelper from "@/services/date.helpers";
 
 export const POST = async (request) => {
    const create = async (model) => {
-      const _date = new Date(model.date);
+      const date = DateHelper.withoutTime(model.date);
+      const _date = new Date(date);
       const _year = _date.getFullYear();
 
       let _calendar = await prisma.production_calendar.findFirst({ where: { year: _year } });
@@ -19,7 +21,7 @@ export const POST = async (request) => {
       const is_exists = await prisma.exclusion.findFirst({
          where: {
             production_calendar_id: _calendar.id,
-            date: new Date(model.date),
+            date: _date,
             exclusion_type: model.exclusion_type,
          }
       })
@@ -29,7 +31,7 @@ export const POST = async (request) => {
       const result = await prisma.exclusion.create({
          data: {
             production_calendar_id: _calendar.id,
-            date: new Date(model.date),
+            date: _date,
             exclusion_type: model.exclusion_type,
          }
       })
@@ -94,12 +96,13 @@ export const POST = async (request) => {
    }
 
    const update = async (model) => {
+      const _date = new Date(model.date);
       const result = await prisma.exclusion.update({
          where: {
             id: model.id
          },
          data: {
-            date: new Date(model.date),
+            date: _date,
             exclusion_type: model.exclusion_type,
          }
       })

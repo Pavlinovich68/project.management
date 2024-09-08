@@ -5,8 +5,8 @@ export interface ICalendarHeader {
 export interface ICalendarHeaderItem {
    day: number | undefined;
    type: number | undefined;
-   background_class: string | undefined;
-   text_class: string | undefined;
+   background_class: number | undefined;
+   text_class: number | undefined;
 }
 export interface ICalendarRow {
    name: string | undefined | null,

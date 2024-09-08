@@ -299,64 +299,57 @@ tr.node-closed-color {
       text-align: center;
    }   
 }
-.calendar {
-   font-size: 14px;
-   .header {
-      .data-cell {
-         height: 24px;
-         width: 24px;
-      }
-      .data-cell-h {
-         height: 24px;
-      }
-      .cell-gray {
-         border-right: 1px solid var(--surface-50);
-         background-color: var(--surface-200);
-      }
-      .cell-red {
-         border-right: 1px solid var(--surface-50);
-         background-color: var(--red-500);
-      }
-      .cell-pink {
-         border-right: 1px solid var(--surface-50);
-         background-color: var(--red-300);
-      }
-   }
-   .calendar-row {
-      .data-cell {
-         height: 24px;
-         width: 24px;
-      }
-      .data-cell-h {
-         height: 24px;
-      }
-      .name-cell {
-         border-right: 1px solid var(--surface-50);
-         border-top: 1px solid var(--surface-50);
-         background-color: var(--surface-200);
-      }
-      .cell-gray {
-         border-right: 1px solid var(--surface-50);
-         border-top: 1px solid var(--surface-50);
-         color: var(--gray-600);
-         background-color: var(--surface-900);
-      }
-      .cell-red {
-         border-right: 1px solid var(--surface-50);
-         border-top: 1px solid var(--surface-50);
-         background-color: var(--red-500);
-         color: var(--red-500);
-      }
-      .cell-pink {
-         border-right: 1px solid var(--surface-50);
-         border-top: 1px solid var(--surface-50);
-         background-color: var(--red-300);
-      }
-      .cell-yellow {
-         border-right: 1px solid var(--surface-50);
-         border-top: 1px solid var(--surface-50);
-         color: var(--orange-500);
-         background-color: var(--orange-500);
-      }
-   }
+
+.cell-white {
+   border-right: 1px solid var(--surface-50);
+   border-top: 1px solid var(--surface-50);
+   color: var(--gray-600);
+   background-color: var(--surface-900);
+}
+.cell-gray {
+   background-color: var(--gray-800);
+}
+.cell-red {
+   border-right: 1px solid var(--surface-50);
+   border-top: 1px solid var(--surface-50);
+   background-color: var(--red-500);
+   color: var(--red-500);
+}
+.cell-pink {
+   border-right: 1px solid var(--surface-50);
+   border-top: 1px solid var(--surface-50);
+   background-color: var(--red-300);
+}
+.cell-yellow {
+   border-right: 1px solid var(--surface-50);
+   border-top: 1px solid var(--surface-50);
+   color: var(--yellow-500);
+   background-color: var(--yellow-500);
+}
+.cell-vertical {
+   height: 36px !important;
+   font-weight: 700;
+   writing-mode: vertical-rl;
+}
+
+.calendar-left-cell {   
+   height: 36px !important;
+   background-color: var(--gray-800);
+   padding-top: 8px;
+}
+
+.cell-bl {
+   border-left: 1px solid #999999 !important;
+}
+
+.cell-br {
+   border-right: 1px solid #999999 !important;
+}
+
+.cell-bb {
+   border-bottom: 1px solid #999999 !important;
+}
+
+.cell-bt {
+   border-top: 1px solid #999999 !important;
 }

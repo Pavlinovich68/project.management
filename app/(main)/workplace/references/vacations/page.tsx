@@ -40,6 +40,7 @@ const Vacations = () => {
    useEffect(() => {
       changeYear(year);
       const getDivisionId = async (): Promise<number | undefined> => {
+         //TODO Получение сессии с сервера
          const _session = await getSession();
          return _session?.user?.division_id;
       }

@@ -14,8 +14,8 @@ export const POST = async (request: NextRequest) => {
          const dayOfWeek = date.getDay();
          daysData.push({
             day: i+1,
-            background_class: (dayOfWeek === 0 || dayOfWeek === 6)? 'cellHoliday': 'cellWork',
-            text_class: (dayOfWeek === 0 || dayOfWeek === 6)? 'textHoliday': 'textWork',
+            background_class: (dayOfWeek === 0 || dayOfWeek === 6)? 1 : 0,
+            text_class: (dayOfWeek === 0 || dayOfWeek === 6)? 1 : 0,
             exclusion_type: (dayOfWeek === 0 || dayOfWeek === 6)? 0 : -1
          })
       }
@@ -39,13 +39,23 @@ export const POST = async (request: NextRequest) => {
          if (exclusion) { 
             switch (exclusion.exclusion_type) {
                case 0: {
-                  i.background_class = 'cellHoliday';
-                  i.text_class = 'textHoliday';
+                  i.background_class = 1;
+                  i.text_class = 1;
                   break;
                }
                case 1: {
-                  i.background_class = 'cellPreHoliday';
-                  i.text_class = 'textPreHoliday';
+                  i.background_class = 2;
+                  i.text_class = 2;
+                  break;
+               }
+               case 2: {
+                  i.background_class = 1;
+                  i.text_class = 1;
+                  break;
+               }
+               case 3: {
+                  i.background_class = 0;
+                  i.text_class = 0;
                   break;
                }
             }
@@ -106,11 +116,21 @@ export const POST = async (request: NextRequest) => {
 
       const footer: ICalendarFooter = {days: [], total: 0};
       for (const dayItem of headerData) {
+         let bkg = 'cell-gray';
+         switch (dayItem.background_class) {
+            case 1:
+               bkg = 'cell-red'
+               break;
+            case 2:
+               bkg = 'cell-pink'         
+            default:
+               break;
+         }
          const day: ICalendarRowItem = {
             day: dayItem.day,
             value: 0,
-            background_class: dayItem.background_class,
-            text_class: dayItem.text_class,
+            background_class: bkg,
+            text_class: '',
          }
          footer.days.push(day);
       }
@@ -121,12 +141,15 @@ export const POST = async (request: NextRequest) => {
          for (const dayItem of headerData)  {            
             let isVacation = vacationDays.find((v_item) => Number(v_item) === Number(dayItem.day));
             let dayHours: number = 0;
+            let bkg = 'cell-white';
             switch (dayItem.type) {
                case 0: {
                   dayHours = 0;
+                  bkg = 'cell-red';
                   break;
                }
                case 1: {
+                  bkg = 'cell-pink';
                   dayHours = isVacation ? 0 : 7;
                   break;
                }
@@ -140,15 +163,17 @@ export const POST = async (request: NextRequest) => {
             if (_item) _item.value += dayHours;
 
             profileRow.total += dayHours;
-            const item: ICalendarRowItem = {day: dayItem.day, value: dayHours, background_class: isVacation ? "cellVacation" : dayItem.background_class, text_class: isVacation ? "textVacation" : dayItem.text_class};
+            const item: ICalendarRowItem = {day: dayItem.day, value: dayHours, background_class: isVacation ? "cell-yellow" : bkg, text_class: isVacation ? "textVacation" :''};
             profileRow.hours?.push(item);
-
-
          }
-         rows.push(profileRow); 
+         rows.push(profileRow);  
       }
-      data.rows = rows;
 
+      let total = 0;
+      footer?.days.map(i => { total += i.value });
+      if (footer) footer.total = total;
+
+      data.rows = rows;
       data.footer = footer;
 
       return await NextResponse.json({status: 'success', data: data});
