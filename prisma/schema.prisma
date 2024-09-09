@@ -198,10 +198,9 @@ model post {
 //NOTE - Штатная единица
 model stuff_unit {
    id          Int         @id @default(autoincrement())
-   post_id     Int
+   count       Int
+   post_id     Int   
    post        post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   begin_date  DateTime    @db.Timestamp(6)
-   end_date    DateTime?   @db.Timestamp(6)
    division_id Int
    division    division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

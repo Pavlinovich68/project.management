@@ -251,28 +251,15 @@ async function main() {
          if (!division) {
             throw new Error('Не удалось найти подразделение');
          }
-         const units: string[] = [
-            'Начальник отдела', 
-            'Главный специалист', 
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
-            'Ведущий техник-технолог',
+         const units = [
+            { "name": 'Начальник отдела', "count": 1 }, 
+            { "name": 'Главный специалист', "count": 14 }, 
+            { "name": 'Ведущий техник-технолог', "count": 1 },
          ];
          for (const unit of units) {
             const post = await prisma.post.findFirst({
                where: {
-                  name: unit
+                  name: unit.name
                }
             });
             if (!post) {
@@ -280,9 +267,9 @@ async function main() {
             }
             await prisma.stuff_unit.create({
                data: {
+                  count: unit.count,
                   post_id: post.id,
                   division_id: division.id,
-                  begin_date: new Date('2024-01-01'),
                }
             });
          }

@@ -4,3 +4,9 @@ export interface IDivision {
    parent_id?: number,
    childrens?: IDivision[]
 }
+
+export interface IBaseDivision {
+   id: number,
+   name?: string | undefined | null,
+   parent_id?: number | undefined | null
+}

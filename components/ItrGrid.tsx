@@ -118,7 +118,7 @@ const ItrGrid = ({
       });
    };
 
-   useImperativeHandle(ref, () => ({reload}));
+   useImperativeHandle(ref, () => ({reload, records}));
 
    /* #region  */
    const onSort = (event: DataTableStateEvent) => {
