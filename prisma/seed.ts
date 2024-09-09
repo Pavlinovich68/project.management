@@ -81,23 +81,23 @@ async function main() {
          
          index++;
          
-         await prisma.profile.upsert({
-            where: {user_id: user.id},
-            update: {
-               stack: 2,
-               short_name: profiles[key],
-               is_boss: is_boss,
-               begin_date: new Date(2024, 0, 1),
-            },
-            create: {
-                  user_id: user.id,
-                  stack: 2,
-                  short_name: profiles[key],
-                  is_boss: is_boss,
-                  begin_date: new Date(2024, 0, 1),
-            }
+         // await prisma.profile.upsert({
+         //    where: {user_id: user.id},
+         //    update: {
+         //       stack: 2,
+         //       short_name: profiles[key],
+         //       is_boss: is_boss,
+         //       begin_date: new Date(2024, 0, 1),
+         //    },
+         //    create: {
+         //          user_id: user.id,
+         //          stack: 2,
+         //          short_name: profiles[key],
+         //          is_boss: is_boss,
+         //          begin_date: new Date(2024, 0, 1),
+         //    }
 
-         }).finally(() => console.log(`\x1b[32mProfile for user \"${key}\" created\x1b[0m`));
+         // }).finally(() => console.log(`\x1b[32mProfile for user \"${key}\" created\x1b[0m`));
       }      
 
       hashPassword = await bcrypt.hashSync("Read_only1!", 8);
@@ -200,23 +200,23 @@ async function main() {
             const _node = vacations[_index];
             const start_date = new Date(_node.start_date)
             const end_date = new Date(_node.end_date)
-            const profile = await prisma.profile.findFirst({
-               where: {
-                  user: {                     
-                     name: _node.name,
-                  }
-               }
-            });
-            if (profile) {
-               await prisma.vacation.create({
-                  data: {
-                     year: 2024,
-                     profile_id: profile?.id,
-                     start_date: start_date,
-                     end_date: end_date,
-                  }
-               });
-            };
+            // const profile = await prisma.profile.findFirst({
+            //    where: {
+            //       user: {                     
+            //          name: _node.name,
+            //       }
+            //    }
+            // });
+            // if (profile) {
+            //    await prisma.vacation.create({
+            //       data: {
+            //          year: 2024,
+            //          profile_id: profile?.id,
+            //          start_date: start_date,
+            //          end_date: end_date,
+            //       }
+            //    });
+            // };
             _index++;
          }         
       } catch (error) {

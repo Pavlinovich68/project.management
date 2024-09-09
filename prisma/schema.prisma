@@ -61,7 +61,6 @@ model users {
    division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    restoreGuid    String?     @db.VarChar(32)
    restoreTime    DateTime?
-   profile        profile[]
 }
 //NOTE - Вложения
 model attachment {
@@ -127,13 +126,11 @@ model exclusion {
 //!SECTION
 model profile {
    id          Int         @id @default(autoincrement())
-   user_id     Int         @unique
-   user        users?      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   stack       Int
-   is_boss     Boolean
+   name        String?     @db.VarChar(25)
+   surname     String?     @db.VarChar(25)
+   pathname    String?     @db.VarChar(25)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
-   short_name  String?     @db.VarChar(15)
    vacations   vacation[]
 }
 //NOTE - График отпусков
