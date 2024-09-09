@@ -7,7 +7,7 @@ import {useSession} from "next-auth/react";
 import { MenuProvider } from './context/menucontext';
 import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
 import { IconBooks, IconUsers, IconCube } from '@tabler/icons-react';
-import { IconCalendarWeek, IconCalendarCog, IconBeach } from '@tabler/icons-react';
+import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup  } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -28,13 +28,6 @@ const AppMenu = () => {
          visible: checkRoles(['developer', 'read_only']),
          items: [
             {
-               label: 'Рабочий календарь',
-               icon: 'pi pi-fw pi-cog',
-               tabler: <IconCalendarWeek className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['developer', 'master']),
-               to: '/workplace/calendar',               
-            },
-            {
                label: 'Администрирование',
                icon: 'pi pi-fw pi-cog',
                tabler: <IconAdjustmentsHorizontal className='mr-1' stroke={1.5}/>,
@@ -50,6 +43,37 @@ const AppMenu = () => {
                ]
             },
             {
+               label: 'Моё подразделение',
+               tabler: <IconUsersGroup className='mr-1' stroke={1.5}/>,
+               visible: checkRoles(['developer', 'master']),
+               items: [                  
+                  {
+                     label: 'Штатные единицы',
+                     tabler: <IconListCheck className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/references/stuff_units',               
+                  },
+                  {
+                     label: 'Проекты',
+                     icon: 'pi pi-fw pi-star',
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/references/projects'
+                  },
+                  {
+                     label: 'График отпусков',
+                     tabler: <IconBeach className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/references/vacations',               
+                  },
+                  {
+                     label: 'Рабочий календарь',
+                     tabler: <IconCalendarWeek className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/calendar',               
+                  },
+               ]
+            },
+            {
                label: 'Справочники',
                icon: 'pi pi-fw pi-book',
                tabler: <IconBooks className='mr-1' stroke={1.5}/>,
@@ -61,19 +85,14 @@ const AppMenu = () => {
                      to: '/workplace/references/divisions'
                   },
                   {
-                     label: 'Проекты',
-                     icon: 'pi pi-fw pi-star',
-                     to: '/workplace/references/projects'
+                     label: 'Должности',
+                     tabler: <IconArmchair className='mr-1' stroke={1.5}/>,
+                     to: '/workplace/references/post',               
                   },
                   {
                      label: 'Производственный календарь',
                      tabler: <IconCalendarCog className='mr-1' stroke={1.5}/>,
                      to: '/workplace/references/calendar'
-                  },
-                  {
-                     label: 'График отпусков',
-                     tabler: <IconBeach className='mr-1' stroke={1.5}/>,
-                     to: '/workplace/references/vacations',               
                   },
                ]
             }
