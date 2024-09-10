@@ -1,6 +1,7 @@
 import prismaHelper from "@/services/prisma.helpers";
 import prisma from "@/prisma/client";
 import {NextRequest, NextResponse} from "next/server";
+import CRUD from "@/models/enums/crud-type.ts";
 
 export const POST = async (request) => {
    const create = async (model, params) => {

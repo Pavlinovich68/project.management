@@ -129,6 +129,7 @@ model employee {
    name        String?     @db.VarChar(25)
    surname     String?     @db.VarChar(25)
    pathname    String?     @db.VarChar(25)
+   email       String?     @db.VarChar(50)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
    vacations   vacation[]

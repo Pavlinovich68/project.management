@@ -3,6 +3,7 @@ import {appRoles} from "./roles";
 import bcrypt from "bcrypt";
 import divisions from "./data/divisions";
 import projects from "./data/projects.json";
+import employee from "./data/employee.json";
 import production_calendar from "./data/calendar.json";
 import vacations from "./data/vacation.json";
 
@@ -34,93 +35,77 @@ async function main() {
          name: 'Отдел автоматизации процессов и веб-технологий'
       }
    });
-
-   if (division) {
-      let hashPassword = await bcrypt.hashSync("Administrator1!", 8);
-
-      interface emp<T> { [index: string]: T }
-      const profiles: emp<string> = {  
-                                       "Савельев Павел":                   "Савельев",   
-                                       "Гажа Константин Владимирович":     "Гажа",
-                                       "Гореньков Аркадий Юрьевич":        "Гореньков",
-                                       "Яхин Никита Артемович":            "Яхин",
-                                       "Зелениченко Арсений Алексеевич":   "Зелениченко",
-                                       "Кащеев Станислав Евгеньевич":      "Кащеев",
-                                       "Максимова Мария Станиславовна":    "Максимова",
-                                       "Малясов Александр Евгеньевич":     "Малясов",
-                                       "Мезенцев Алексей Юрьевич":         "Мезенцев А.",
-                                       "Мезенцев Игорь Юрьевич":           "Мезенцев И.",
-                                       "Джанабаева Гульзат Рустамовна":    "Джанабаева",
-                                       "Павлов Сергей Павлинович":         "Павлов",
-                                       "Потапов Дмитрий Иванович":         "Потапов",
-                                       "Прокопенко Данил Евгеньевич":      "Прокопенко",
-                                       "Кирков Алексей Михайлович":        "Кирков",
-                                       "Окунев Александр Денисович":       "Окунев"
-                                    };
-      let index = 1
-      for (var key in profiles){
-         const is_boss = profiles[key] === "Павлов";
-         const email = `administrator${index}@localhost`;
+   
+   interface UserInterface {
+      name: string;
+      role: string;
+      prefix: string;
+   }
+   
+   const _users:UserInterface[] = [ 
+      {
+         name: "Администратор",
+         role: "admin",
+         prefix: "administrator"
+      },
+      {
+         name: "Руководитель",
+         role: "boss",
+         prefix: "boss"
+      },
+      {
+         name: "Начальник отдела",
+         role: "master",
+         prefix: "master"
+      },
+      {
+         name: "Разработчик",
+         role: "developer",
+         prefix: "developer"
+      },
+      {
+         name: "Аналитик",
+         role: "analyst",
+         prefix: "analyst"
+      },
+      {
+         name: "Тестировщик",
+         role: "tester",
+         prefix: "tester"
+      },
+      {
+         name: "Только чтение",
+         role: "read_only",
+         prefix: "read_only"
+      },
+   ];
+   
+   for (const _user of _users) {
+      const hashPassword = await bcrypt.hashSync(`${_user.prefix}1!`, 8);
+      const email = `${_user.prefix}@localhost`;
+      const role: Record<string, string> = {};
+      role[_user.name] = _user.role;
+      if (division) {
          const user = await prisma.users.upsert({
             where: {email: email},
             update: {
-               name: key,
-               roles: is_boss ? {"master": "Начальник отдела", "developer": "Разработчик", "admin": "Администратор"} : {"developer": "Разработчик"},
+               name: _user.name,
+               password: hashPassword,
+               roles: role,
                begin_date: new Date(),
                division_id: division.id,
             },
             create: {
                   email: email,
-                  name: key,
-                  begin_date: new Date(),
+                  name: _user.name,
                   password: hashPassword,
-                  division_id: division.id,
-                  roles: is_boss ? {"master": "Начальник отдела", "developer": "Разработчик"} : {"developer": "Разработчик"}
+                  begin_date: new Date(),
+                  roles: role,
+                  division_id: division.id
             }
-         }).finally(() => console.log(`\x1b[32mUser \"${key}\" created\x1b[0m`));
-         
-         index++;
-         
-         // await prisma.profile.upsert({
-         //    where: {user_id: user.id},
-         //    update: {
-         //       stack: 2,
-         //       short_name: profiles[key],
-         //       is_boss: is_boss,
-         //       begin_date: new Date(2024, 0, 1),
-         //    },
-         //    create: {
-         //          user_id: user.id,
-         //          stack: 2,
-         //          short_name: profiles[key],
-         //          is_boss: is_boss,
-         //          begin_date: new Date(2024, 0, 1),
-         //    }
-
-         // }).finally(() => console.log(`\x1b[32mProfile for user \"${key}\" created\x1b[0m`));
-      }      
-
-      hashPassword = await bcrypt.hashSync("Read_only1!", 8);
-
-      await prisma.users.upsert({
-         where: {email: 'read_only@localhost'},
-         update: {
-            name: "Только чтение",
-            roles: {"read_only": "Только чтение"}
-         },
-         create: {
-               email: 'read_only@localhost',
-               name: "Только чтение",
-               begin_date: new Date(),
-               password: hashPassword,
-               division_id: division.id,
-               roles: {"read_only": "Только чтение"}
-         }
-      }).finally(() => console.log(`\x1b[32mUser "Только чтение" created\x1b[0m`));
-
-   } else {
-      throw new Error("Не удалось найти отдел автоматизации процессов и веб-технологий!");
-   }   
+         }).finally(() => console.log(`\x1b[32mUser \"${_user.name}\" created\x1b[0m`));
+      }
+   }
 
    const seedProjects = async () => {
       try {
@@ -278,11 +263,39 @@ async function main() {
       }
    }
 
+   const seedEmployees = async () => {
+      try {
+         await prisma.$queryRaw`delete from employee`;
+
+         const _count = employee.length;
+         let _index = 0;
+         while (_index < _count) {
+            let _node = employee[_index];
+            await prisma.employee.create({
+               data: {
+                  name: _node.name,
+                  surname: _node.surname,
+                  pathname: _node.pathname,
+                  email: _node.email,
+                  begin_date: new Date(_node.begin_date),
+                  end_date: null
+               }
+            });
+            _index++;
+         }
+         return _index;  
+      } catch (error) {
+         throw error;
+      }      
+   }
+
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
    await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedStuffUnits().finally(() => console.log(`\x1b[32mStuff units seeded\x1b[0m`));
+   await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
+
 }
 
 main().then(async () => {

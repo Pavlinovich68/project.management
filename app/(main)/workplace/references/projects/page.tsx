@@ -168,7 +168,6 @@ const card = (
    }
 
    const deleteMethod = async (data: any) => {
-      debugger;
       return await CrudHelper.crud(controllerName, CRUD.delete, { id: data.id });
    }
 

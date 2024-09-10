@@ -1,0 +1,130 @@
+[
+   {
+      "surname": "Савельев",
+      "name": "Павел",
+      "pathname": "Отчество",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Гажа",
+      "name": "Константин",
+      "pathname": "Владимирович",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Гореньков",
+      "name": "Аркадий",
+      "pathname": "Юрьевич",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Яхин",
+      "name": "Никита",
+      "pathname": "Артемович",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Зелениченко",
+      "name": "Арсений",
+      "pathname": "Алексеевич",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Кащеев",
+      "name": "Станислав",
+      "pathname": "Евгеньевич",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Максимова",
+      "name": "Мария",
+      "pathname": "Станиславовна",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Малясов",
+      "name": "Александр",
+      "pathname": "Евгеньевич",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Мезенцев",
+      "name": "Алексей",
+      "pathname": "Юрьевич",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Мезенцев",
+      "name": "Игорь",
+      "pathname": "Юрьевич",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Джанабаева",
+      "name": "Гульзат",
+      "pathname": "Рустамовна",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Павлов",
+      "name": "Сергей",
+      "pathname": "Павлинович",
+      "email": "s.pavlov@mininform74.ru",
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Потапов",
+      "name": "Дмитрий",
+      "pathname": "Иванович",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Прокопенко",
+      "name": "Данил",
+      "pathname": "Евгеньевич",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Кирков",
+      "name": "Алексей",
+      "pathname": "Михайлович",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   },
+   {
+      "surname": "Окунев",
+      "name": "Александр",
+      "pathname": "Денисович",
+      "email": null,
+      "begin_date": "2024-01-01",
+      "end_date": null
+   }
+]
