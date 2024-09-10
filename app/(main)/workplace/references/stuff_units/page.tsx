@@ -77,7 +77,7 @@ const StuffUnit = () => {
       validate: (data) => {
          let errors: FormikErrors<IStuffUnit> = {};
          if (!data.count){
-            errors.count = "Количество штатных единиц должно быть указано!";
+            errors.count = "Количество ставок должно быть указано!";
          }
          if (!data.division){
             errors.division = "Подразделение должно быть указано!";
@@ -233,7 +233,7 @@ const StuffUnit = () => {
       <div className="grid">
          <div className="col-12">
             <div className="card">
-               <h3>Штатные единицы</h3>
+               <h3>Ставки</h3>
                <ItrGrid
                   controller={controllerName}
                   params={12}

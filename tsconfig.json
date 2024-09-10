@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "layout/AppMenu.jsx", "app/api/attachment/upsert/route.ts", "app/api/division/list/route.js", "prisma/data/contracts.js", "app/api/users/restore2/route.js", "prisma/drop.ts", "app/api/contract/eis/route.js", "app/api/helpers/contract/contract.extractor.js", "app/api/helpers/contract/contract.reader.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "layout/AppMenu.jsx", "app/api/attachment/upsert/route.ts", "app/api/division/list/route.js", "prisma/data/contracts.js", "app/api/users/restore2/route.js", "prisma/drop.ts", "app/api/contract/eis/route.js", "app/api/helpers/contract/contract.extractor.js", "app/api/helpers/contract/contract.reader.js", "app/api/employee/crud/route.js"],
   "exclude": ["node_modules"]
 }

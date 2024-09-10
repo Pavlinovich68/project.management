@@ -7,7 +7,8 @@ import {useSession} from "next-auth/react";
 import { MenuProvider } from './context/menucontext';
 import { IconAdjustmentsHorizontal } from '@tabler/icons-react';
 import { IconBooks, IconUsers, IconCube } from '@tabler/icons-react';
-import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup  } from '@tabler/icons-react';
+import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup,
+   IconStar, IconListDetails, IconStars } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -44,18 +45,25 @@ const AppMenu = () => {
             },
             {
                label: 'Моё подразделение',
-               tabler: <IconUsersGroup className='mr-1' stroke={1.5}/>,
+               tabler: <IconStar  className='mr-1' stroke={1.5}/>,
+               //tabler: <IconUsersGroup className='mr-1' stroke={1.5}/>,
                visible: checkRoles(['developer', 'master']),
                items: [                  
                   {
-                     label: 'Штатные единицы',
+                     label: 'Ставки',
                      tabler: <IconListCheck className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
                      to: '/workplace/references/stuff_units',               
+                  },               
+                  {
+                     label: 'Штатные единицы',
+                     tabler: <IconStars className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/division_rate',               
                   },
                   {
                      label: 'Проекты',
-                     icon: 'pi pi-fw pi-star',
+                     tabler: <IconListDetails className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
                      to: '/workplace/references/projects'
                   },
@@ -93,6 +101,12 @@ const AppMenu = () => {
                      label: 'Производственный календарь',
                      tabler: <IconCalendarCog className='mr-1' stroke={1.5}/>,
                      to: '/workplace/references/calendar'
+                  },
+                  {
+                     label: 'Сотрудники организации',
+                     tabler: <IconUsersGroup className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/references/employee'
                   },
                ]
             }
