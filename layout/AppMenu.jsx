@@ -59,7 +59,7 @@ const AppMenu = () => {
                      label: 'Штатные единицы',
                      tabler: <IconStars className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/division_rate',               
+                     to: '/workplace/state_unit',               
                   },
                   {
                      label: 'Проекты',

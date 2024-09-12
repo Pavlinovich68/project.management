@@ -133,6 +133,7 @@ model employee {
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
    vacations   vacation[]
+   state_units state_unit[]
 }
 //NOTE - График отпусков
 model vacation {
@@ -193,12 +194,21 @@ model post {
    name        String   @db.VarChar(250)
    stuff_units stuff_unit[]
 }
-//NOTE - Штатная единица
+//NOTE - Ставки
 model stuff_unit {
    id          Int         @id @default(autoincrement())
    count       Int
    post_id     Int   
-   post        post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   post        post       @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    division_id Int
    division    division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   state_units state_unit[]
+}
+//NOTE - Штатные идиницы
+model state_unit {
+   id             Int         @id @default(autoincrement())
+   stuff_unit_id  Int
+   stuff_unit     stuff_unit  @relation(fields: [stuff_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee_id    Int
+   employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
