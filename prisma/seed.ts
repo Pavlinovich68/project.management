@@ -176,39 +176,6 @@ async function main() {
       return _index;
    }
 
-   const seedVacations = async () => {
-      try {
-         await prisma.$queryRaw`delete from vacation`;
-         const _count = vacations.length;
-         let _index = 0;
-         while (_index < _count) {
-            const _node = vacations[_index];
-            const start_date = new Date(_node.start_date)
-            const end_date = new Date(_node.end_date)
-            // const profile = await prisma.profile.findFirst({
-            //    where: {
-            //       user: {                     
-            //          name: _node.name,
-            //       }
-            //    }
-            // });
-            // if (profile) {
-            //    await prisma.vacation.create({
-            //       data: {
-            //          year: 2024,
-            //          profile_id: profile?.id,
-            //          start_date: start_date,
-            //          end_date: end_date,
-            //       }
-            //    });
-            // };
-            _index++;
-         }         
-      } catch (error) {
-         throw error;
-      }
-   }
-
    const seedPosts = async () => {
       try {
          await prisma.$queryRaw`delete from post`;
@@ -267,11 +234,13 @@ async function main() {
       try {
          await prisma.$queryRaw`delete from employee`;
 
+         const posts = await prisma.post.findMany();
+         
          const _count = employee.length;
          let _index = 0;
          while (_index < _count) {
             let _node = employee[_index];
-            await prisma.employee.create({
+            const emp = await prisma.employee.create({
                data: {
                   name: _node.name,
                   surname: _node.surname,
@@ -282,6 +251,28 @@ async function main() {
                }
             });
             _index++;
+
+            const post = posts.find(p => p.name === _node.post);
+            if (!post)
+               throw new Error('Не удалось найти должность');
+            if (!division)
+               throw new Error('Не удалось найти подразделение');
+            const staff_unit = await prisma.stuff_unit.findFirst({
+               where: {
+                  post_id: post.id,
+                  division_id: division.id
+               }
+            });
+            if (!staff_unit)
+               throw new Error('Не удалось найти ставку');
+            if (!emp)
+               throw new Error('Не удалось найти сотрудника');
+            await prisma.state_unit.create({
+               data: {
+                  employee_id: emp.id,
+                  stuff_unit_id: staff_unit.id
+               }
+            })
          }
          return _index;  
       } catch (error) {
@@ -289,12 +280,48 @@ async function main() {
       }      
    }
 
+   const seedVacations = async () => {
+      try {
+         await prisma.$queryRaw`delete from vacation`;
+         const _count = vacations.length;
+         let _index = 0;         
+         while (_index < _count) {
+            const _node = vacations[_index];
+            const start_date = new Date(_node.start_date)
+            const end_date = new Date(_node.end_date)
+            const names = _node.name.split(' ');
+            const employee = await prisma.employee.findFirst({
+               where: {
+                  surname: names[0],
+                  name: names[1],
+               }
+            });
+            const state_unit = await prisma.state_unit.findFirst({
+               where: {
+                  employee_id: employee?.id,
+               }
+            });
+            await prisma.vacation.create({
+               data: {
+                  year: 2024,
+                  start_date: new Date(_node.start_date),
+                  end_date: new Date(_node.end_date),
+                  state_unit_id: state_unit?.id,
+               }
+            });
+            _index++;
+         }         
+      } catch (error) {
+         throw error;
+      }
+   }  
+   
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
    await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
-   await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedStuffUnits().finally(() => console.log(`\x1b[32mStuff units seeded\x1b[0m`));
    await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
+   await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
 
 }
 

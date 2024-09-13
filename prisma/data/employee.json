@@ -1,11 +1,12 @@
 [
-   {
+   {      
       "surname": "Савельев",
       "name": "Павел",
       "pathname": "Отчество",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Гажа",
@@ -13,7 +14,8 @@
       "pathname": "Владимирович",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Гореньков",
@@ -21,7 +23,8 @@
       "pathname": "Юрьевич",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Яхин",
@@ -29,7 +32,8 @@
       "pathname": "Артемович",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Зелениченко",
@@ -37,7 +41,8 @@
       "pathname": "Алексеевич",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Кащеев",
@@ -45,7 +50,8 @@
       "pathname": "Евгеньевич",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Максимова",
@@ -53,7 +59,8 @@
       "pathname": "Станиславовна",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Малясов",
@@ -61,7 +68,8 @@
       "pathname": "Евгеньевич",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Мезенцев",
@@ -69,7 +77,8 @@
       "pathname": "Юрьевич",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Мезенцев",
@@ -77,7 +86,8 @@
       "pathname": "Юрьевич",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Джанабаева",
@@ -85,7 +95,8 @@
       "pathname": "Рустамовна",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Павлов",
@@ -93,7 +104,8 @@
       "pathname": "Павлинович",
       "email": "s.pavlov@mininform74.ru",
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Начальник отдела"
    },
    {
       "surname": "Потапов",
@@ -101,7 +113,8 @@
       "pathname": "Иванович",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Прокопенко",
@@ -109,7 +122,8 @@
       "pathname": "Евгеньевич",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Кирков",
@@ -117,7 +131,8 @@
       "pathname": "Михайлович",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    },
    {
       "surname": "Окунев",
@@ -125,6 +140,7 @@
       "pathname": "Денисович",
       "email": null,
       "begin_date": "2024-01-01",
-      "end_date": null
+      "end_date": null,
+      "post": "Главный специалист"
    }
 ]

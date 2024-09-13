@@ -132,17 +132,16 @@ model employee {
    email       String?     @db.VarChar(50)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
-   vacations   vacation[]
    state_units state_unit[]
 }
 //NOTE - График отпусков
 model vacation {
-   id          Int      @id @default(autoincrement())
-   year        Int
-   start_date  DateTime @db.Timestamp(6)
-   end_date    DateTime @db.Timestamp(6)
-   profile_id  Int
-   employee    employee? @relation(fields: [profile_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+   id             Int      @id @default(autoincrement())
+   year           Int
+   start_date     DateTime @db.Timestamp(6)
+   end_date       DateTime @db.Timestamp(6)
+   state_unit_id  Int
+   state_unit     state_unit? @relation(fields: [state_unit_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 //NOTE - Дорожная карта
 model roadmap {
@@ -211,4 +210,5 @@ model state_unit {
    stuff_unit     stuff_unit  @relation(fields: [stuff_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    employee_id    Int
    employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   vacations      vacation[]
 }

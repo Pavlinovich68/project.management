@@ -19,7 +19,7 @@ import { IVacation } from "@/models/IVacation";
 import { IBaseEntity } from "@/models/IBaseEntity";
 import styles from './styles.module.scss';
 import { Calendar } from "primereact/calendar";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const Vacations = () => {
    const controllerName = 'vacation';
@@ -31,36 +31,27 @@ const Vacations = () => {
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
    const [cardHeader, setCardHeader] = useState('');
-   const [profiles, setProfiles] = useState<IBaseEntity[]>();
+   const [stateUnits, setStateUnits] = useState<IBaseEntity[]>();
    const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
    const [submitted, setSubmitted] = useState(false);
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const [divisionId, setDivisionId] = useState<number | undefined>(0);
+   const {data: session} = useSession();
 
    useEffect(() => {
-      changeYear(year);
-      const getDivisionId = async (): Promise<number | undefined> => {
-         //TODO Получение сессии с сервера
-         const _session = await getSession();
-         return _session?.user?.division_id;
-      }
-      getDivisionId().then(
-         (n) => {
-            readProfiles(n);
-            setDivisionId(n);
-      });
+      changeYear(year);      
    }, []);
 
-   const readProfiles = async (divisionId: number | undefined) => {
-      
-      const res = await fetch(`/api/profile/list?division=${divisionId}&begin_date=${minDate}&end_date=${maxDate}`, {
-         method: "GET",
+   const readStateUnit = async () => {
+      const res = await fetch(`/api/state_unit/list`, {
+         method: "POST",
          headers: {
             "Content-Type": "application/json",
-         }
+         },
+         body: JSON.stringify({year: year, division_id: session?.user.division_id}),
+         cache: 'force-cache'
       });
       const data = await res.json();
-      setProfiles(data.data);
+      setStateUnits(data.data);
    }
    
    const changeYear = (val: number) => {
@@ -106,8 +97,8 @@ const vacation = useFormik<IVacation>({
    initialValues: model,
    validate: (data) => {
       let errors: FormikErrors<IVacation> = {};
-      if (!data.profile_id){
-         errors.profile_id = "Сотрудник быть указан!";
+      if (!data.state_unit_id){
+         errors.state_unit_id = "Сотрудник быть указан!";
       }
       if (!data.start_date){
          errors.start_date = "Дата начала должна быть указан!";
@@ -130,16 +121,16 @@ const card = (
          <label htmlFor="is_priority" className="mr-3">Сотрудник</label>
             <div>
                <Dropdown 
-                  value={vacation.values.profile_id} 
-                  className={classNames({"p-invalid": submitted && !vacation.values.profile_id})} 
+                  value={vacation.values.state_unit_id} 
+                  className={classNames({"p-invalid": submitted && !vacation.values.state_unit_id})} 
                   required 
                   optionLabel="name" 
                   optionValue="id" 
-                  options={profiles}
+                  options={stateUnits}
                   onChange={(e) => {
-                     const item = profiles?.find(item => item.id === e.value);
+                     const item = stateUnits?.find(item => item.id === e.value);
                      if (item) {
-                        vacation.setFieldValue('profile_id', item.id);
+                        vacation.setFieldValue('state_unit_id', item.id);
                      }
                   }}
                />
@@ -177,6 +168,7 @@ const card = (
 //#region //SECTION CRUD
    const createMethod = () => {
       setCardHeader('Планирование отпуска');
+      readStateUnit();
       vacation.setValues(model);
       setRecordState(RecordState.new);
       setSubmitted(false);
@@ -187,6 +179,7 @@ const card = (
 
 const updateMethod = async (data: IVacation) => {
    setCardHeader('Изменение запланированного отпуска');
+   readStateUnit();
    vacation.setValues(data);
    setRecordState(RecordState.edit);
    setSubmitted(false);
@@ -251,6 +244,7 @@ const saveMethod = async () => {
 //#endregion
 
    return (
+      session ?
       <div className="grid">
          <div className="col-12">
             <div className={classNames('card', styles.vacationsPage)}>
@@ -259,7 +253,7 @@ const saveMethod = async () => {
                <div className={classNames(styles.beforeGrid)}></div>
                <ItrGrid                  
                   controller={controllerName}
-                  params={{year: year, division: divisionId}}
+                  params={{year: year, division_id: session.user.division_id}}
                   create={createMethod}
                   update={updateMethod}
                   drop={deleteMethod}
@@ -279,7 +273,7 @@ const saveMethod = async () => {
                <Toast ref={toast} />
             </div>
          </div>
-      </div>
+      </div> : <React.Fragment></React.Fragment>
    );
 };
 

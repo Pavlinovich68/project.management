@@ -7,7 +7,7 @@ export const POST = async (request) => {
       const result = await prisma.vacation.create({
          data: {
             year: params.year,
-            profile_id: model.profile_id,
+            state_unit_id: model.state_unit_id,
             start_date: new Date(model.start_date),
             end_date: new Date(model.end_date),
          }
@@ -16,40 +16,42 @@ export const POST = async (request) => {
       return result;
    }
 
-   const read = async (model, year, division) => {
+   const read = async (model, year, division_id) => {
       const count = await prisma.$queryRaw`
          select
-            count(*)
+            *
          from
             vacation v
-            left join profile p on v.profile_id = p.id
-            left join users u on p.user_id = u.id
+            left join state_unit sta on v.state_unit_id = sta.id
+            left join employee e on sta.employee_id = e.id
+            left join stuff_unit stu on sta.stuff_unit_id = stu.id
          where
-            u.division_id = ${division}
+            stu.division_id = ${division_id}
             and v.year = ${year}
-            and position(lower(${model.searchStr??''}) in lower(u.name)) > 0 
+            and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0 
       `;
 
-      const totalCount = Number(count[0]?.count);
+      const totalCount = Number(count.length);
 
       const result = await prisma.$queryRaw`
          select
             v.id,
             v.year,
-            v.profile_id,
             v.start_date,
             v.end_date,
-            u.name
+            e.surname || ' ' || e.name || ' ' || e.pathname as name,
+            sta.id as state_unit_id
          from
             vacation v
-            left join profile p on v.profile_id = p.id
-            left join users u on p.user_id = u.id
+            left join state_unit sta on v.state_unit_id = sta.id
+            left join employee e on sta.employee_id = e.id
+            left join stuff_unit stu on sta.stuff_unit_id = stu.id
          where
-            u.division_id = ${division}
+            stu.division_id = ${division_id}
             and v.year = ${year}
-            and position(lower(${model.searchStr??''}) in lower(u.name)) > 0 
+            and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0  
          order by
-            u.name,
+            e.surname || ' ' || e.name || ' ' || e.pathname,
             v.start_date
          limit ${model.pageSize}
          offset (${model.pageNo} -1) * ${model.pageSize}
@@ -94,7 +96,7 @@ export const POST = async (request) => {
       let result = null;
       switch (operation) {
          case CRUD.read:
-            result = await read(model, params.year, params.division);
+            result = await read(model, params.year, params.division_id);
             break;
          case CRUD.create:
             result = await create(model, params);

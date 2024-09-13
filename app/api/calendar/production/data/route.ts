@@ -69,9 +69,12 @@ export const POST = async (request: NextRequest) => {
          };
       });
 
-// Исключения в соответствии с графиком отпусков   
-      const getMonthVacationDays = async (profile_id: number, year: number, month: number, dayCount: number): Promise<number[]> => {
-         const result = await prisma.$queryRaw`
+// Исключения в соответствии с графиком отпусков
+      interface IDay {
+         day: number;
+      }
+      const getMonthVacationDays = async (state_unit_id: number, year: number, month: number, dayCount: number): Promise<number[]> => {
+         const result:IDay[] = await prisma.$queryRaw`
             select distinct q2.day from
                (select
                      extract(day from q.date) as day
@@ -80,13 +83,12 @@ export const POST = async (request: NextRequest) => {
                            format('%s-%s-%s', ${year}, ${month}, month.day)::DATE as date
                      from
                            (select day.* from generate_series(1, ${dayCount}) as day) as month) q,
-                           (select v.start_date::date, v.end_date::date from vacation v where v.profile_id = ${profile_id} and v.year = ${year} and (extract(month from v.start_date) = ${month} or extract(month from v.end_date) = ${month})) as q1
+                           (select v.start_date::date, v.end_date::date from vacation v where v.state_unit_id = ${state_unit_id} and v.year = ${year} and (extract(month from v.start_date) = ${month} or extract(month from v.end_date) = ${month})) as q1
                   where
                      case when q.date between q1.start_date and q1.end_date then 1 else 0 end = 1) q2
             order by
                q2.day;
          `;
-         //@ts-ignore
          return result?.map(i => i.day);
       }
          
@@ -98,19 +100,41 @@ export const POST = async (request: NextRequest) => {
 
 // Заполнение заголовка
       const rows: ICalendarRow[] = [];
-
-      const divisionData = await prisma.profile.findMany({         
+      interface IDivisionData {
+         id: number,
+         employee: {
+            surname: string,
+            name: string,
+            pathname: string
+         }
+      }
+      const divisionPreData = await prisma.state_unit.findMany({         
          where: {
-            user: {
+            stuff_unit: {
                division_id: division_id,
             }
          },
          select: {
             id: true,
-            short_name: true
+            employee: {
+               select: {
+                  surname: true,
+                  name: true,
+                  pathname: true
+               }
+            }
          },
          orderBy: {
-            short_name: 'asc'
+            employee: {
+               surname: 'asc'
+            }
+         }
+      });
+
+      const divisionData = (divisionPreData as IDivisionData[]).map((i) => {
+         return {
+            id: i.id,
+            name: i.employee.surname + ' ' + i.employee.name.charAt(0) + '.',
          }
       });
 
@@ -136,7 +160,7 @@ export const POST = async (request: NextRequest) => {
       }
 
       for (const profile of divisionData){
-         let profileRow: ICalendarRow = { name: profile.short_name, hours: [], total: 0 };
+         let profileRow: ICalendarRow = { name: profile.name, hours: [], total: 0 };
          const vacationDays: number[] = (await getMonthVacationDays(profile.id, year, month, cnt));
          for (const dayItem of headerData)  {            
             let isVacation = vacationDays.find((v_item) => Number(v_item) === Number(dayItem.day));
@@ -177,7 +201,7 @@ export const POST = async (request: NextRequest) => {
       data.footer = footer;
 
       return await NextResponse.json({status: 'success', data: data});
-   } catch (error) {
-      return await NextResponse.json({status: 'error', data: error });
+   } catch (error:any) {
+      return await NextResponse.json({status: 'error', data: error.meta.message });
    }
 }
