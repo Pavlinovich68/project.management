@@ -53,31 +53,25 @@ const AppMenu = () => {
                      label: 'Ставки',
                      tabler: <IconListCheck className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/references/stuff_units',               
+                     to: '/workplace/department/rate',               
                   },               
                   {
                      label: 'Штатные единицы',
                      tabler: <IconStars className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/state_unit',               
-                  },
-                  {
-                     label: 'Проекты',
-                     tabler: <IconListDetails className='mr-1' stroke={1.5}/>,
-                     visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/references/projects'
+                     to: '/workplace/department/staff',               
                   },
                   {
                      label: 'График отпусков',
                      tabler: <IconBeach className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/references/vacations',               
+                     to: '/workplace/department/vacations',               
                   },
                   {
                      label: 'Рабочий календарь',
                      tabler: <IconCalendarWeek className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/calendar',               
+                     to: '/workplace/department/calendar',               
                   },
                ]
             },
@@ -96,6 +90,12 @@ const AppMenu = () => {
                      label: 'Должности',
                      tabler: <IconArmchair className='mr-1' stroke={1.5}/>,
                      to: '/workplace/references/post',               
+                  },
+                  {
+                     label: 'Проекты',
+                     tabler: <IconListDetails className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/references/projects'
                   },
                   {
                      label: 'Производственный календарь',

@@ -6,11 +6,11 @@ import { count } from "console";
 
 export const POST = async (request) => {
    const create = async (model) => {
-      const result = await prisma.stuff_unit.create({
+      const result = await prisma.rate.create({
          data: {
             post_id: model.post.id,
             division_id: model.division.id,
-            count: model.count,
+            no: model.no,
          }
       })
 
@@ -39,12 +39,14 @@ export const POST = async (request) => {
          }
       }
 
-      const totalCount = await prisma.stuff_unit.count({where: filter});
-      const result = await prisma.stuff_unit.findMany({
+      const totalCount = await prisma.rate.count({where: filter});
+      const result = await prisma.rate.findMany({
          skip: model.pageSize * (model.pageNo -1),
          take: model.pageSize,
          where: filter,
-         orderBy: model.orderBy,
+         orderBy: {
+            no: 'asc'
+         },
          include: {
             division: true,
             post: true
@@ -62,18 +64,19 @@ export const POST = async (request) => {
    }
 
    const update = async (model) => {
-      return await prisma.stuff_unit.update({
+      return await prisma.rate.update({
          where: {
             id: model.id
          },
          data: {
-            count: model.count,
+            no: model.count,
+            post_id: model.post.id,
          }
       });
    }
 
    const drop = async (model) => {
-      const result = await prisma.stuff_unit.delete({
+      const result = await prisma.rate.delete({
          where: {
             id: model.id
          }

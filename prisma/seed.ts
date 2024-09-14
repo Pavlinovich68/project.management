@@ -192,9 +192,9 @@ async function main() {
       }
    }
 
-   const seedStuffUnits = async () => {
+   const seedRate = async () => {
       try {
-         await prisma.$queryRaw`delete from stuff_unit`;
+         await prisma.$queryRaw`delete from rate`;
          const division = await prisma.division.findUnique({
             where: {
                name: 'Отдел автоматизации процессов и веб-технологий'
@@ -204,9 +204,22 @@ async function main() {
             throw new Error('Не удалось найти подразделение');
          }
          const units = [
-            { "name": 'Начальник отдела', "count": 1 }, 
-            { "name": 'Главный специалист', "count": 14 }, 
-            { "name": 'Ведущий техник-технолог', "count": 1 },
+            { "name": 'Начальник отдела', "no": 1 }, 
+            { "name": 'Главный специалист', "no": 2 }, 
+            { "name": 'Главный специалист', "no": 3 }, 
+            { "name": 'Главный специалист', "no": 4 }, 
+            { "name": 'Главный специалист', "no": 5 }, 
+            { "name": 'Главный специалист', "no": 6 }, 
+            { "name": 'Главный специалист', "no": 7 }, 
+            { "name": 'Главный специалист', "no": 8 }, 
+            { "name": 'Главный специалист', "no": 9 }, 
+            { "name": 'Главный специалист', "no": 10 }, 
+            { "name": 'Главный специалист', "no": 11 }, 
+            { "name": 'Главный специалист', "no": 12 }, 
+            { "name": 'Главный специалист', "no": 13 }, 
+            { "name": 'Главный специалист', "no": 14 }, 
+            { "name": 'Главный специалист', "no": 15 }, 
+            { "name": 'Ведущий техник-технолог', "no": 16 },
          ];
          for (const unit of units) {
             const post = await prisma.post.findFirst({
@@ -217,9 +230,9 @@ async function main() {
             if (!post) {
                throw new Error('Не удалось найти должность');
             }
-            await prisma.stuff_unit.create({
+            await prisma.rate.create({
                data: {
-                  count: unit.count,
+                  no: unit.no,
                   post_id: post.id,
                   division_id: division.id,
                }
@@ -230,98 +243,98 @@ async function main() {
       }
    }
 
-   const seedEmployees = async () => {
-      try {
-         await prisma.$queryRaw`delete from employee`;
+   // const seedEmployees = async () => {
+   //    try {
+   //       await prisma.$queryRaw`delete from employee`;
 
-         const posts = await prisma.post.findMany();
+   //       const posts = await prisma.post.findMany();
          
-         const _count = employee.length;
-         let _index = 0;
-         while (_index < _count) {
-            let _node = employee[_index];
-            const emp = await prisma.employee.create({
-               data: {
-                  name: _node.name,
-                  surname: _node.surname,
-                  pathname: _node.pathname,
-                  email: _node.email,
-                  begin_date: new Date(_node.begin_date),
-                  end_date: null
-               }
-            });
-            _index++;
+   //       const _count = employee.length;
+   //       let _index = 0;
+   //       while (_index < _count) {
+   //          let _node = employee[_index];
+   //          const emp = await prisma.employee.create({
+   //             data: {
+   //                name: _node.name,
+   //                surname: _node.surname,
+   //                pathname: _node.pathname,
+   //                email: _node.email,
+   //                begin_date: new Date(_node.begin_date),
+   //                end_date: null
+   //             }
+   //          });
+   //          _index++;
 
-            const post = posts.find(p => p.name === _node.post);
-            if (!post)
-               throw new Error('Не удалось найти должность');
-            if (!division)
-               throw new Error('Не удалось найти подразделение');
-            const staff_unit = await prisma.stuff_unit.findFirst({
-               where: {
-                  post_id: post.id,
-                  division_id: division.id
-               }
-            });
-            if (!staff_unit)
-               throw new Error('Не удалось найти ставку');
-            if (!emp)
-               throw new Error('Не удалось найти сотрудника');
-            await prisma.state_unit.create({
-               data: {
-                  employee_id: emp.id,
-                  stuff_unit_id: staff_unit.id
-               }
-            })
-         }
-         return _index;  
-      } catch (error) {
-         throw error;
-      }      
-   }
+   //          const post = posts.find(p => p.name === _node.post);
+   //          if (!post)
+   //             throw new Error('Не удалось найти должность');
+   //          if (!division)
+   //             throw new Error('Не удалось найти подразделение');
+   //          const staff_unit = await prisma.stuff_unit.findFirst({
+   //             where: {
+   //                post_id: post.id,
+   //                division_id: division.id
+   //             }
+   //          });
+   //          if (!staff_unit)
+   //             throw new Error('Не удалось найти ставку');
+   //          if (!emp)
+   //             throw new Error('Не удалось найти сотрудника');
+   //          await prisma.state_unit.create({
+   //             data: {
+   //                employee_id: emp.id,
+   //                stuff_unit_id: staff_unit.id
+   //             }
+   //          })
+   //       }
+   //       return _index;  
+   //    } catch (error) {
+   //       throw error;
+   //    }      
+   // }
 
-   const seedVacations = async () => {
-      try {
-         await prisma.$queryRaw`delete from vacation`;
-         const _count = vacations.length;
-         let _index = 0;         
-         while (_index < _count) {
-            const _node = vacations[_index];
-            const start_date = new Date(_node.start_date)
-            const end_date = new Date(_node.end_date)
-            const names = _node.name.split(' ');
-            const employee = await prisma.employee.findFirst({
-               where: {
-                  surname: names[0],
-                  name: names[1],
-               }
-            });
-            const state_unit = await prisma.state_unit.findFirst({
-               where: {
-                  employee_id: employee?.id,
-               }
-            });
-            await prisma.vacation.create({
-               data: {
-                  year: 2024,
-                  start_date: new Date(_node.start_date),
-                  end_date: new Date(_node.end_date),
-                  state_unit_id: state_unit?.id,
-               }
-            });
-            _index++;
-         }         
-      } catch (error) {
-         throw error;
-      }
-   }  
+   // const seedVacations = async () => {
+   //    try {
+   //       await prisma.$queryRaw`delete from vacation`;
+   //       const _count = vacations.length;
+   //       let _index = 0;         
+   //       while (_index < _count) {
+   //          const _node = vacations[_index];
+   //          const start_date = new Date(_node.start_date)
+   //          const end_date = new Date(_node.end_date)
+   //          const names = _node.name.split(' ');
+   //          const employee = await prisma.employee.findFirst({
+   //             where: {
+   //                surname: names[0],
+   //                name: names[1],
+   //             }
+   //          });
+   //          const state_unit = await prisma.state_unit.findFirst({
+   //             where: {
+   //                employee_id: employee?.id,
+   //             }
+   //          });
+   //          await prisma.vacation.create({
+   //             data: {
+   //                year: 2024,
+   //                start_date: new Date(_node.start_date),
+   //                end_date: new Date(_node.end_date),
+   //                state_unit_id: state_unit?.id,
+   //             }
+   //          });
+   //          _index++;
+   //       }         
+   //    } catch (error) {
+   //       throw error;
+   //    }
+   // }  
    
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
    await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
-   await seedStuffUnits().finally(() => console.log(`\x1b[32mStuff units seeded\x1b[0m`));
-   await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
-   await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
+   await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
+   // await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
+   // await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
 
 }
 

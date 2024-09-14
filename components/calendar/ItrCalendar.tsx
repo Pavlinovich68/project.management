@@ -1,7 +1,7 @@
 'use client'
 import React, {useRef, useState, useEffect, cache} from "react";
 import { classNames } from "primereact/utils";
-import styles from "@/app/(main)/workplace/calendar/styles.module.scss"
+import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
 import { ICalendarData } from "@/types/ICalendarData";
 

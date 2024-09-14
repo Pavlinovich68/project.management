@@ -1,8 +1,8 @@
 import { IBaseEntity } from "./IBaseEntity"
 
-export interface IStuffUnit {
+export interface IRate {
    id?: number | undefined | null,
-   count: number,
+   no: number,
    division: IBaseEntity | undefined,
    post: IBaseEntity | undefined,
 }

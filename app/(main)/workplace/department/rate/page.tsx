@@ -6,7 +6,7 @@ import RecordState from "@/models/enums/record-state";
 import { IBaseEntity } from "@/models/IBaseEntity";
 import { ICardRef } from "@/models/ICardRef";
 import { IGridRef } from "@/models/IGridRef";
-import { IStuffUnit } from "@/models/IStuffUnit";
+import { IRate } from "@/models/IRate";
 import CrudHelper from "@/services/crud.helper";
 import { FormikErrors, useFormik } from "formik";
 import { Column } from "primereact/column";
@@ -19,8 +19,8 @@ import React, {useRef, useState, useEffect} from "react";
 import { useSession } from "next-auth/react";
 
 const StuffUnit = () => {
-   const controllerName = 'stuff_unit';
-   const model: IStuffUnit = {count: 0, division: undefined, post: undefined};
+   const controllerName = 'rate';
+   const model: IRate = {no: 0, division: undefined, post: undefined};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -58,26 +58,26 @@ const StuffUnit = () => {
    const gridColumns = [
       <Column
          key="stuffGridColumn0"
-         field="post.name"
-         header="Должность"
-         style={{ width: '80%' }}>
+         field="no"
+         header="№"
+         style={{ width: '5%' }}>
       </Column>,
       <Column
          key="stuffGridColumn1"
-         field="count"
-         header="Численность"
-         style={{ width: '20%' }}>
+         field="post.name"
+         header="Должность"
+         style={{ width: '95%' }}>
       </Column>
    ];
 //#endregion //!SECTION
 
 //#region //SECTION Card
-   const stuff_unit = useFormik<IStuffUnit>({
+   const rate = useFormik<IRate>({
       initialValues: model,
       validate: (data) => {
-         let errors: FormikErrors<IStuffUnit> = {};
-         if (!data.count){
-            errors.count = "Количество ставок должно быть указано!";
+         let errors: FormikErrors<IRate> = {};
+         if (!data.no){
+            errors.no = "Порядковый номер ставки должнен быть указан!";
          }
          if (!data.division){
             errors.division = "Подразделение должно быть указано!";
@@ -88,7 +88,7 @@ const StuffUnit = () => {
          return errors;
       },
       onSubmit: () => {
-         stuff_unit.resetForm();
+         rate.resetForm();
       }
    });
 
@@ -99,12 +99,19 @@ const StuffUnit = () => {
             <div className="field col-12">
                <h6>{division?.name}</h6>               
             </div>
+            <div className="field col-3">
+               <label htmlFor="code">Порядковый номер</label>
+               <InputNumber id="no"  placeholder="Порядковый номер"
+                                    className={classNames({"p-invalid": submitted && !rate.values.no})}
+                                    value={rate.values.no}
+                                    onValueChange={(e) => rate.setFieldValue('no', e.value)} required autoFocus/>
+            </div>            
             <div className="field col-12">
                <label htmlFor="post" className="mr-3">Должность</label>
                <div>
                   <Dropdown
-                     value={stuff_unit.values.post?.id} 
-                     className={classNames({"p-invalid": submitted && !stuff_unit.values.post})} 
+                     value={rate.values.post?.id} 
+                     className={classNames({"p-invalid": submitted && !rate.values.post})} 
                      required 
                      optionLabel="name" 
                      optionValue="id" 
@@ -113,18 +120,11 @@ const StuffUnit = () => {
                      onChange={(e) => {
                         const item = posts?.find(item => item.id === e.value);
                         if (item) {
-                           stuff_unit.setFieldValue('post', item)
+                           rate.setFieldValue('post', item)
                         }
                      }}
                   />
                </div>
-            </div>
-            <div className="field col-3">
-               <label htmlFor="code">Численность</label>
-               <InputNumber id="count"  placeholder="Численность"
-                                    className={classNames({"p-invalid": submitted && !stuff_unit.values.count})}
-                                    value={stuff_unit.values.count}
-                                    onValueChange={(e) => stuff_unit.setFieldValue('count', e.value)} required autoFocus/>
             </div>            
          </div>
       </div>
@@ -137,7 +137,7 @@ const StuffUnit = () => {
       getDivision();
       readPosts();
       model.division = division;
-      stuff_unit.setValues(model);
+      rate.setValues(model);
       setRecordState(RecordState.new);
       setSubmitted(false);
       if (editor.current) {
@@ -145,11 +145,11 @@ const StuffUnit = () => {
       }
    }
 
-   const updateMethod = async (data: IStuffUnit) => {
+   const updateMethod = async (data: IRate) => {
       setCardHeader('Редактирование должности');
       getDivision();
       readPosts();
-      stuff_unit.setValues(data);
+      rate.setValues(data);
       setRecordState(RecordState.edit);
       setSubmitted(false);
       if (editor.current) {
@@ -162,16 +162,16 @@ const StuffUnit = () => {
    }
 
    const saveMethod = async () => {
-      const ids: number[] | undefined = grid.current?.records.map(i => i.id);
-      if (recordState === RecordState.new && ids && stuff_unit.values.post?.id && ids.includes(stuff_unit.values.post?.id))
+      const numbers: number[] | undefined = grid.current?.records.map(i => i.no);
+      if (recordState === RecordState.new && numbers && rate.values.no && numbers.includes(rate.values.no))
       {
          toast.current?.show({
             severity:'warn',
             summary: 'Должность уже заведена',
             content: (
                <div className="flex flex-column">
-                  <p>Должность {stuff_unit.values.post.name} уже имеется в списке</p>
-                  <small>Измените численность в имеющейся записи</small>
+                  <p>Уже имеется ставка с номером {rate.values.no}</p>
+                  <small>Измените номер ставки</small>
                </div>               
             ),
             life: 5000
@@ -179,8 +179,8 @@ const StuffUnit = () => {
          return;
       }
       setSubmitted(true);
-      if (!stuff_unit.isValid) {
-         const errors = Object.values(stuff_unit.errors);
+      if (!rate.isValid) {
+         const errors = Object.values(rate.errors);
          //@ts-ignore
          toast.current.show({
             severity:'error',
@@ -207,7 +207,7 @@ const StuffUnit = () => {
       try {
          setIsLoading(true);
          const res = 
-            await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, stuff_unit.values);
+            await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, rate.values);
 
          setIsLoading(false);
 

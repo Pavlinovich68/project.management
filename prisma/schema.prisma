@@ -196,7 +196,7 @@ model post {
 //NOTE - Ставки
 model rate {
    id          Int         @id @default(autoincrement())
-   count       Int
+   no          Int         @unique
    post_id     Int   
    post        post       @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    division_id Int

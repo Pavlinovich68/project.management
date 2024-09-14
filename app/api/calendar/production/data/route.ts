@@ -108,35 +108,35 @@ export const POST = async (request: NextRequest) => {
             pathname: string
          }
       }
-      const divisionPreData = await prisma.state_unit.findMany({         
-         where: {
-            stuff_unit: {
-               division_id: division_id,
-            }
-         },
-         select: {
-            id: true,
-            employee: {
-               select: {
-                  surname: true,
-                  name: true,
-                  pathname: true
-               }
-            }
-         },
-         orderBy: {
-            employee: {
-               surname: 'asc'
-            }
-         }
-      });
+      // const divisionPreData = await prisma.state_unit.findMany({         
+      //    where: {
+      //       stuff_unit: {
+      //          division_id: division_id,
+      //       }
+      //    },
+      //    select: {
+      //       id: true,
+      //       employee: {
+      //          select: {
+      //             surname: true,
+      //             name: true,
+      //             pathname: true
+      //          }
+      //       }
+      //    },
+      //    orderBy: {
+      //       employee: {
+      //          surname: 'asc'
+      //       }
+      //    }
+      // });
 
-      const divisionData = (divisionPreData as IDivisionData[]).map((i) => {
-         return {
-            id: i.id,
-            name: i.employee.surname + ' ' + i.employee.name.charAt(0) + '.',
-         }
-      });
+      // const divisionData = (divisionPreData as IDivisionData[]).map((i) => {
+      //    return {
+      //       id: i.id,
+      //       name: i.employee.surname + ' ' + i.employee.name.charAt(0) + '.',
+      //    }
+      // });
 
       const footer: ICalendarFooter = {days: [], total: 0};
       for (const dayItem of headerData) {
@@ -159,39 +159,39 @@ export const POST = async (request: NextRequest) => {
          footer.days.push(day);
       }
 
-      for (const profile of divisionData){
-         let profileRow: ICalendarRow = { name: profile.name, hours: [], total: 0 };
-         const vacationDays: number[] = (await getMonthVacationDays(profile.id, year, month, cnt));
-         for (const dayItem of headerData)  {            
-            let isVacation = vacationDays.find((v_item) => Number(v_item) === Number(dayItem.day));
-            let dayHours: number = 0;
-            let bkg = 'cell-white';
-            switch (dayItem.type) {
-               case 0: {
-                  dayHours = 0;
-                  bkg = 'cell-red';
-                  break;
-               }
-               case 1: {
-                  bkg = 'cell-pink';
-                  dayHours = isVacation ? 0 : 7;
-                  break;
-               }
-               default: {
-                  dayHours = isVacation ? 0 : 8;
-                  break;
-               }
-            }
+      // for (const profile of divisionData){
+      //    let profileRow: ICalendarRow = { name: profile.name, hours: [], total: 0 };
+      //    const vacationDays: number[] = (await getMonthVacationDays(profile.id, year, month, cnt));
+      //    for (const dayItem of headerData)  {            
+      //       let isVacation = vacationDays.find((v_item) => Number(v_item) === Number(dayItem.day));
+      //       let dayHours: number = 0;
+      //       let bkg = 'cell-white';
+      //       switch (dayItem.type) {
+      //          case 0: {
+      //             dayHours = 0;
+      //             bkg = 'cell-red';
+      //             break;
+      //          }
+      //          case 1: {
+      //             bkg = 'cell-pink';
+      //             dayHours = isVacation ? 0 : 7;
+      //             break;
+      //          }
+      //          default: {
+      //             dayHours = isVacation ? 0 : 8;
+      //             break;
+      //          }
+      //       }
 
-            let _item = footer.days.find((f_item: ICalendarRowItem) => f_item.day === dayItem.day);
-            if (_item) _item.value += dayHours;
+      //       let _item = footer.days.find((f_item: ICalendarRowItem) => f_item.day === dayItem.day);
+      //       if (_item) _item.value += dayHours;
 
-            profileRow.total += dayHours;
-            const item: ICalendarRowItem = {day: dayItem.day, value: dayHours, background_class: isVacation ? "cell-yellow" : bkg, text_class: isVacation ? "textVacation" :''};
-            profileRow.hours?.push(item);
-         }
-         rows.push(profileRow);  
-      }
+      //       profileRow.total += dayHours;
+      //       const item: ICalendarRowItem = {day: dayItem.day, value: dayHours, background_class: isVacation ? "cell-yellow" : bkg, text_class: isVacation ? "textVacation" :''};
+      //       profileRow.hours?.push(item);
+      //    }
+      //    rows.push(profileRow);  
+      // }
 
       let total = 0;
       footer?.days.map(i => { total += i.value });
@@ -229,30 +229,30 @@ export const POST = async (request: NextRequest) => {
       }
 
       
-      const vacationsDays = async (id: number, year: number): Promise<IDateHours[]> => {
-         const result: IDateHours[] = [];
-         const vacations = await prisma.vacation.findMany({
-            where: {
-               state_unit_id: id,
-               year: year
-            }
-         });
+      // const vacationsDays = async (id: number, year: number): Promise<IDateHours[]> => {
+      //    const result: IDateHours[] = [];
+      //    const vacations = await prisma.vacation.findMany({
+      //       where: {
+      //          state_unit_id: id,
+      //          year: year
+      //       }
+      //    });
 
-         for (const vacation of vacations) {
-            let currentDate = vacation.start_date;
-            while (currentDate <= vacation.end_date) {
-               const item: IDateHours = {
-                  year: currentDate.getFullYear(),
-                  month: currentDate.getMonth(),
-                  day: currentDate.getDate(),
-                  hours: 0,
-               }
-               result.push(item);
-               currentDate = new Date(currentDate.getTime() + (1000 * 60 * 60 * 24));
-            }
-         }
-         return result;
-      }
+      //    for (const vacation of vacations) {
+      //       let currentDate = vacation.start_date;
+      //       while (currentDate <= vacation.end_date) {
+      //          const item: IDateHours = {
+      //             year: currentDate.getFullYear(),
+      //             month: currentDate.getMonth(),
+      //             day: currentDate.getDate(),
+      //             hours: 0,
+      //          }
+      //          result.push(item);
+      //          currentDate = new Date(currentDate.getTime() + (1000 * 60 * 60 * 24));
+      //       }
+      //    }
+      //    return result;
+      // }
 
       //const dates = datesArray(year, month);
 
