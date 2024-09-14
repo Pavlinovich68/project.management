@@ -31,7 +31,7 @@ export const POST = async (request: NextRequest) => {
             extract(year from e.date) = ${year}
             and extract(month from e.date) = ${month}
          order by
-            e.date;
+            e.date
       `;
 // Шапка      
       const headerData: ICalendarHeaderItem[] = daysData.map((i) => {
@@ -199,6 +199,64 @@ export const POST = async (request: NextRequest) => {
 
       data.rows = rows;
       data.footer = footer;
+
+      interface IDateHours {
+         year: number,
+         month: number,
+         day: number,
+         hours: number
+      }
+
+      const datesArray = (year: number, month: number): IDateHours[] => {
+         const timeZone = new Date().getTimezoneOffset() / 60 * -1;
+         const dates: IDateHours[] = [];
+         for (let i = 1; i <= month; i++){
+            const cnt = new Date(year, i, 0).getDate();
+            for (let j = 1; j <= cnt; j++){
+               const date = new Date(year, i-1, j, timeZone, 0, 0);
+               const dayOfWeek = date.getDay();
+               const item = {
+                  //date: date,
+                  year: date.getFullYear(),
+                  month: date.getMonth(),
+                  day: date.getDate(),
+                  hours: (dayOfWeek === 0 || dayOfWeek === 6) ? 0 : 8,
+               }
+               dates.push(item);
+            }
+         }
+         return dates;
+      }
+
+      
+      const vacationsDays = async (id: number, year: number): Promise<IDateHours[]> => {
+         const result: IDateHours[] = [];
+         const vacations = await prisma.vacation.findMany({
+            where: {
+               state_unit_id: id,
+               year: year
+            }
+         });
+
+         for (const vacation of vacations) {
+            let currentDate = vacation.start_date;
+            while (currentDate <= vacation.end_date) {
+               const item: IDateHours = {
+                  year: currentDate.getFullYear(),
+                  month: currentDate.getMonth(),
+                  day: currentDate.getDate(),
+                  hours: 0,
+               }
+               result.push(item);
+               currentDate = new Date(currentDate.getTime() + (1000 * 60 * 60 * 24));
+            }
+         }
+         return result;
+      }
+
+      //const dates = datesArray(year, month);
+
+      //const vacations = await vacationsDays(12, year);
 
       return await NextResponse.json({status: 'success', data: data});
    } catch (error:any) {
