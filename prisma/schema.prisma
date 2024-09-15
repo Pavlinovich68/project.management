@@ -232,15 +232,16 @@ model dept_calendar_row {
    cells       dept_calendar_cell[]
    calendar_id Int
    calendar    dept_calendar  @relation(fields: [calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   header      String         @db.VarChar(100)
    @@unique([rate_id, calendar_id])
 }
 
 model dept_calendar_cell {
    id       Int               @id @default(autoincrement())
-   month    Int
-   day      Int
+   date     DateTime          @db.Timestamp(6)
+   hours    Int
    type     Int
    row_id   Int
    row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   @@unique([day, month, row_id])
+   @@unique([date, row_id])
 }
