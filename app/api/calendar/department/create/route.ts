@@ -15,11 +15,38 @@ export const POST = async (request: NextRequest) => {
       }
       
       // Строки
-      const rates = await prisma.rate.findMany({
-         where: { division_id }
+
+      await prisma.dept_calendar_cell.deleteMany({
+         where: {
+            row: {
+               calendar_id: _calendar.id
+            }
+         }
       })
 
-      //const _daysCount = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
+      await prisma.dept_calendar_row.deleteMany({
+         where: {
+            calendar_id: _calendar.id
+         }
+      })
+
+      let rates = await prisma.rate.findMany({
+         where: { division_id },
+         orderBy: { no: 'asc' }
+      })
+
+      for (const rate of rates) {
+         const _row = await prisma.dept_calendar_row.create({
+            data: {
+               calendar_id: _calendar.id,
+               rate_id: rate.id,
+            }
+         });
+         
+         const _daysCount = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
+
+      }
+
       return await NextResponse.json({status: 'success', data: _calendar});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
