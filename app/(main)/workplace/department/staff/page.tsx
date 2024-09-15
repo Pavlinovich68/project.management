@@ -1,197 +1,254 @@
 'use client'
-import RecordState from "@/models/enums/record-state";
-import { IBaseEntity } from "@/models/IBaseEntity";
-import { ICardRef } from "@/models/ICardRef";
-import { IGridRef } from "@/models/IGridRef";
-import { IStateUnit } from "@/models/IStateUnit";
-import { useSession } from "next-auth/react";
-import { Button } from "primereact/button";
-import { Column, ColumnEditorOptions } from "primereact/column";
-import { DataTable, DataTableRowEditCompleteEvent } from "primereact/datatable";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import React, {useRef, useState, useEffect} from "react";
-import { ConfirmDialog } from 'primereact/confirmdialog';
-import {confirmDialog} from "primereact/confirmdialog";
+import { IStaff, IStaffRate } from "@/models/IStaff";
+import { IGridRef } from "@/models/IGridRef";
+import { Toast } from "primereact/toast";
+import { ICardRef } from "@/models/ICardRef";
+import RecordState from "@/models/enums/record-state";
+import { Column } from "primereact/column";
+import { FormikErrors, useFormik } from "formik";
+import { Dropdown } from "primereact/dropdown";
+import { classNames } from "primereact/utils";
+import { IBaseEntity } from "@/models/IBaseEntity";
+import crudHelper from "@/services/crud.helper";
+import CRUD from "@/models/enums/crud-type";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import ItrGrid from "@/components/ItrGrid";
+import ItrCard from "@/components/ItrCard";
+import { useSession } from "next-auth/react";
 
-const DivisionRate = () => {
-   const [data, setData] = useState<IStateUnit[]>([]);
-   const [employees, setEmployees] = useState<IBaseEntity[]>([]);
+const Staff = () => {
+   const controllerName = 'staff';
+   const model: IStaff = {id: undefined, rate: undefined, employee: undefined};
+   const grid = useRef<IGridRef>(null);
+   const toast = useRef<Toast>(null);
+   const editor = useRef<ICardRef>(null);
+   const [cardHeader, setCardHeader] = useState('');
+   const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
+   const [submitted, setSubmitted] = useState(false);
+   const [isLoading, setIsLoading] = useState<boolean>(false);
+   const [rates, setRates] = useState<IBaseEntity[]>();
+   const [employees, setEmployees] = useState<IBaseEntity[]>();
    const {data: session} = useSession();
-   const [needSave, setNeedSave] = useState<boolean>(false);
 
-   useEffect(() => {
-      getData();
-   }, [session]);
-
-   const getData = async () => {
-      console.log(session?.user.division_id)
-      const res = await fetch(`/api/state_unit/read`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-            division_id: session?.user.division_id
-         }),
-         cache: 'force-cache'
-      });
-      const data = await res.json();
-      setData(data.data);
-   }
-
-   const employeeBodyTemplate = (rowData: IStateUnit) => {
-      return rowData.employee?.name;
-   };
-
-   const onDropdownClick = async (e: any) => {
-      const res = await fetch(`/api/state_unit/available?id=${session?.user.division_id}`,
-         {
+   const readRates = async () => {
+      const res = await fetch(`/api/staff/rate/list?id=${session?.user.division_id}`, {
          method: "GET",
          headers: {
             "Content-Type": "application/json",
          }
       });
       const data = await res.json();
-      setEmployees(data.data as IBaseEntity[]);
+      setRates(data.data);
    }
 
-   const employeeEditor = (options: ColumnEditorOptions) => {
-      return (
-         options.rowData.id < 0 && !needSave ?
-         <Dropdown
-            value={options.value}
-            options={employees}                   
-            optionLabel="name" 
-            optionValue="id" 
-            onMouseDown={(e) => onDropdownClick(e)}
-            onChange={(e: DropdownChangeEvent) => {
-               const _employee = employees.find((item) => item.id === e.value);
-               const _data = data;
-               const _item = _data.find((item) => item.id === options.rowData.id);                     
-               if (!_item) return;
-               if (_employee) {
-                  _item.employee = {
-                     id: _employee?.id,
-                     name: _employee?.name
-                  }
-               };
-               setData(_data);
-               setNeedSave(true);
-            }}
-            placeholder="Вакансия"
-            style={{ width: '100%' }}
-         /> : options.rowData.employee?.name
-      );
-   };
-
-   const saveButtonClick = async (e: IStateUnit) => {
-      confirmDialog({
-         message: (
-            <div className="flex flex-column align-items-center w-full gap-3 surface-border mb-2">
-               <h6 className="mb-0 mt-0">Вы уверены что хотите привязать сотрудника {e.employee?.name}</h6>
-               <h6 className="mb-0 mt-0">к штатной единице {e.post?.name}?</h6>
-            </div>
-         ),
-         header: "Привязка к штатной единице",
-         icon: 'pi pi-question text-blue-500',
-         acceptLabel: 'Да',
-         rejectLabel: 'Нет',
-         showHeader: true,
-         accept: () => _saveButtonClick(e)
+   const readEmployees = async () => {
+      const res = await fetch(`/api/staff/employee/list`, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+         }
       });
+      const data = await res.json();
+      setEmployees(data.data);
    }
 
-   const _saveButtonClick = async (e: IStateUnit) => {
-      await fetch(`/api/state_unit/appoint`, { method: "POST",
-            headers: {
-               "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-               stuff_unit_id: e.stuff_unit_id,
-               employee_id: e.employee?.id,
-            })
+//#region //SECTION - GRID
+   const gridColumns = [
+      <Column
+         key="staffGridColumn1"
+         field="rate.name"
+         header="Ставка"
+         style={{ width: '45%' }}>
+      </Column>,
+      <Column
+         key="staffGridColumn2"
+         field="employee.name"
+         header="Сотрудник"
+         style={{ width: '50%' }}>
+      </Column>,
+   ];
+//#endregion //!SECTION
+
+//#region //SECTION Card
+   const staff = useFormik<IStaff>({
+      initialValues: model,
+      validate: (data) => {
+         let errors: FormikErrors<IStaff> = {};
+         if (!data.rate){
+            errors.rate = "Ставка должна быть заполнена!";
+         }
+         if (!data.employee){
+            errors.employee = "Сотрудник должен быть указан!";
+         }
+         return errors;
+      },
+      onSubmit: () => {
+         staff.resetForm();
+      }
+   });
+
+   const card = (
+      <div className="card p-fluid">
+         <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
+         <div className="p-fluid formgrid grid">
+            <div className="field col-12">
+               <label htmlFor="rate" className="mr-3">Ставка</label>
+               <div>
+                  <Dropdown
+                     value={staff.values.rate?.id} 
+                     className={classNames({"p-invalid": submitted && !staff.values.rate})} 
+                     required 
+                     optionLabel="name" 
+                     optionValue="id" 
+                     filter
+                     options={rates}
+                     onChange={(e) => {
+                        const item = rates?.find(item => item.id === e.value);
+                        if (item) {
+                           staff.setFieldValue('rate', item)
+                        }
+                     }}
+                  />
+               </div>
+            </div>
+            <div className="field col-12">
+               <label htmlFor="employee" className="mr-3">Сотрудник</label>
+               <div>
+                  <Dropdown
+                     value={staff.values.employee?.id} 
+                     className={classNames({"p-invalid": submitted && !staff.values.employee})} 
+                     required 
+                     optionLabel="name" 
+                     optionValue="id" 
+                     filter
+                     options={employees}
+                     onChange={(e) => {
+                        const item = employees?.find(item => item.id === e.value);
+                        if (item) {
+                           staff.setFieldValue('employee', item)
+                        }
+                     }}
+                  />
+               </div>
+            </div>
+         </div>
+      </div>
+   )
+//#endregion //!SECTION
+
+//#region //SECTION CRUD
+   const createMethod = () => {
+      setCardHeader('Заполнение ставки');
+      readRates();
+      readEmployees();
+      staff.setValues(model);
+      setRecordState(RecordState.new);
+      setSubmitted(false);
+      if (editor.current) {
+         editor.current.visible(true);
+      }
+   }
+
+   const updateMethod = async (data: IStaff) => {
+      setCardHeader('Изменение ставки');
+      readRates();
+      readEmployees();
+      staff.setValues(data);
+      setRecordState(RecordState.edit);
+      setSubmitted(false);
+      if (editor.current) {
+         editor.current.visible(true);
+      }
+   }
+
+   const deleteMethod = async (data: any) => {
+      return await crudHelper.crud(controllerName, CRUD.delete, { id: data.id });
+   }
+
+   const saveMethod = async () => {
+      setSubmitted(true);
+      if (!staff.isValid) {
+         const errors = Object.values(staff.errors);
+         //@ts-ignore
+         toast.current.show({
+            severity:'error',
+            summary: 'Ошибка сохранения',
+            content: (<div className="flex flex-column">
+                        <div className="text-center mb-2">
+                           <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
+                           <h3 className="text-red-500">Ошибка сохранения</h3>
+                        </div>
+                  {errors.map((item, i) => {
+                     return (
+                        // eslint-disable-next-line react/jsx-key
+                        <p className="flex align-items-left m-0">
+                           {/* @ts-ignore */}
+                           {item}
+                        </p>)
+                  })
+               }
+            </div>),
+            life: 5000
          });
-      await getData();
-      setNeedSave(false);
-   }
-
-   const cleanButtonClick = async (e: IStateUnit) => {
-      confirmDialog({
-         message: (
-            <div className="flex flex-column align-items-center w-full gap-3 surface-border mb-2">
-               <h6 className="mb-0 mt-0">Вы уверены что хотите отвязать сотрудника {e.employee?.name}</h6>
-               <h6 className="mb-0 mt-0">от штатной единицы {e.post?.name}?</h6>
-            </div>
-         ),
-         header: 'Освобождение штатной единицы',
-         icon: 'pi pi-question text-blue-500',
-         acceptLabel: 'Да',
-         rejectLabel: 'Нет',
-         showHeader: true,
-         accept: () => _cleanButtonClick(e)
-      });
-   }
-
-   const _cleanButtonClick = async (e: IStateUnit) => {      
-      const _data = data;
-      const _item = _data.find((item) => item.id === e.id);
-      if (_item && e.id < 0) {
-         _item.employee = undefined;
-         setData(_data);
-         setNeedSave(false);
          return;
       }
-      if (_item && e.id > 0) {         
-         await fetch(`/api/state_unit/clean`, { method: "POST",
-            headers: {
-               "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-               id: e.id
-            })
-         });
-         await getData();
-         setNeedSave(false);
+      try {
+         setIsLoading(true);
+         const res = recordState === RecordState.new ?
+            await crudHelper.crud(controllerName, CRUD.create, staff.values) :
+            await crudHelper.crud(controllerName, CRUD.update, staff.values);
+
+         setIsLoading(false);
+
+         if (res.status === 'error'){
+            toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
+         } else {
+            if (editor.current) {
+               editor.current.visible(false);
+            }
+            if (grid.current) {
+               grid.current.reload();
+            }
+         }
+      } catch (e: any) {
+         toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
+         setIsLoading(false);
       }
    }
-
-   const saveButtonTemplate = (rowData: IStateUnit) => {
-      return (
-         rowData.id && rowData.employee && rowData.id < 0 ?
-         <Button severity="success" onClick={i => saveButtonClick(rowData)}>
-            Привязать
-         </Button>
-         : <React.Fragment></React.Fragment>
-      );
-   }   
-
-   const cleanButtonTemplate = (rowData: IStateUnit) => {
-      return (
-         rowData.employee ?
-         <Button severity="danger" onClick={i => cleanButtonClick(rowData)}>
-            Освободить
-         </Button>
-         : <React.Fragment></React.Fragment>
-      );
-   }   
-
+//#endregion
+   
    return (
       session ?
       <div className="grid">
          <div className="col-12">
             <div className="card">
-               <h3>Штатные единицы</h3>               
-               <DataTable value={data} editMode="cell" dataKey="id" tableStyle={{ minWidth: '100%' }}>
-                  <Column field="" header="Сотрудник"  body={employeeBodyTemplate} editor={(options) => employeeEditor(options)} style={{ width: '50%' }}></Column>
-                  <Column field="post.name" header="Ставка" style={{ width: '50%' }}></Column>
-                  <Column field="" header="" body={saveButtonTemplate} style={{ width: '20rem' }}></Column>
-                  <Column field="" header="" body={cleanButtonTemplate} style={{ width: '20rem' }}></Column>
-               </DataTable>
+               <h3>Штатные единицы</h3>
+               <ItrGrid
+                  controller={controllerName}
+                  create={createMethod}
+                  update={updateMethod}
+                  drop={deleteMethod}
+                  tableStyle={{ minWidth: '50rem' }}
+                  showClosed={false}
+                  editVisible={false}
+                  columns={gridColumns}
+                  params={{division_id: session.user.division_id}}
+                  ref={grid}/>
+               <ItrCard
+                  header={cardHeader}
+                  width={'35vw'}
+                  save={saveMethod}
+                  hiddenSave={false}
+                  body={card}
+                  ref={editor}
+               />
                <ConfirmDialog/>
+               <Toast ref={toast} />
             </div>
          </div>
       </div> : <React.Fragment></React.Fragment>
    );
 };
 
-export default DivisionRate;
+export default Staff;

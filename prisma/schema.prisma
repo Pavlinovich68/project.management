@@ -33,14 +33,15 @@ model Session {
 }
 //NOTE - Подразделение
 model division {
-   id            Int         @id @default(autoincrement())
-   name          String?     @unique(map: "division_u_ind") @db.VarChar(200)
-   parent_id     Int?
-   parent        division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   childrens     division[]  @relation("divisionTodivision")
-   users         users[]
-   projects      project[]
-   rate   rate[]
+   id             Int         @id @default(autoincrement())
+   name           String?     @unique(map: "division_u_ind") @db.VarChar(200)
+   parent_id      Int?
+   parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   childrens      division[]  @relation("divisionTodivision")
+   users          users[]
+   projects       project[]
+   rate           rate[]
+   dept_calendar  dept_calendar[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -195,13 +196,15 @@ model post {
 }
 //NOTE - Ставки
 model rate {
-   id          Int         @id @default(autoincrement())
-   no          Int         @unique
-   post_id     Int   
-   post        post       @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division_id Int
-   division    division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   staff staff[]
+   id             Int         @id @default(autoincrement())
+   no             Int         
+   post_id        Int   
+   post           post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division_id    Int         
+   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   staff          staff[]
+   calendar_rows  dept_calendar_row[]
+   @@unique([no,  division_id])
 }
 //NOTE - Штатные идиницы
 model staff {
@@ -211,4 +214,33 @@ model staff {
    employee_id    Int
    employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    vacations      vacation[]
+}
+//NOTE - Рабочий календарь подразделения
+model dept_calendar {
+   id          Int                  @id @default(autoincrement())
+   year        Int
+   division_id Int   
+   division    division             @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   rows        dept_calendar_row[]
+   @@unique([year, division_id])
+}
+
+model dept_calendar_row {
+   id          Int            @id @default(autoincrement())
+   rate_id     Int
+   rate        rate           @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   cells       dept_calendar_cell[]
+   calendar_id Int
+   calendar    dept_calendar  @relation(fields: [calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([rate_id, calendar_id])
+}
+
+model dept_calendar_cell {
+   id       Int               @id @default(autoincrement())
+   month    Int
+   day      Int
+   type     Int
+   row_id   Int
+   row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([day, month, row_id])
 }

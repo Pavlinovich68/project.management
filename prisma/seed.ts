@@ -178,6 +178,8 @@ async function main() {
 
    const seedPosts = async () => {
       try {
+         await prisma.$queryRaw`delete from staff`;
+         await prisma.$queryRaw`delete from rate`;
          await prisma.$queryRaw`delete from post`;
          const posts: string[] = ['Начальник отдела', 'Главный специалист', 'Ведущий техник-технолог'];
          for (const post of posts){
@@ -243,55 +245,56 @@ async function main() {
       }
    }
 
-   // const seedEmployees = async () => {
-   //    try {
-   //       await prisma.$queryRaw`delete from employee`;
+   const seedEmployees = async () => {
+      try {
+         await prisma.$queryRaw`delete from employee`;
 
-   //       const posts = await prisma.post.findMany();
+         const posts = await prisma.post.findMany();
          
-   //       const _count = employee.length;
-   //       let _index = 0;
-   //       while (_index < _count) {
-   //          let _node = employee[_index];
-   //          const emp = await prisma.employee.create({
-   //             data: {
-   //                name: _node.name,
-   //                surname: _node.surname,
-   //                pathname: _node.pathname,
-   //                email: _node.email,
-   //                begin_date: new Date(_node.begin_date),
-   //                end_date: null
-   //             }
-   //          });
-   //          _index++;
+         const _count = employee.length;
+         let _index = 0;
+         while (_index < _count) {
+            let _node = employee[_index];
+            const emp = await prisma.employee.create({
+               data: {
+                  name: _node.name,
+                  surname: _node.surname,
+                  pathname: _node.pathname,
+                  email: _node.email,
+                  begin_date: new Date(_node.begin_date),
+                  end_date: null
+               }
+            });
+            _index++;
 
-   //          const post = posts.find(p => p.name === _node.post);
-   //          if (!post)
-   //             throw new Error('Не удалось найти должность');
-   //          if (!division)
-   //             throw new Error('Не удалось найти подразделение');
-   //          const staff_unit = await prisma.stuff_unit.findFirst({
-   //             where: {
-   //                post_id: post.id,
-   //                division_id: division.id
-   //             }
-   //          });
-   //          if (!staff_unit)
-   //             throw new Error('Не удалось найти ставку');
-   //          if (!emp)
-   //             throw new Error('Не удалось найти сотрудника');
-   //          await prisma.state_unit.create({
-   //             data: {
-   //                employee_id: emp.id,
-   //                stuff_unit_id: staff_unit.id
-   //             }
-   //          })
-   //       }
-   //       return _index;  
-   //    } catch (error) {
-   //       throw error;
-   //    }      
-   // }
+            const post = posts.find(p => p.name === _node.post);
+            if (!post)
+               throw new Error('Не удалось найти должность');
+            if (!division)
+               throw new Error('Не удалось найти подразделение');
+            const rate = await prisma.rate.findFirst({
+               where: {
+                  post_id: post.id,
+                  division_id: division.id,
+                  no: _node.no
+               }
+            });
+            if (!rate)
+               throw new Error(`Не удалось найти ставку ${_node.no}`);
+            if (!emp)
+               throw new Error('Не удалось найти сотрудника');
+            await prisma.staff.create({
+               data: {
+                  employee_id: emp.id,
+                  rate_id: rate.id
+               }
+            })
+         }
+         return _index;  
+      } catch (error) {
+         throw error;
+      }      
+   }
 
    // const seedVacations = async () => {
    //    try {
@@ -333,7 +336,7 @@ async function main() {
    await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
-   // await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
+   await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
    // await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
 
 }
