@@ -15,7 +15,7 @@ export const POST = async (request: NextRequest) => {
       }
       
       // Строки
-      const staffs = await prisma.rate.findMany({
+      const rates = await prisma.rate.findMany({
          where: { division_id }
       })
 
