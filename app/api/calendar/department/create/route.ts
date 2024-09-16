@@ -45,7 +45,7 @@ export const POST = async (request: NextRequest) => {
 
          let _workerName = 'Вакансия';
          if (_worker) {
-            _workerName = _worker.employee.surname + ' ' + _worker.employee.name.charAt(0) + '.'
+            _workerName = _worker.employee.surname + ' ' + _worker.employee.name?.charAt(0) + '.' + _worker.employee.pathname?.charAt(0) + '.'
          }
          
 
@@ -53,7 +53,7 @@ export const POST = async (request: NextRequest) => {
             data: {
                calendar_id: _calendar.id,
                rate_id: rate.id,
-               header: ''
+               header: _workerName
             }
          });
          let _i = 0;
@@ -62,6 +62,14 @@ export const POST = async (request: NextRequest) => {
             let _date = new Date(Date.UTC(year, 0, _i))
             const _dayOfWeek = _date.getDay();
             const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
+            await prisma.dept_calendar_cell.create({
+               data: {
+                  date: _date,
+                  hours: _isHoliday ? 0 : 8,
+                  type: _isHoliday ? 0 : 4,
+                  row_id: _row.id
+               }
+            });
          }
       }
 

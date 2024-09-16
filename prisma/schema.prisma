@@ -235,7 +235,18 @@ model dept_calendar_row {
    header      String         @db.VarChar(100)
    @@unique([rate_id, calendar_id])
 }
-
+//NOTE - Типы дня. Частично совпадает с типами исключений
+//SECTION
+//NOTE - exclusion_type
+// 0 - holiday
+// 1 - reduced
+// 2 - holiday transfer
+// 3 - worked transfer
+// 4 - worked
+// 5 - vacation
+// 6 - hospital
+// 7 - without pay
+// 8 - absense from work
 model dept_calendar_cell {
    id       Int               @id @default(autoincrement())
    date     DateTime          @db.Timestamp(6)
