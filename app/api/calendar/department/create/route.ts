@@ -92,7 +92,15 @@ export const POST = async (request: NextRequest) => {
             }
             for (const rate of rates) {
                const _rows = await prisma.dept_calendar_row.findMany({
-                  where: { calendar_id: _calendar.id }                  
+                  where: { calendar_id: _calendar.id }, 
+                  select: {
+                     id: true,
+                     rate: {
+                        select: {
+                           staff: true
+                        }
+                     }
+                  }
                })
                for (const _row of _rows) {
                   if (_row) {
@@ -119,6 +127,12 @@ export const POST = async (request: NextRequest) => {
             }
          }
       }
+      //NOTE - Отпуска
+      const _staffs = await prisma.staff.findMany({
+         select: {
+            rate: true
+         }
+      })
 
       return await NextResponse.json({status: 'success', data: _calendar});
    } catch (error: Error | unknown) {      
