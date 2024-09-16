@@ -6,7 +6,6 @@ import { getToken } from 'next-auth/jwt'
 
 export default withAuth(
    async function middleware(request: NextRequestWithAuth) {
-      debugger;
       if (!!request.nextauth.token) {         
          const session = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
          
