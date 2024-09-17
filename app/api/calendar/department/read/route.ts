@@ -39,9 +39,21 @@ export const POST = async (request: NextRequest) => {
       });
 
       for (const _row of _rows) {
+         const _startDate = new Date(year, month-1, 1);
+         const _endDate = new Date(year, month, 0);
          const _cells = await prisma.dept_calendar_cell.findMany({
             where: {
-               row_id: _row.id
+               AND: [
+                  {
+                     row_id: _row.id
+                  },
+                  {
+                     date: { gte: _startDate },                     
+                  },
+                  {
+                     date: { lte: _endDate }      
+                  }
+               ]
             },
             orderBy: {
                date: 'asc'
