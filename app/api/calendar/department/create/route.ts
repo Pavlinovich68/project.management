@@ -128,13 +128,17 @@ export const POST = async (request: NextRequest) => {
          }
       }
       //NOTE - Отпуска
-      const _staffs = await prisma.staff.findMany({
-         select: {
-            rate: true
+      const _rows = await prisma.dept_calendar_row.findMany({
+         where: {
+            calendar_id: _calendar.id
          }
       })
 
-      return await NextResponse.json({status: 'success', data: _calendar});
+      for (const _row of _rows) {
+         
+      }
+
+      return await NextResponse.json({status: 'success', data: _rows});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }
