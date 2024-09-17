@@ -127,55 +127,7 @@ export const POST = async (request: NextRequest) => {
             }
          }
       }
-      //NOTE - Отпуска
-      const _rows = await prisma.dept_calendar_row.findMany({
-         where: {
-            calendar_id: _calendar.id
-         }
-      })
-
-      for (const _row of _rows) {
-         const _staff = await prisma.staff.findFirst({
-            where: {
-               rate_id: _row.rate_id
-            }
-         });
-
-         if (_staff) {
-            const _vacations = await prisma.vacation.findMany({
-               where: {
-                  staff_id: _staff.id,
-                  year: year
-               }
-            });
-            for (const _vacation of _vacations) {
-               await prisma.dept_calendar_cell.updateMany({
-                  where: {
-                     row_id: _row.id,                     
-                  },
-                  data: {
-                     hours: 0,
-                     type: 5
-                  }
-               })
-            }
-         }
-         else {
-            await prisma.dept_calendar_cell.updateMany({
-               where: {
-                  row_id: _row.id,
-                  date: {
-                     
-                  }
-               },
-               data: {
-                  type: 9
-               }
-            });
-         }
-      }
-
-      return await NextResponse.json({status: 'success', data: _rows});
+      return await NextResponse.json({status: 'success', data: _calendar});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }
