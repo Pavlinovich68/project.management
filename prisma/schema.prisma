@@ -247,6 +247,7 @@ model dept_calendar_row {
 // 6 - hospital
 // 7 - without pay
 // 8 - absense from work
+// 9 - vacancy
 model dept_calendar_cell {
    id       Int               @id @default(autoincrement())
    date     DateTime          @db.Timestamp(6)
