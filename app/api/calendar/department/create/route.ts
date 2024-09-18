@@ -42,18 +42,11 @@ export const POST = async (request: NextRequest) => {
             where: {rate_id: rate.id},
             select: {employee: true}
          })
-
-         let _workerName = 'Вакансия';
-         if (_worker) {
-            _workerName = _worker.employee.surname + ' ' + _worker.employee.name?.charAt(0) + '.' + _worker.employee.pathname?.charAt(0) + '.'
-         }
          
-
          const _row = await prisma.dept_calendar_row.create({
             data: {
                calendar_id: _calendar.id,
-               rate_id: rate.id,
-               header: _workerName
+               rate_id: rate.id
             }
          });
          let _i = 0;

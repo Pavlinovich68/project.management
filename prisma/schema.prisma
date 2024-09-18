@@ -232,7 +232,6 @@ model dept_calendar_row {
    cells       dept_calendar_cell[]
    calendar_id Int
    calendar    dept_calendar  @relation(fields: [calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   header      String         @db.VarChar(100)
    @@unique([rate_id, calendar_id])
 }
 //NOTE - Типы дня. Частично совпадает с типами исключений
@@ -248,6 +247,7 @@ model dept_calendar_row {
 // 7 - without pay
 // 8 - absense from work
 // 9 - vacancy
+// 10 - work on weekends
 model dept_calendar_cell {
    id       Int               @id @default(autoincrement())
    month    Int

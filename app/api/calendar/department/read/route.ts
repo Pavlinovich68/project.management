@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
       const result: ICalendar = {
          year: year,
          month: month,
-         header: { name: 'Фамилия', days: dayArray, hours: 'Всего', total: 'От начала года' },
+         header: { name: 'Фамилия', days: dayArray, hours: 'Всего', total: 'От начала' },
          rows: [],
          footer: undefined
       }
@@ -39,6 +39,17 @@ export const POST = async (request: NextRequest) => {
       });
 
       for (const _row of _rows) {
+         const _staff = await prisma.staff.findFirst({ where: {rate_id: _row.rate_id} });
+         let _rowHeader = 'Вакансия';
+         if (_staff) {
+            const _employee = await prisma.employee.findFirst({ where: {id: _staff.employee_id } });
+            if (_employee) {
+               _rowHeader = _employee.surname + ' ' + _employee.name?.charAt(0) + '.' + _employee.pathname?.charAt(0) + '.'
+            } else {
+               _rowHeader = 'Вакансия';
+            }
+         }
+
          const _cells = await prisma.dept_calendar_cell.findMany({
             where: {
                row_id: _row.id,
@@ -71,7 +82,7 @@ export const POST = async (request: NextRequest) => {
          })
          
          const row: ICalendarRow = {
-            name: _row.rate_id ? _row.header : 'Вакансия',
+            name: _rowHeader,
             cells: cells,
             hours: _sum,
             total: _total._sum.hours??0
