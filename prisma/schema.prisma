@@ -250,10 +250,11 @@ model dept_calendar_row {
 // 9 - vacancy
 model dept_calendar_cell {
    id       Int               @id @default(autoincrement())
-   date     DateTime          @db.Timestamp(6)
+   month    Int
+   day      Int
    hours    Int
    type     Int
    row_id   Int
    row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   @@unique([date, row_id])
+   @@unique([month, day, row_id])
 }

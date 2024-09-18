@@ -64,7 +64,8 @@ export const POST = async (request: NextRequest) => {
             const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
             await prisma.dept_calendar_cell.create({
                data: {
-                  date: _date,
+                  month: _date.getMonth() +1,
+                  day: _date.getDate(),
                   hours: _isHoliday ? 0 : 8,
                   type: _isHoliday ? 0 : 4,
                   row_id: _row.id
