@@ -84,7 +84,7 @@ async function main() {
       const hashPassword = await bcrypt.hashSync(`${_user.prefix}1!`, 8);
       const email = `${_user.prefix}@localhost`;
       const role: Record<string, string> = {};
-      role[_user.name] = _user.role;
+      role[_user.role] = _user.name;
       if (division) {
          const user = await prisma.users.upsert({
             where: {email: email},

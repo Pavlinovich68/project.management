@@ -22,21 +22,20 @@ const AppMenu = () => {
       const intersection = accessRoles.filter(x => roles.includes(x));
       return intersection.length > 0
    }
-
    const model = [
       {
          label: 'Меню',
-         visible: checkRoles(['developer', 'read_only']),
+         visible: checkRoles(['admin', 'boss', 'master', 'developer', 'analyst', 'tester', 'read_only']),
          items: [
             {
                label: 'Администрирование',
                icon: 'pi pi-fw pi-cog',
                tabler: <IconAdjustmentsHorizontal className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['developer']),
+               visible: checkRoles(['admin', 'master', 'developer']),
                items: [
                   {
                      label: 'Пользователи',
-                     visible: checkRoles(['developer']),
+                     visible: checkRoles(['admin', 'master', 'developer']),
                      icon: 'pi pi-fw pi-user',
                      to: '/workplace/admin/users',
                      tabler: <IconUsers className='mr-1' stroke={1.5}/>
@@ -79,7 +78,7 @@ const AppMenu = () => {
                label: 'Справочники',
                icon: 'pi pi-fw pi-book',
                tabler: <IconBooks className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['master']),
+               visible: checkRoles(['admin', 'boss', 'master', 'developer']),
                items: [
                   {
                      label: 'Подразделения',

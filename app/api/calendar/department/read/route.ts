@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
       const result: ICalendar = {
          year: year,
          month: month,
-         header: { name: 'Фамилия', days: dayArray, hours: 'Часов', total: 'Всего' },
+         header: { name: 'Фамилия', days: dayArray, hours: 'Всего', total: 'От начала года' },
          rows: [],
          footer: undefined
       }
@@ -70,8 +70,6 @@ export const POST = async (request: NextRequest) => {
             }
          })
          
-         console.log(`Row: ${_row.header}, Total: ${JSON.stringify(_total._sum.hours)}`)
-
          const row: ICalendarRow = {
             name: _row.rate_id ? _row.header : 'Вакансия',
             cells: cells,

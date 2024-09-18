@@ -3,11 +3,11 @@ import React, {useRef, useState, useEffect, cache} from "react";
 import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
-import { ICalendarData } from "@/types/ICalendarData";
+import { ICalendar } from "@/models/ICalendar";
 
 const ItrCalendar = ({year, month, division_id}: {year: number, month: number, division_id: number}) => {
    const toast = useRef<Toast>(null);
-   const [data, setData] = useState<ICalendarData>();
+   const [data, setData] = useState<ICalendar>();
 
    useEffect(() => {
       getCalendarData();
@@ -18,7 +18,7 @@ const ItrCalendar = ({year, month, division_id}: {year: number, month: number, d
          toast.current?.show({severity:'error', summary: 'Сессия приложения', detail: 'Идентификатор подразделения недоступен!', life: 3000});
          return;
       }
-      const res = await fetch(`/api/calendar/production/data`, {
+      const res = await fetch(`/api/calendar/department/read`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",
@@ -38,20 +38,23 @@ const ItrCalendar = ({year, month, division_id}: {year: number, month: number, d
          <div className={classNames('card', styles.monthCalendar)} style={{marginTop: "1em"}}>
             <div className={classNames("flex justify-content-center", styles.calendarHeader)}>
                <div className={classNames("flex align-items-center justify-content-center w-8rem font-bold cell-bl cell-bt", styles.cellHeader)}>
-                  Фамилия
+                  {data?.header?.name}
                </div>
                {
                   data?.header?.days?.map((day) => {
                      return (
-                        <div key="calendar-header" className={classNames("flex align-items-center justify-content-center font-bold cell-bt", day.background_class === 0 ? styles.cellWork : (day.background_class === 1 ? styles.cellHoliday : styles.cellPreHoliday), styles.dataCell)}>
-                           {day.day}
+                        <div key="calendar-header" className={classNames("flex align-items-center justify-content-center font-bold cell-bt", styles.dataCell)}>
+                           {day}
                         </div>
                      )
                   })
                }
                <div className={classNames("flex align-items-center justify-content-center w-4rem font-bold cell-br cell-bt", styles.cellHeader)}>
-                  Часов
-               </div>               
+                  {data?.header?.hours}
+               </div>
+               <div className={classNames("flex align-items-center justify-content-center w-6rem font-bold cell-br cell-bt", styles.cellHeader)}>
+                  {data?.header?.total}
+               </div>
             </div>
             {
                data?.rows?.map((row) => {
@@ -59,33 +62,37 @@ const ItrCalendar = ({year, month, division_id}: {year: number, month: number, d
                      <div key="row" className={classNames("flex justify-content-center", styles.calendarRow)}>
                         <div className={classNames("flex align-items-start justify-content-start w-8rem font-bold pl-2 cell-bl", styles.cellHeader)}>{row.name}</div>
                         {
-                           row?.hours?.map((day) => {                                                            
+                           row?.cells?.map((day) => {                                                            
                               return (
-                                 <div key="calendar-row" className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell, day.background_class)}>{day.value}</div>
+                                 <div key="calendar-row" className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell)}>{day.hours}</div>
                               )
                            })
                         }
-                        <div className={classNames("flex align-items-end justify-content-end w-4rem pr-2 font-bold cell-br", styles.cellHeader)}>{row.total}</div>
+                        <div className={classNames("flex align-items-end justify-content-end w-4rem pr-2 font-bold cell-br", styles.cellHeader)}>{row.hours}</div>
+                        <div className={classNames("flex align-items-end justify-content-end w-6rem pr-2 font-bold cell-br", styles.cellHeader)}>{row.total?.toLocaleString()}</div>
                      </div>
                   )
                })
             }
             <div className={classNames("flex justify-content-center", styles.calendarHeader)}>
                <div className={classNames("flex vertical-align-middle w-8rem font-bold pl-2 calendar-left-cell cell-bl cell-bl cell-bb cell-br")}>
-                  Итого:
+                  {data?.footer?.name}
                </div>
                {
-                  data?.footer?.days?.map((day) => {
+                  data?.footer?.hours?.map((day) => {
                      return (
-                        <div key="calendar-footer" className={classNames("flex align-items-center justify-content-center font-bold, cell-vertical cell-br cell-bb", day.background_class, styles.dataCell)}>
-                           {day.value}
+                        <div key="calendar-footer" className={classNames("flex align-items-center justify-content-center font-bold, cell-vertical cell-br cell-bb", styles.dataCell)}>
+                           {day}
                         </div>
                      )
                   })
                }
                <div className={classNames("w-4rem font-bold pr-2 calendar-left-cell text-right cell-br cell-bb")}>
+                  {data?.footer?.sum?.toLocaleString()}
+               </div>
+               <div className={classNames("w-6rem font-bold pr-2 calendar-left-cell text-right cell-br cell-bb")}>
                   {data?.footer?.total?.toLocaleString()}
-               </div>               
+               </div>
             </div>
          </div>
          <Toast ref={toast} />
