@@ -101,7 +101,7 @@ model production_calendar {
    year        Int
    exclusions  exclusion[]
 }
-//NOTE - Исключение
+//NOTE - Исключение для всех
 //SECTION
 //NOTE - exclusion_type
 // 0 - holiday
@@ -142,7 +142,7 @@ model vacation {
    start_date  DateTime @db.Timestamp(6)
    end_date    DateTime @db.Timestamp(6)
    staff_id    Int
-   staff       staff? @relation(fields: [staff_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+   staff       staff?   @relation(fields: [staff_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 //NOTE - Дорожная карта
 model roadmap {
@@ -167,11 +167,11 @@ model roadmap_item {
 }
 //NOTE - Контрольная точка
 model control_point {
-   id                Int   @id @default(autoincrement())
-   date              DateTime    @db.Timestamp(6)
-   name              String      @db.VarChar(250)
+   id                Int            @id @default(autoincrement())
+   date              DateTime       @db.Timestamp(6)
+   name              String         @db.VarChar(250)
    roadmap_item_id   Int
-   roadmap_item      roadmap_item @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 //NOTE - Дни пропуска
 //SECTION
@@ -208,11 +208,13 @@ model rate {
 }
 //NOTE - Штатные идиницы
 model staff {
-   id          Int      @id @default(autoincrement())
+   id          Int         @id @default(autoincrement())
    rate_id     Int
-   rate        rate     @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   rate        rate        @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    employee_id Int
-   employee    employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee    employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   begin_date  DateTime    @db.Timestamp(6)
+   end_date    DateTime?   @db.Timestamp(6)
    vacations   vacation[]
 }
 //NOTE - Рабочий календарь подразделения

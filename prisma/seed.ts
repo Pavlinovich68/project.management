@@ -158,13 +158,39 @@ async function main() {
                   data: {
                      exclusion_type: _node.exclusion_type
                   }
-               });
+               });              
+
             } else {
                await prisma.exclusion.create({
                   data: {
                      production_calendar_id: calendar?.id,
                      date: _date,
                      exclusion_type: _node.exclusion_type
+                  }
+               });
+            }
+            const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
+            const _calendar = await prisma.dept_calendar.findFirst({where:{year:2024,division_id:_division?.id}});
+
+            let hours = 8;
+            switch (_node.exclusion_type) {
+               case 0: hours = 0; break;
+               case 1: hours = 7; break;
+               case 2: hours = 0; break;
+               case 3: hours = 8; break;
+            }
+            if (_calendar) {
+               const _cells = await prisma.dept_calendar_cell.updateMany({
+                  where: {
+                     row: {
+                        calendar_id: _calendar.id
+                     },
+                     month: _date.getMonth() +1,
+                     day: _date.getDate()
+                  },
+                  data: {
+                     type: _node.exclusion_type,
+                     hours: hours
                   }
                });
             }
@@ -176,8 +202,58 @@ async function main() {
       return _index;
    }
 
+   const seedProdCalendar = async () => {
+      try {
+         const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
+         if (!_division) return
+         const _calendar = await prisma.dept_calendar.create({
+            data: { division_id: _division?.id, year: 2024 }
+         })
+
+         let rates = await prisma.rate.findMany({
+            where: { division_id: _division.id },
+            orderBy: { no: 'asc' }
+         })
+
+         for (const rate of rates) {
+            const _worker = await prisma.staff.findFirst({
+               where: {rate_id: rate.id},
+               select: {employee: true}
+            })
+            
+            const _row = await prisma.dept_calendar_row.create({
+               data: {
+                  calendar_id: _calendar.id,
+                  rate_id: rate.id
+               }
+            });
+            let _i = 0;
+            while (_i < 366) {
+               _i++
+               let _date = new Date(Date.UTC(2024, 0, _i))
+               const _dayOfWeek = _date.getDay();
+               const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
+               await prisma.dept_calendar_cell.create({
+                  data: {
+                     month: _date.getMonth() +1,
+                     day: _date.getDate(),
+                     hours: _isHoliday ? 0 : 8,
+                     type: _isHoliday ? 0 : 4,
+                     row_id: _row.id
+                  }
+               });
+            }
+         }
+      } catch (error) {
+         throw error;
+      }
+   }
+
    const seedPosts = async () => {
       try {
+         await prisma.$queryRaw`delete from dept_calendar_cell`;
+         await prisma.$queryRaw`delete from dept_calendar_row`;
+         await prisma.$queryRaw`delete from dept_calendar`;
          await prisma.$queryRaw`delete from staff`;
          await prisma.$queryRaw`delete from rate`;
          await prisma.$queryRaw`delete from post`;
@@ -196,6 +272,9 @@ async function main() {
 
    const seedRate = async () => {
       try {
+         await prisma.$queryRaw`delete from dept_calendar_cell`;
+         await prisma.$queryRaw`delete from dept_calendar_row`;
+         await prisma.$queryRaw`delete from dept_calendar`;
          await prisma.$queryRaw`delete from rate`;
          const division = await prisma.division.findUnique({
             where: {
@@ -285,6 +364,7 @@ async function main() {
                throw new Error('Не удалось найти сотрудника');
             await prisma.staff.create({
                data: {
+                  begin_date: new Date(2024, 0, 1),
                   employee_id: emp.id,
                   rate_id: rate.id
                }
@@ -333,10 +413,11 @@ async function main() {
    // }  
    
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
-   await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
    await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
+   await seedProdCalendar().finally(() => console.log(`\x1b[32mWorked calendar seeded\x1b[0m`));
+   await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    // await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
 
 }
