@@ -1,17 +1,55 @@
 import prisma from "@/prisma/client";
 import {NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type.ts";
+import DateHelper from "@/services/date.helpers";
 
 export const POST = async (request) => {
    const create = async (model, params) => {
       const result = await prisma.vacation.create({
          data: {
             year: params.year,
-            state_unit_id: model.state_unit_id,
+            staff_id: model.staff_id,
             start_date: new Date(model.start_date),
             end_date: new Date(model.end_date),
          }
       })
+
+      const _calendar = await prisma.dept_calendar.findFirst({
+         where: {
+            year: params.year,
+            division_id: Number(params.division_id)
+         }
+      })
+      const _rate = await prisma.staff.findFirst({
+         staff_id: model.staff_id
+      })
+      const _row = await prisma.dept_calendar_row.findFirst({
+         where: {
+            calendar_id: _calendar.id,
+            rate: {
+               staff_id: model.staff_id
+            }
+         }
+      })
+      let _date = new Date(model.start_date);
+      const _end_date = new Date(model.end_date);
+      while(_date <= _end_date){         
+         const _month = _date.getMonth();
+         const _day = _date.getDate();         
+         
+         await prisma.dept_calendar_cell.update({
+            where: {
+               row_id: _row.id,
+               month: _month,
+               day: _day
+            },
+            data: {
+               type: 5
+            }
+         })
+
+         _date = DateHelper.addDays(_date, 1);
+      }
 
       return result;
    }
@@ -22,11 +60,11 @@ export const POST = async (request) => {
             *
          from
             vacation v
-            left join state_unit sta on v.state_unit_id = sta.id
+            left join staff sta on v.staff_id = sta.id
             left join employee e on sta.employee_id = e.id
-            left join stuff_unit stu on sta.stuff_unit_id = stu.id
+            left join rate r on sta.rate_id = r.id
          where
-            stu.division_id = ${division_id}
+            r.division_id = ${division_id}
             and v.year = ${year}
             and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0 
       `;
@@ -40,14 +78,14 @@ export const POST = async (request) => {
             v.start_date,
             v.end_date,
             e.surname || ' ' || e.name || ' ' || e.pathname as name,
-            sta.id as state_unit_id
+            sta.id as staff_id
          from
             vacation v
-            left join state_unit sta on v.state_unit_id = sta.id
+            left join staff sta on v.staff_id = sta.id
             left join employee e on sta.employee_id = e.id
-            left join stuff_unit stu on sta.stuff_unit_id = stu.id
+            left join rate r on sta.rate_id = r.id
          where
-            stu.division_id = ${division_id}
+            r.division_id = ${division_id}
             and v.year = ${year}
             and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0  
          order by
@@ -73,7 +111,7 @@ export const POST = async (request) => {
             id: model.id
          },
          data: {
-            profile_id: model.profile_id,
+            staff_id: model.staff_id,
             start_date: new Date(model.start_date),
             end_date: new Date(model.end_date),
          }

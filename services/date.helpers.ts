@@ -51,4 +51,10 @@ export default class DateHelper {
       const xDate = new Date(year, month, day);
       return xDate.toLocaleDateString('fr-CA');
    }
+
+   static addDays = (date: Date, days: number): Date => {
+      var _date = new Date(date.valueOf());
+      _date.setDate(_date.getDate() + days);
+      return _date;
+   }
 }

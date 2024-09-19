@@ -49,7 +49,6 @@ const Vacations = () => {
          },
          cache: 'force-cache'
       });
-      debugger;
       const data = await res.json();
       setStaffs(data.data);
    }
@@ -97,14 +96,14 @@ const vacation = useFormik<IVacation>({
    initialValues: model,
    validate: (data) => {
       let errors: FormikErrors<IVacation> = {};
-      if (!data.state_unit_id){
-         errors.state_unit_id = "Сотрудник быть указан!";
+      if (!data.staff_id){
+         errors.staff_id = "Сотрудник быть указан!";
       }
       if (!data.start_date){
-         errors.start_date = "Дата начала должна быть указан!";
+         errors.start_date = "Дата начала должна быть указана!";
       }
       if (!data.end_date){
-         errors.end_date = "Дата окончания должна быть указан!";
+         errors.end_date = "Дата окончания должна быть указана!";
       }
       return errors;
    },
@@ -121,8 +120,8 @@ const card = (
          <label htmlFor="is_priority" className="mr-3">Сотрудник</label>
             <div>
                <Dropdown 
-                  value={vacation.values.state_unit_id} 
-                  className={classNames({"p-invalid": submitted && !vacation.values.state_unit_id})} 
+                  value={vacation.values.staff_id} 
+                  className={classNames({"p-invalid": submitted && !vacation.values.staff_id})} 
                   required 
                   optionLabel="name" 
                   optionValue="id" 
@@ -130,7 +129,7 @@ const card = (
                   onChange={(e) => {
                      const item = staffs?.find(item => item.id === e.value);
                      if (item) {
-                        vacation.setFieldValue('state_unit_id', item.id);
+                        vacation.setFieldValue('staff_id', item.id);
                      }
                   }}
                />
@@ -169,7 +168,9 @@ const card = (
    const createMethod = () => {
       setCardHeader('Планирование отпуска');
       readStaffs();
-      vacation.setValues(model);
+      model.start_date = new Date(year, 0, 1);
+      model.end_date = new Date(year, 11, 31);
+      vacation.setValues(model);      
       setRecordState(RecordState.new);
       setSubmitted(false);
       if (editor.current) {
@@ -222,7 +223,7 @@ const saveMethod = async () => {
    try {
       setIsLoading(true);
       const res = 
-         await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, vacation.values, {year: year});
+         await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, vacation.values, {year: year, division_id: session?.user.division_id});
 
       setIsLoading(false);
 
