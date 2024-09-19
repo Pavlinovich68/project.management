@@ -214,8 +214,9 @@ model staff {
    employee_id Int
    employee    employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    begin_date  DateTime    @db.Timestamp(6)
-   end_date    DateTime?   @db.Timestamp(6)
+   end_date    DateTime?   @db.Timestamp(6)   
    vacations   vacation[]
+   @@unique([id])
 }
 //NOTE - Рабочий календарь подразделения
 model dept_calendar {

@@ -37,7 +37,7 @@ export const POST = async (request) => {
          const _month = _date.getMonth();
          const _day = _date.getDate();         
          
-         const _cell = await prisma.dept_calendar_cell.updateMany({
+         await prisma.dept_calendar_cell.updateMany({
             where: {
                row_id: _row.id,
                month: _month+1,
