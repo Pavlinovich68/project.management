@@ -20,15 +20,15 @@ export const POST = async (request) => {
             division_id: Number(params.division_id)
          }
       })
-      const _rate = await prisma.staff.findFirst({
-         staff_id: model.staff_id
+      const _staff = await prisma.staff.findUnique({
+         where: {
+            id: model?.staff_id
+         }
       })
       const _row = await prisma.dept_calendar_row.findFirst({
          where: {
             calendar_id: _calendar.id,
-            rate: {
-               staff_id: model.staff_id
-            }
+            rate_id: _staff.rate_id
          }
       })
       let _date = new Date(model.start_date);
@@ -37,10 +37,10 @@ export const POST = async (request) => {
          const _month = _date.getMonth();
          const _day = _date.getDate();         
          
-         await prisma.dept_calendar_cell.update({
+         const _cell = await prisma.dept_calendar_cell.updateMany({
             where: {
                row_id: _row.id,
-               month: _month,
+               month: _month+1,
                day: _day
             },
             data: {
