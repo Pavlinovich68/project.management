@@ -1,6 +1,6 @@
 .monthCalendar {
    margin-top: 1rem;
-   font-size: 14px;
+   font-size: 12px;
    .dataCell {
       height: 24px;
       width: 24px !important;
@@ -24,6 +24,7 @@
       .cellHeader {
          height: 24px;
          border-right: 1px solid var(--surface-50);
+         padding-top: 6px;
       }
       .cellWork {
          border-right: 1px solid var(--surface-50);
@@ -68,6 +69,7 @@
          border-top: 1px solid var(--surface-50);
          color: var(--gray-600);
          background-color: var(--surface-900);
+         padding-top: 6px !important;
       }
       .cell5 {
          border-right: 1px solid var(--surface-50);
@@ -110,6 +112,7 @@
          border-right: 1px solid var(--surface-50);
          border-top: 1px solid var(--surface-50);
          background-color: var(--surface-200);
+         padding-top: 6px !important;
       }
       .cellWork {
          border-right: 1px solid var(--surface-50);

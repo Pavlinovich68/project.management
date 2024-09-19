@@ -4,8 +4,9 @@ import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
 import { ICalendar } from "@/models/ICalendar";
+import { Session } from "next-auth";
 
-const ItrCalendar = ({year, month, division_id}: {year: number, month: number, division_id: number}) => {
+const ItrCalendar = ({year, month, division_id, session}: {year: number, month: number, division_id: number, session: Session}) => {
    const toast = useRef<Toast>(null);
    const [data, setData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -39,6 +40,24 @@ const ItrCalendar = ({year, month, division_id}: {year: number, month: number, d
    //@ts-ignore
    if (data === 'Календарь не обнаружен!' || isLoaded) 
       return <React.Fragment/>
+
+   const checkRoles = (arr: string[]):boolean => {
+      const userRoles = session?.user?.roles;
+      if (!userRoles) {
+         return false;
+      }
+      const roles = Object.keys(userRoles);
+      const intersection = arr.filter(x => roles.includes(x));
+      return intersection.length > 0
+   }
+
+   const onCellClick = (id: number) => { 
+      if (!checkRoles(['master'])) {
+         console.log('Пошел на хуй!');
+         return;
+      }    
+      console.log(`Cell click ${id}`);
+   }
 
    return (
       <React.Fragment>         
@@ -85,7 +104,7 @@ const ItrCalendar = ({year, month, division_id}: {year: number, month: number, d
                                     case 10: cellClass = styles.cell10; break;
                                  }
                                  return (
-                                    <div key="calendar-row" className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell, cellClass)}>{day.hours}</div>
+                                    <div key={`calendar-cell-id-${day.id}`} onClick={() => onCellClick(day.id)} className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell, cellClass)}>{day.hours}</div>
                                  )
                               })
                            }

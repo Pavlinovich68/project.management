@@ -31,7 +31,7 @@ const Vacations = () => {
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
    const [cardHeader, setCardHeader] = useState('');
-   const [stateUnits, setStateUnits] = useState<IBaseEntity[]>();
+   const [staffs, setStaffs] = useState<IBaseEntity[]>();
    const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
    const [submitted, setSubmitted] = useState(false);
    const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,17 +41,17 @@ const Vacations = () => {
       changeYear(year);      
    }, []);
 
-   const readStateUnit = async () => {
-      const res = await fetch(`/api/state_unit/list`, {
-         method: "POST",
+   const readStaffs = async () => {
+      const res = await fetch(`/api/staff/list?division_id=${session?.user.division_id}`, {
+         method: "GET",
          headers: {
             "Content-Type": "application/json",
          },
-         body: JSON.stringify({year: year, division_id: session?.user.division_id}),
          cache: 'force-cache'
       });
+      debugger;
       const data = await res.json();
-      setStateUnits(data.data);
+      setStaffs(data.data);
    }
    
    const changeYear = (val: number) => {
@@ -126,9 +126,9 @@ const card = (
                   required 
                   optionLabel="name" 
                   optionValue="id" 
-                  options={stateUnits}
+                  options={staffs}
                   onChange={(e) => {
-                     const item = stateUnits?.find(item => item.id === e.value);
+                     const item = staffs?.find(item => item.id === e.value);
                      if (item) {
                         vacation.setFieldValue('state_unit_id', item.id);
                      }
@@ -168,7 +168,7 @@ const card = (
 //#region //SECTION CRUD
    const createMethod = () => {
       setCardHeader('Планирование отпуска');
-      readStateUnit();
+      readStaffs();
       vacation.setValues(model);
       setRecordState(RecordState.new);
       setSubmitted(false);
@@ -179,7 +179,7 @@ const card = (
 
 const updateMethod = async (data: IVacation) => {
    setCardHeader('Изменение запланированного отпуска');
-   readStateUnit();
+   readStaffs();
    vacation.setValues(data);
    setRecordState(RecordState.edit);
    setSubmitted(false);

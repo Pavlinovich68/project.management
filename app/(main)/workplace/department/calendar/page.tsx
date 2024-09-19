@@ -21,7 +21,7 @@ const Calendar = () => {
             <div className="card pt-1">
                <h3>Рабочий календарь</h3> 
                <ItrCalendarSwitch xdate={date} onClick={monthSwitch}/>
-               <ItrCalendar year={date.getFullYear()} month={date.getMonth()+1} division_id={session?.user?.division_id} />
+               <ItrCalendar year={date.getFullYear()} month={date.getMonth()+1} division_id={session?.user?.division_id} session={session} />
             </div>
          </div>
       </div> : <React.Fragment/>

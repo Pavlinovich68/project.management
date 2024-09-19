@@ -23,6 +23,7 @@ export interface ICalendarRow {
 }
 
 export interface ICalendarCell {
+   id: number,
    day: number,
    type: number,
    hours: number

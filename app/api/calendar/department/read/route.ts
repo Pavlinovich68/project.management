@@ -63,6 +63,7 @@ export const POST = async (request: NextRequest) => {
          const _sum = _cells.map(i => i.hours).reduce((part, a) => part + a, 0);
          const cells:ICalendarCell[] = _cells.map(i => {
             return {
+               id: i.id,
                day: i.day,
                type: i.type,
                hours: i.hours,
