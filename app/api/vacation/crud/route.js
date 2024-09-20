@@ -2,8 +2,34 @@ import prisma from "@/prisma/client";
 import {NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type.ts";
 import DateHelper from "@/services/date.helpers";
+import CalendarHelper from "@/services/calendar.helper";
 
 export const POST = async (request) => {
+   const dropVacationDay = async (staff_id, year, month, day) => {
+      const _cell = await prisma.$queryRaw`
+         select
+            dcc.id
+         from
+            dept_calendar_row dcr
+            inner join dept_calendar_cell dcc on dcr.id = dcc.row_id
+            inner join rate r on dcr.rate_id = r.id
+            inner join staff s on r.id = s.rate_id
+            inner join public.dept_calendar dc on dc.id = dcr.calendar_id
+         where
+            dc.year = ${year}
+            and dcc.month = ${month}
+            and dcc.day = ${day}
+            and s.id = ${staff_id}
+      `
+      if (!_cell) return;      
+      await prisma.dept_calendar_cell.update({
+         where: {id: _cell.id},
+         data: {
+            type: 4
+         }
+      })
+   }
+
    const create = async (model, params) => {
       const result = await prisma.vacation.create({
          data: {
@@ -121,11 +147,30 @@ export const POST = async (request) => {
    }
 
    const drop = async (model) => {
+      const _vacation = await prisma.vacation.findUnique({
+         where: {
+            id: model.id
+         }
+      });
+
+      const _staff_id = _vacation.staff_id;
+      let _start_date = _vacation.start_date;
+      const _end_date = _vacation.end_date;
+      
       const result = await prisma.vacation.delete({
          where: {
             id: model.id
          }
       });
+
+      while(_start_date <= _end_date){   
+         const _year = _start_date.getFullYear();
+         const _month = _start_date.getMonth()+1;
+         const _day = _start_date.getDate();
+         await dropVacationDay(_staff_id, _year, _month, _day);
+         _start_date = DateHelper.addDays(_date, 1);
+      }
+
       return result;
    }
 

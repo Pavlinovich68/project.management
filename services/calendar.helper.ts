@@ -34,39 +34,29 @@ export default class CalendarHelper {
       }
    }
 
-   dropVacationDay = async (division_id: number, staff_id: number, year: number, month: number, day: number) => {
-      const _calendar = await prisma.dept_calendar.findFirst({
-         where: {
-            division_id: division_id,
-            year: year
-         }
-      })
-      if (!_calendar) return;
-      const _row = await prisma.dept_calendar_row.findFirst({
-         where: {
-            calendar_id: _calendar.id
-         }
-      })
-      const _cell = await prisma.dept_calendar_cell.findFirst({
-         where: {
-            month: month,
-            day: day,
-            row: {
-               rate: {
-                  staff: {
-                     id: staff_id
-                  }
-               }
-            }
-         }
-      });
-      await prisma.dept_calendar_cell.delete({
-         where: {
-            month: month,
-            day: day,
-            row_id: 1,
-            id: 1
-         }
-      })
+   dropVacationDay = async (staff_id: number, year: number, month: number, day: number) => {
+      const _cell = await prisma.$queryRaw`
+         select
+            dcc.id
+         from
+            dept_calendar_row dcr
+            inner join dept_calendar_cell dcc on dcr.id = dcc.row_id
+            inner join rate r on dcr.rate_id = r.id
+            inner join staff s on r.id = s.rate_id
+            inner join public.dept_calendar dc on dc.id = dcr.calendar_id
+         where
+            dc.year = ${year}
+            and dcc.month = ${month}
+            and dcc.day = ${day}
+            and s.id = ${staff_id}
+      `
+      if (!_cell) return;
+      console.log(_cell);
+      // await prisma.dept_calendar_cell.update({
+      //    where: {id: _cell.id},
+      //    data: {
+      //       type: 4
+      //    }
+      // })
    }
 }
