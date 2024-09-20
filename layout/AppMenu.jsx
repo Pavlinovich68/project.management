@@ -31,7 +31,7 @@ const AppMenu = () => {
                label: 'Администрирование',
                icon: 'pi pi-fw pi-cog',
                tabler: <IconAdjustmentsHorizontal className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['admin', 'master', 'developer']),
+               visible: checkRoles(['admin']),
                items: [
                   {
                      label: 'Пользователи',
