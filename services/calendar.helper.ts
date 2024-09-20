@@ -51,12 +51,11 @@ export default class CalendarHelper {
             and s.id = ${staff_id}
       `
       if (!_cell) return;
-      console.log(_cell);
-      // await prisma.dept_calendar_cell.update({
-      //    where: {id: _cell.id},
-      //    data: {
-      //       type: 4
-      //    }
-      // })
+      await prisma.dept_calendar_cell.update({
+         where: {id: 1},
+         data: {
+            type: 4
+         }
+      })
    }
 }

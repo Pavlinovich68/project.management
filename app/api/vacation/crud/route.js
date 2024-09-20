@@ -21,11 +21,25 @@ export const POST = async (request) => {
             and dcc.day = ${day}
             and s.id = ${staff_id}
       `
+      
+      const _date = new Date(year, month-1, day);
+      const _dayOfWeek = _date.getDay();
+      const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
+      const _ex_date = new Date(Date.UTC(year, month-1, day));
+
+      const type = await prisma.exclusion.findFirst({
+         where: {
+            date: _ex_date
+         }
+      })
+
+      const _type = type ? type.exclusion_type : (_isHoliday ? 0 : 4)
+
       if (!_cell) return;      
       await prisma.dept_calendar_cell.update({
-         where: {id: _cell.id},
+         where: {id: _cell[0].id},
          data: {
-            type: 4
+            type: _type
          }
       })
    }
@@ -168,7 +182,7 @@ export const POST = async (request) => {
          const _month = _start_date.getMonth()+1;
          const _day = _start_date.getDate();
          await dropVacationDay(_staff_id, _year, _month, _day);
-         _start_date = DateHelper.addDays(_date, 1);
+         _start_date = DateHelper.addDays(_start_date, 1);
       }
 
       return result;
