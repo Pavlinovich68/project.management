@@ -5,7 +5,7 @@ import DateHelper from "@/services/date.helpers";
 import CalendarHelper from "@/services/calendar.helper";
 
 export const POST = async (request) => {
-   const dropVacationDay = async (staff_id, year, month, day) => {
+   const getVacationDayId = async (staff_id, year, month, day) => {
       const _cell = await prisma.$queryRaw`
          select
             dcc.id
@@ -21,7 +21,12 @@ export const POST = async (request) => {
             and dcc.day = ${day}
             and s.id = ${staff_id}
       `
-      
+      const result = _cell ? _cell[0].id : undefined;
+      return result;
+   }
+   
+   const dropVacationDay = async (staff_id, year, month, day) => {
+      const _cell_id = await getVacationDayId(staff_id, year, month, day);
       const _date = new Date(year, month-1, day);
       const _dayOfWeek = _date.getDay();
       const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
@@ -35,13 +40,46 @@ export const POST = async (request) => {
 
       const _type = type ? type.exclusion_type : (_isHoliday ? 0 : 4)
 
-      if (!_cell) return;      
+      if (!_cell_id) return;      
       await prisma.dept_calendar_cell.update({
-         where: {id: _cell[0].id},
+         where: {id: _cell_id},
          data: {
             type: _type
          }
       })
+   }
+
+   const dropVacation = async (staff_id, _start_date, _end_date) => {
+      while(_start_date <= _end_date){   
+         const _year = _start_date.getFullYear();
+         const _month = _start_date.getMonth()+1;
+         const _day = _start_date.getDate();
+         await dropVacationDay(staff_id, _year, _month, _day);
+         _start_date = DateHelper.addDays(_start_date, 1);
+      }
+   }
+
+   const createVacation = async (staff_id, start_date, end_date) => {
+      let _start_date = new Date(start_date);
+      const _end_date = new Date(end_date);
+      while(_start_date <= _end_date){      
+         const _year = _start_date.getFullYear();   
+         const _month = _start_date.getMonth();
+         const _day = _start_date.getDate();         
+         
+         const _row_id = await getVacationDayId(staff_id, _year, _month+1, _day)
+
+         await prisma.dept_calendar_cell.updateMany({
+            where: {
+               id: _row_id
+            },
+            data: {
+               type: 5
+            }
+         })
+
+         _start_date = DateHelper.addDays(_start_date, 1);
+      }
    }
 
    const create = async (model, params) => {
@@ -146,6 +184,7 @@ export const POST = async (request) => {
    }
 
    const update = async (model) => {
+      const _old = await prisma.vacation.findUnique({where: {id: model.id}});
       const result = await prisma.vacation.update({
          where: {
             id: model.id
@@ -156,6 +195,9 @@ export const POST = async (request) => {
             end_date: new Date(model.end_date),
          }
       })
+
+      await dropVacation(model.staff_id, _old.start_date, _old.end_date);
+      await createVacation(model.staff_id, model.start_date, model.end_date);
 
       return result;
    }
@@ -177,13 +219,7 @@ export const POST = async (request) => {
          }
       });
 
-      while(_start_date <= _end_date){   
-         const _year = _start_date.getFullYear();
-         const _month = _start_date.getMonth()+1;
-         const _day = _start_date.getDate();
-         await dropVacationDay(_staff_id, _year, _month, _day);
-         _start_date = DateHelper.addDays(_start_date, 1);
-      }
+      await dropVacation(_staff_id, _start_date, _end_date);
 
       return result;
    }
