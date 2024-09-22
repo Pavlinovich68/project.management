@@ -25,12 +25,17 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
    const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
 
    const exclusions: Exclusion[] = [
-      {name: 'Отпуск',             value: 5},
-      {name: 'Больничный',         value: 6},
-      {name: 'Без содержания',     value: 7},
-      {name: 'Прогул',             value: 8},
-      {name: 'Вакансия',           value: 9},
-      {name: 'Работа в выходной',  value: 10},
+      {name: 'Выходной',               value: 0},
+      {name: 'Сокращенный',            value: 1},
+      {name: 'Перенесенный выходной',  value: 2},
+      {name: 'Перенесенный рабочий',   value: 3},
+      {name: 'Рабочий',                value: 4},
+      {name: 'Отпуск',                 value: 5},
+      {name: 'Больничный',             value: 6},
+      {name: 'Без содержания',         value: 7},
+      {name: 'Прогул',                 value: 8},
+      {name: 'Вакансия',               value: 9},
+      {name: 'Работа в выходной',      value: 10},
    ];
 
    useEffect(() => {
