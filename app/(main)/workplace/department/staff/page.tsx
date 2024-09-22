@@ -16,10 +16,11 @@ import { ConfirmDialog } from "primereact/confirmdialog";
 import ItrGrid from "@/components/ItrGrid";
 import ItrCard from "@/components/ItrCard";
 import { useSession } from "next-auth/react";
+import { Calendar } from "primereact/calendar";
 
 const Staff = () => {
    const controllerName = 'staff';
-   const model: IStaff = {id: undefined, rate: undefined, employee: undefined};
+   const model: IStaff = {id: undefined, rate: undefined, employee: undefined, begin_date: new Date(), end_date: undefined};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -131,6 +132,14 @@ const Staff = () => {
                      }}
                   />
                </div>
+            </div>            
+            <div className="field col-12 md:col-6">
+               <label htmlFor="begin_date">Дата начала действия</label>
+               <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !staff.values.begin_date})} value={new Date(staff.values.begin_date)} onChange={(e) => staff.setFieldValue('begin_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала действия"/>
+            </div>
+            <div className="field col-12 md:col-6">
+               <label htmlFor="end_date">Дата окончания действия</label>
+               <Calendar id="end_date" value={staff.values.end_date !== null ? new Date(staff.values.end_date as Date) : null} onChange={(e) => staff.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата окончания действия"/>
             </div>
          </div>
       </div>
@@ -151,6 +160,7 @@ const Staff = () => {
    }
 
    const updateMethod = async (data: IStaff) => {
+      debugger;
       setCardHeader('Изменение ставки');
       readRates();
       readEmployees();
@@ -231,7 +241,7 @@ const Staff = () => {
                   drop={deleteMethod}
                   tableStyle={{ minWidth: '50rem' }}
                   showClosed={false}
-                  editVisible={false}
+                  //editVisible={false}
                   columns={gridColumns}
                   params={{division_id: session.user.division_id}}
                   ref={grid}/>

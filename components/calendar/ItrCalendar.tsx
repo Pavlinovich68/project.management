@@ -237,6 +237,7 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
                <div className="card flex justify-content-center">
                   <Dropdown 
                      value={selectedExclusion} 
+                     filter
                      onChange={(e) => setSelectedExclusion(e.value)}                        
                      options={exclusions} 
                      optionLabel="name" 

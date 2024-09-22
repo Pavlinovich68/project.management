@@ -52,6 +52,8 @@ export const POST = async (request) => {
             id: true,
             rate_id: true,
             employee_id: true,
+            begin_date: true,
+            end_date: true,
             employee: {
                select: {
                   id: true,
@@ -76,6 +78,8 @@ export const POST = async (request) => {
       const result = list.map(item => {
          return {
             id: item.id,
+            begin_date: item.begin_date,
+            end_date: item.end_date,
             employee: {
                id: item.employee_id,
                name: item.employee.surname + ' ' +
