@@ -5,10 +5,74 @@ import CRUD from "@/models/enums/crud-type.ts";
 
 export const POST = async (request) => {
    const create = async (model, params) => {
+      const rateIsBusy = await prisma.staff.findFirst({
+         where: {
+            AND: [
+               {
+                  rate: {
+                     id: model.rate.id
+                  }
+               },
+               {
+                  begin_date: {
+                     lte: new Date(model.begin_date)
+                  }
+               },
+               {
+                  OR: [
+                     {
+                        end_date: null
+                     },
+                     {
+                        end_date: {
+                           gt: model.end_date ? new Date(model.end_date) : new Date()
+                        }
+                     }
+                  ]
+               }
+            ]
+         }
+      });
+      if (rateIsBusy)
+         throw new Error('Ставка уже занята!');
+
+      const employeeIsBusy = await prisma.staff.findFirst({
+         where: {
+            AND: [
+               {
+                  employee: {
+                     id: model.employee.id
+                  }
+               },
+               {
+                  begin_date: {
+                     lte: new Date(model.begin_date)
+                  }
+               },
+               {
+                  OR: [
+                     {
+                        end_date: null
+                     },
+                     {
+                        end_date: {
+                           gt: model.end_date ? new Date(model.end_date) : new Date()
+                        }
+                     }
+                  ]
+               }
+            ]
+         }
+      });
+      if (employeeIsBusy)
+         throw new Error('Сотрудник уже привязан к другой ставке!');
+
       const result = await prisma.staff.create({
          data: {
             employee_id: model.employee.id,
-            rate_id: model.rate.id
+            rate_id: model.rate.id,
+            begin_date: model.begin_date,
+            end_date: model.end_date
          }
       });
 
@@ -16,14 +80,31 @@ export const POST = async (request) => {
    }
 
    const read = async (model, params) => {
+      const currentDate = new Date();
       let filter = {
-         rate: {
-            division: {
-               id: params.division_id
+         AND: [
+            {
+               rate: {
+                  division: {
+                     id: params.division_id
+                  }
+               },
+               
+            },
+            {
+               begin_date: {
+                  lte: currentDate
+               }
+            },
+            {
+               OR: [
+                  { end_date: null },
+                  { end_date: { gt: currentDate } }
+               ]
             }
-         }
+         ]
       };
-
+      
       if (model.searchStr) {
          filter = {
             AND:  [
@@ -34,7 +115,25 @@ export const POST = async (request) => {
                            { employee: { pathname: { contains: model.searchStr, mode: 'insensitive'}}}
                         ]
                      },
-                     { rate: { division: { id: params.division_id }}}                     
+                     {
+                        rate: {
+                           division: {
+                              id: params.division_id
+                           }
+                        },
+                        
+                     },
+                     {
+                        begin_date: {
+                           lte: currentDate
+                        }
+                     },
+                     {
+                        OR: [
+                           { end_date: null },
+                           { end_date: { gt: currentDate } }
+                        ]
+                     }
                   ]
          }
       }
@@ -105,16 +204,19 @@ export const POST = async (request) => {
    }
 
    const update = async (model) => {
-   }
-
-   const drop = async (model) => {
-      const result = await prisma.staff.delete({
+      if (!model.end_date)
+         throw new Error('Необходимо указать дату закрытия');
+      await prisma.staff.update({
          where: {
             id: model.id
+         },
+         data: {
+            end_date: model.end_date
          }
-      });
+      })
+   }
 
-      return result;
+   const drop = async (model) => {      
    }
 
    const { operation, model, params } = await request.json();
@@ -136,6 +238,6 @@ export const POST = async (request) => {
       }
       return await NextResponse.json({status: 'success', data: result});
    } catch (error) {
-      return await NextResponse.json({status: 'error', data: error.stack });
+      return await NextResponse.json({status: 'error', data: error.message });
    }
 }

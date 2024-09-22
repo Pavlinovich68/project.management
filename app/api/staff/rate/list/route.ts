@@ -29,30 +29,7 @@ export const GET = async (request: NextRequest) => {
             }
          }
       });
-      const all: IBaseEntity[] = data.map(item => {return {id: item.id, name: item.no + ' ' + item.post.name }});
-
-      const array1 = await prisma.staff.findMany({
-         where: {
-            rate: {
-               division_id: id
-            }
-         },
-         select: {
-            rate: {
-               select: {
-                  id: true,
-                  no: true,
-                  post: true
-               }
-            }
-         }
-      })
-      const array2 = array1.map(item => {return {id: item.rate.id, name: item.rate.no + ' ' + item.rate.post.name}});
-
-      //@ts-ignore
-      const filtered = all.map(i => i.id).filter(elem_A => !array2.map(i => i.id).includes(elem_A));
-      const result = all.filter(i => {return filtered.includes(i.id)});
-
+      const result: IBaseEntity[] = data.map(item => {return {id: item.id, name: item.no + ' ' + item.post.name }});
       return NextResponse.json({status: 'success', data: result});
    } catch (error) {
       return NextResponse.json({status: 'error', data: error });

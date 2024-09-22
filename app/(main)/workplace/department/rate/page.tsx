@@ -236,7 +236,7 @@ const StuffUnit = () => {
                <h3>Ставки</h3>
                <ItrGrid
                   controller={controllerName}
-                  params={12}
+                  params={session.user.division_id}
                   create={createMethod}
                   update={updateMethod}
                   drop={deleteMethod}

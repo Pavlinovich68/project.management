@@ -17,6 +17,7 @@ import ItrGrid from "@/components/ItrGrid";
 import ItrCard from "@/components/ItrCard";
 import { useSession } from "next-auth/react";
 import { Calendar } from "primereact/calendar";
+import DateHelper from "@/services/date.helpers";
 
 const Staff = () => {
    const controllerName = 'staff';
@@ -30,7 +31,8 @@ const Staff = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const [rates, setRates] = useState<IBaseEntity[]>();
    const [employees, setEmployees] = useState<IBaseEntity[]>();
-   const {data: session} = useSession();
+   const {data: session} = useSession();   
+   const [disabledEditors, setDisabledEditors] = useState<boolean>(false);
 
    const readRates = async () => {
       const res = await fetch(`/api/staff/rate/list?id=${session?.user.division_id}`, {
@@ -52,9 +54,15 @@ const Staff = () => {
       });
       const data = await res.json();
       setEmployees(data.data);
-   }
+   }   
 
 //#region //SECTION - GRID
+const dateTemplate1 = (rowData: IStaff) => {
+   return DateHelper.formatDate(rowData.begin_date);
+};
+const dateTemplate2 = (rowData: IStaff) => {
+   return DateHelper.formatDate(rowData.end_date);
+};
    const gridColumns = [
       <Column
          key="staffGridColumn1"
@@ -66,7 +74,23 @@ const Staff = () => {
          key="staffGridColumn2"
          field="employee.name"
          header="Сотрудник"
-         style={{ width: '50%' }}>
+         style={{ width: '45%' }}>
+      </Column>,
+      <Column
+         key="staffGridColumn3"
+         body={dateTemplate1}
+         field="begin_date"
+         header="Дата начала"
+         sortable
+         style={{ width: '10%' }}>
+      </Column>,
+      <Column
+         key="staffGridColumn4"
+         body={dateTemplate2}
+         field="end_date"
+         header="Дата окончания"
+         sortable
+         style={{ width: '10%' }}>
       </Column>,
    ];
 //#endregion //!SECTION
@@ -97,6 +121,7 @@ const Staff = () => {
                <label htmlFor="rate" className="mr-3">Ставка</label>
                <div>
                   <Dropdown
+                     disabled={disabledEditors}
                      value={staff.values.rate?.id} 
                      className={classNames({"p-invalid": submitted && !staff.values.rate})} 
                      required 
@@ -117,6 +142,7 @@ const Staff = () => {
                <label htmlFor="employee" className="mr-3">Сотрудник</label>
                <div>
                   <Dropdown
+                     disabled={disabledEditors}
                      value={staff.values.employee?.id} 
                      className={classNames({"p-invalid": submitted && !staff.values.employee})} 
                      required 
@@ -135,7 +161,7 @@ const Staff = () => {
             </div>            
             <div className="field col-12 md:col-6">
                <label htmlFor="begin_date">Дата начала действия</label>
-               <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !staff.values.begin_date})} value={new Date(staff.values.begin_date)} onChange={(e) => staff.setFieldValue('begin_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала действия"/>
+               <Calendar disabled={disabledEditors} id="begin_date" className={classNames({"p-invalid": submitted && !staff.values.begin_date})} value={new Date(staff.values.begin_date)} onChange={(e) => staff.setFieldValue('begin_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала действия"/>
             </div>
             <div className="field col-12 md:col-6">
                <label htmlFor="end_date">Дата окончания действия</label>
@@ -149,31 +175,30 @@ const Staff = () => {
 //#region //SECTION CRUD
    const createMethod = () => {
       setCardHeader('Заполнение ставки');
-      readRates();
+      setDisabledEditors(false);
       readEmployees();
-      staff.setValues(model);
-      setRecordState(RecordState.new);
-      setSubmitted(false);
-      if (editor.current) {
-         editor.current.visible(true);
-      }
+      readRates().then(() => {
+         staff.setValues(model);
+         setRecordState(RecordState.new);
+         setSubmitted(false);
+         if (editor.current) {
+            editor.current.visible(true);
+         }
+      });      
    }
 
    const updateMethod = async (data: IStaff) => {
-      debugger;
-      setCardHeader('Изменение ставки');
-      readRates();
-      readEmployees();
-      staff.setValues(data);
-      setRecordState(RecordState.edit);
-      setSubmitted(false);
-      if (editor.current) {
-         editor.current.visible(true);
-      }
-   }
-
-   const deleteMethod = async (data: any) => {
-      return await crudHelper.crud(controllerName, CRUD.delete, { id: data.id });
+      setCardHeader('Освобождение ставки');
+      setDisabledEditors(true);
+      readEmployees()
+      readRates().then(()=> {
+         staff.setValues(data);
+         setRecordState(RecordState.edit);
+         setSubmitted(false);
+         if (editor.current) {
+            editor.current.visible(true);
+         }
+      });      
    }
 
    const saveMethod = async () => {
@@ -238,10 +263,9 @@ const Staff = () => {
                   controller={controllerName}
                   create={createMethod}
                   update={updateMethod}
-                  drop={deleteMethod}
                   tableStyle={{ minWidth: '50rem' }}
                   showClosed={false}
-                  //editVisible={false}
+                  deleteVisible={false}
                   columns={gridColumns}
                   params={{division_id: session.user.division_id}}
                   ref={grid}/>
