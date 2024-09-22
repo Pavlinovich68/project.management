@@ -1,15 +1,37 @@
 'use client'
-import React, {useRef, useState, useEffect, cache} from "react";
+import React, {useRef, useState, useEffect, cache, SyntheticEvent} from "react";
 import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
 import { ICalendar } from "@/models/ICalendar";
 import { Session } from "next-auth";
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
+import { Dropdown } from "primereact/dropdown";
+
+interface Exclusion {
+   value: number,
+   name: string
+}
 
 const ItrCalendar = ({year, month, division_id, session}: {year: number, month: number, division_id: number, session: Session}) => {
    const toast = useRef<Toast>(null);
    const [data, setData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+   const [cardHeader, setCardHeader] = useState<string>('');
+   const [cardVisible, setCardVisible] = useState<boolean>(false);
+   const [selectedExclusion, setSelectedExclusion] = useState<Exclusion | null>(null);
+   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
+
+   const exclusions: Exclusion[] = [
+      {name: 'Отпуск',             value: 5},
+      {name: 'Больничный',         value: 6},
+      {name: 'Без содержания',     value: 7},
+      {name: 'Прогул',             value: 8},
+      {name: 'Вакансия',           value: 9},
+      {name: 'Работа в выходной',  value: 10},
+   ];
 
    useEffect(() => {
       getCalendarData();
@@ -37,6 +59,49 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
       setIsLoaded(false);
    }
 
+   const getCardHeader = async (id: number) => {
+      const res = await fetch(`/api/calendar/department/cell_prop?id=${id}`, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         cache: 'force-cache'
+      });
+      const data = await res.json();
+      setSelectedExclusion(null);
+      setCardHeader(`Исключение для ${data.data.name} на дату ${data.data.date}`);
+   }
+
+   const saveCellType = async () => {
+      const el = document.getElementById(`calendar-cell-id-${selectedId}`);
+      el?.classList.remove('cell-0');
+      el?.classList.remove('cell-1');
+      el?.classList.remove('cell-2');
+      el?.classList.remove('cell-3');
+      el?.classList.remove('cell-4');
+      el?.classList.remove('cell-5');
+      el?.classList.remove('cell-6');
+      el?.classList.remove('cell-7');
+      el?.classList.remove('cell-8');
+      el?.classList.remove('cell-9');
+      el?.classList.remove('cell-10');
+      el?.classList.add(`cell-${selectedExclusion}`);
+      setSelectedId(undefined);
+      
+      await fetch(`/api/calendar/department/update_cell`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            id: selectedId, 
+            type: selectedExclusion}),
+         cache: 'force-cache'
+      });
+      setCardVisible(false);
+      getCalendarData();
+   }
+
    //@ts-ignore
    if (data === 'Календарь не обнаружен!' || isLoaded) 
       return <React.Fragment/>
@@ -51,13 +116,35 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
       return intersection.length > 0
    }
 
-   const onCellClick = (id: number) => { 
+   const onCellClick = async (id: number, e: SyntheticEvent) => {
       if (!checkRoles(['master'])) {
-         console.log('Пошел на хуй!');
-         return;
       }    
-      console.log(`Cell click ${id}`);
+      await getCardHeader(id);
+      setSelectedId(id);
+      setCardVisible(true);
    }
+
+   const confirmSave = (event: any) => {
+      confirmPopup({
+         target: event.currentTarget,
+         message: (
+            <div className="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
+                  <i className="pi pi-exclamation-circle text-6xl text-primary-500"></i>
+                  <span>Вы действительно хотите изменить тип выбранного дня?</span>
+            </div>
+         ),
+         defaultFocus: 'accept',
+         accept: saveCellType
+      });
+   }
+
+   const dialogFooter = (
+      <div className="itr-dialog-footer">
+         <Button label="Отмена" icon="pi pi-times" className="p-button-text" onClick={() => {setCardVisible(false);}}/>
+         <Button label="Сохранить" icon="pi pi-check" autoFocus onClick={confirmSave} type="submit"/>
+         <ConfirmPopup/>
+      </div>
+   );
 
    return (
       <React.Fragment>         
@@ -91,20 +178,20 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
                               row?.cells?.map((day) => {
                                  let cellClass = styles.dataCell;
                                  switch (day.type) {
-                                    case 0: cellClass = styles.cell0; break;
-                                    case 1: cellClass = styles.cell1; break;
-                                    case 2: cellClass = styles.cell2; break;
-                                    case 3: cellClass = styles.cell3; break;
-                                    case 4: cellClass = styles.cell4; break;
-                                    case 5: cellClass = styles.cell5; break;
-                                    case 6: cellClass = styles.cell6; break;
-                                    case 7: cellClass = styles.cell7; break;
-                                    case 8: cellClass = styles.cell8; break;
-                                    case 9: cellClass = styles.cell9; break;
-                                    case 10: cellClass = styles.cell10; break;
+                                    case 0: cellClass = "cell-0"; break;
+                                    case 1: cellClass = "cell-1"; break;
+                                    case 2: cellClass = "cell-2"; break;
+                                    case 3: cellClass = "cell-3"; break;
+                                    case 4: cellClass = "cell-4"; break;
+                                    case 5: cellClass = "cell-5"; break;
+                                    case 6: cellClass = "cell-6"; break;
+                                    case 7: cellClass = "cell-7"; break;
+                                    case 8: cellClass = "cell-8"; break;
+                                    case 9: cellClass = "cell-9"; break;
+                                    case 10: cellClass = "cell-010"; break;
                                  }
                                  return (
-                                    <div key={`calendar-cell-id-${day.id}`} onClick={() => onCellClick(day.id)} className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell, cellClass)}>{day.hours}</div>
+                                    <div id={`calendar-cell-id-${day.id}`} key={`calendar-cell-id-${day.id}`} onClick={(e) => onCellClick(day.id, e)} className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell, cellClass)}>{day.hours}</div>
                                  )
                               })
                            }
@@ -135,6 +222,26 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
                   </div>
                </div>
             </div>
+            <Dialog
+               className="itr-dialog"
+               header={cardHeader}               
+               visible={cardVisible}
+               style={{width: 600}}
+               footer={dialogFooter}
+               onHide={()=> setCardVisible(false)}>
+               <div className="card flex justify-content-center">
+                  <Dropdown 
+                     value={selectedExclusion} 
+                     onChange={(e) => setSelectedExclusion(e.value)}                        
+                     options={exclusions} 
+                     optionLabel="name" 
+                     optionValue="value"
+                     placeholder="Выберите тип исключения" 
+                     className="w-full" 
+                     highlightOnSelect={true}
+                  />
+               </div>
+            </Dialog>
             <Toast ref={toast} />
       </React.Fragment>
    );
