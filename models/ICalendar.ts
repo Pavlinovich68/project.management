@@ -18,7 +18,7 @@ export interface ICalendarHeader {
 export interface ICalendarRow {
    name: string | undefined,
    cells: ICalendarCell[] | undefined
-   hours: number | undefined
+   hours: number
    total: number | undefined
 }
 
@@ -34,4 +34,9 @@ export interface ICalendarFooter {
    hours: number[] | undefined,
    sum: number | undefined,
    total: number | undefined
+}
+
+export interface ICellProperty {
+   type: number,
+   hours: number
 }
