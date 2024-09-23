@@ -39,7 +39,24 @@ export const POST = async (request: NextRequest) => {
       });
 
       for (const _row of _rows) {
-         const _staff = await prisma.staff.findFirst({ where: {rate_id: _row.rate_id} });
+         const _staff = await prisma.staff.findFirst({ 
+            where: {
+               rate_id: _row.rate_id,
+               begin_date: {
+                  lte: new Date()
+               },
+               OR: [
+                  {
+                     end_date: {
+                        gte: new Date()
+                     }
+                  },
+                  {
+                     end_date: null
+                  }
+               ]
+            } 
+         });
          let _rowHeader = 'Вакансия';
          if (_staff) {
             const _employee = await prisma.employee.findFirst({ where: {id: _staff.employee_id } });
@@ -114,8 +131,6 @@ export const POST = async (request: NextRequest) => {
       }
 
       _footer.sum = _footer.hours?.reduce((item, a) => item + a, 0);
-      //ts-ignore
-      //_footer.total = result.rows?.map(i => i.total).reduce((item, a) => item??0 + a, 0);
       _footer.total = 0;
       for (const _row of result.rows??[]) {
          _footer.total += _row.total??0;

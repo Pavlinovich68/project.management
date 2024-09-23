@@ -204,8 +204,6 @@ export const POST = async (request) => {
    }
 
    const update = async (model) => {
-      if (!model.end_date)
-         throw new Error('Необходимо указать дату закрытия');
       await prisma.staff.update({
          where: {
             id: model.id
