@@ -224,6 +224,7 @@ async function main() {
             
             const _row = await prisma.dept_calendar_row.create({
                data: {
+                  no: rate.no,
                   calendar_id: _calendar.id,
                   rate_id: rate.id
                }

@@ -230,6 +230,7 @@ model dept_calendar {
 
 model dept_calendar_row {
    id          Int            @id @default(autoincrement())
+   no          Int
    rate_id     Int
    rate        rate           @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    cells       dept_calendar_cell[]
