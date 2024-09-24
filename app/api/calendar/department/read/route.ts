@@ -2,7 +2,7 @@ import { ICalendar, ICalendarCell, ICalendarFooter, ICalendarRow } from "@/model
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-const buildRow = async (year: number, month: number, days: number[], row_id: number, calendar_id: number): Promise<ICalendarRow> => {
+const buildRow = async (year: number, month: number, days: number[], row_id: number): Promise<ICalendarRow> => {
    const now = new Date(year, month, 0)
    const staff = await prisma.staff.findFirst({
       where: {
