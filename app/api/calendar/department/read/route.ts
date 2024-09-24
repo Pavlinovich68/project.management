@@ -2,8 +2,15 @@ import { ICalendar, ICalendarCell, ICalendarFooter, ICalendarRow } from "@/model
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-const buildRow = async (year: number, month: number, days: number[], row_id: number): Promise<ICalendarRow> => {
-   const now = new Date(year, month, 0)
+const readRow = async (year: number, month: number, days: number[], row_id: number): Promise<ICalendarRow> => {
+   // Достаю базовую строку календаря
+   const row = await prisma.dept_calendar_row.findFirst({
+      where: {
+         rate_id: row_id
+      }
+   });
+   // Получаю сотрудника привязанного к строке на состояние последний день месяцв
+   const now = new Date(year, month, 0);
    const staff = await prisma.staff.findFirst({
       where: {
          AND: [
@@ -14,7 +21,7 @@ const buildRow = async (year: number, month: number, days: number[], row_id: num
                   end_date: null
                },
                {
-                  end_date: { gt: now }
+                  end_date: { gte: now }
                }
             ]}
          ]
@@ -23,7 +30,14 @@ const buildRow = async (year: number, month: number, days: number[], row_id: num
          employee: true
       }
    });
-   const row: ICalendarRow = {
+
+   const cells = await prisma.dept_calendar_cell.findMany({
+      where: {
+         
+      }
+   })
+
+   const result: ICalendarRow = {
       name: staff ? `${staff.employee.surname} ${staff.employee.name?.charAt(0)}.${staff.employee.pathname?.charAt(0)}` : 'Вакансия',
       cells: [],
       hours: 0,
@@ -32,11 +46,11 @@ const buildRow = async (year: number, month: number, days: number[], row_id: num
 
    for (const day of days) {
       const cell = await buildCell(year, month, day, staff);
-      row.cells?.push(cell);
-      row.hours += cell.hours;
+      result.cells?.push(cell);
+      result.hours += cell.hours;
    }
 
-   return row;
+   return result;
 }
 
 // 0  - holiday            Выходной или праздничный   0
@@ -109,12 +123,13 @@ export const POST = async (request: NextRequest) => {
       });
 
       for (const row of rows) {
-         const calendarRow = await buildRow(year, month, dayArray, row.id, _calendar.id);
+         const calendarRow = await readRow(year, month, dayArray, row.id);
          const prevHours = await previewHours();
          calendarRow.total = calendarRow?.hours + prevHours;
          result.rows?.push(calendarRow);
          result.footer = await buildFooter();
       }
+   
       // const _rows = await prisma.dept_calendar_row.findMany({
       //    where: {
       //       calendar_id: _calendar.id
