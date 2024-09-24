@@ -15,7 +15,7 @@ interface Exclusion {
    name: string
 }
 
-const ItrCalendar = ({year, month, division_id, session}: {year: number, month: number, division_id: number, session: Session}) => {
+const ItrCalendar = ({year, month, division_id, session, refresh}: {year: number, month: number, division_id: number, session: Session, refresh: boolean}) => {
    const toast = useRef<Toast>(null);
    const [data, setData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -23,6 +23,25 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
    const [cardVisible, setCardVisible] = useState<boolean>(false);
    const [selectedExclusion, setSelectedExclusion] = useState<Exclusion | null>(null);
    const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
+   const [start, setStart] = useState<number>(0);
+   const [end, setEnd] = useState<number>(0);
+   const [selecting, setSelecting] = useState<boolean>(false);
+
+   const beginSelection = (i: number) => {
+      setSelecting(true);
+      setStart(i);
+      updateSelection(i);
+   };
+   const endSelection = (i = end) => {
+      setSelecting(false);
+      updateSelection(i);
+   };
+
+   const updateSelection = (i: number) => {
+      if (selecting) {
+         setEnd(i);
+      }
+   };
 
    const exclusions: Exclusion[] = [
       {name: 'Выходной',               value: 0},
@@ -40,7 +59,7 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
 
    useEffect(() => {
       getCalendarData();
-   }, [year, month, division_id]);
+   }, [year, month, division_id, refresh]);
 
    const getCalendarData = async () => {
       if (!division_id) {
@@ -196,7 +215,17 @@ const ItrCalendar = ({year, month, division_id, session}: {year: number, month: 
                                     case 10: cellClass = "cell-010"; break;
                                  }
                                  return (
-                                    <div id={`calendar-cell-id-${day.id}`} key={`calendar-cell-id-${day.id}`} onClick={(e) => onCellClick(day.id, e)} className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.dataCell, cellClass)}>{day.hours}</div>
+                                    <div 
+                                       id={`calendar-cell-id-${day.id}`} 
+                                       key={`calendar-cell-id-${day.id}`} 
+                                       onClick={(e) => onCellClick(day.id, e)}
+                                       onMouseDown={() => beginSelection(day.id)}
+                                       onMouseUp={() => endSelection(day.id)} 
+                                       onMouseMove={() => updateSelection(day.id)}
+                                       className={classNames("flex align-items-center justify-content-center w-4rem font-bold noselect", styles.dataCell, cellClass,
+                                          (end <= day.id && day.id <= start) || (start <= day.id && day.id <= end) ? "bg-red-600" : ""
+                                       )}
+                                    >{day.hours}</div>
                                  )
                               })
                            }

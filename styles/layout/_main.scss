@@ -312,70 +312,130 @@ tr.node-closed-color {
    display: none;
 }
 
+$proj-color-0: #D9124A;
+$proj-color-1: #e681b3;
+$proj-color-2: #64BDE1;
+$proj-color-3: #45B97C;
+$proj-color-4: #eeeeee;
+$proj-color-5: #fd9741;
+$proj-color-6: #208076;
+$proj-color-7: #d76b11;
+$proj-color-8: #7C6EB0;
+$proj-color-9: #576375;
+$proj-color-10: #DCAA44;
+
 .cell-0 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
-   background-color: var(--red-500);
-   color: var(--red-500);
+   background-color: $proj-color-0;
+   color: $proj-color-0;
 }
 .cell-1 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
-   color: var(--gray-600);
-   background-color: var(--red-100);
+   color: var(--gray-900);
+   background-color: $proj-color-1;
 }
 .cell-2 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--pink-500);
-   background-color: var(--pink-500);
+   background-color: $proj-color-2;
 }
 .cell-3 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--gray-600);
-   background-color: var(--gray-100);
+   background-color: $proj-color-3;
 }
 .cell-4 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--gray-600);
-   background-color: var(--surface-900);
+   background-color: $proj-color-4;
    padding-top: 6px !important;
 }
 .cell-5 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
-   color: var(--orange-400);
-   background-color: var(--orange-400);
+   color: $proj-color-5;
+   background-color: $proj-color-5;
 }
 .cell-6 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--red-700);
-   background-color: var(--red-700);
+   background-color: $proj-color-6;
 }
 .cell-7 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--red-300);
-   background-color: var(--red-300);
+   background-color: $proj-color-7;
 }
 .cell-8 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--blue-600);
-   background-color: var(--blue-600);
+   background-color: $proj-color-8;
 }
 .cell-9 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--gray-600);
-   background-color: var(--gray-600);
+   background-color: $proj-color-9;
 }
 .cell-10 {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
    color: var(--red-500);
-   background-color: var(--gray-100);
+   background-color: $proj-color-10;
+}
+
+.cell-bg-0 {
+   background-color: $proj-color-0;
+}
+.cell-bg-1 {
+   background-color: $proj-color-1;
+}
+.cell-bg-2 {
+   background-color: $proj-color-2;
+}
+.cell-bg-3 {
+   background-color: $proj-color-3;
+}
+.cell-bg-4 {
+   background-color: $proj-color-4;
+}
+.cell-bg-5 {
+   background-color: $proj-color-5;
+}
+.cell-bg-6 {
+   background-color: $proj-color-6;
+}
+.cell-bg-7 {
+   background-color: $proj-color-7;
+}
+.cell-bg-8 {
+   background-color: $proj-color-8;
+}
+.cell-bg-9 {
+   background-color: $proj-color-9;
+}
+.cell-bg-10 {
+   background-color: $proj-color-10;
+}
+
+.noselect {
+   -webkit-touch-callout: none; /* iOS Safari */
+     -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+         -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                   supported by Chrome and Opera */
+}
+
+.calendar-tag {
+   margin-right: 0.5rem;
 }
