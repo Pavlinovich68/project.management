@@ -10,6 +10,8 @@ import { Button } from "primereact/button";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Dropdown } from "primereact/dropdown";
 import ItrCalendarRow from "./ItrCalendarRow";
+import ItrCalendarHeader from "./ItrCalendarHeader";
+import ItrCalendarFooter from "./ItrCalendarFooter";
 
 interface Exclusion {
    value: number,
@@ -174,49 +176,11 @@ const ItrCalendar = ({year, month, division_id, session, refresh}: {year: number
    return (
       <React.Fragment>         
             <div className={classNames('card', styles.monthCalendar)} style={{marginTop: "1em"}}>
-               <div className={classNames("flex justify-content-center", styles.calendarHeader)}>
-                  <div className={classNames("flex align-items-center justify-content-center w-8rem font-bold", styles.cellHeader, styles.cellBl, styles.cellBt, styles.cellBr)}>
-                     {data?.header?.name}
-                  </div>
-                  {
-                     data?.header?.days?.map((day) => {                        
-                        return (
-                           <div key="calendar-header" className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBt, styles.cellBr)}>
-                              {day}
-                           </div>
-                        )
-                     })
-                  }
-                  <div className={classNames("flex align-items-center justify-content-center w-4rem font-bold", styles.cellHeader, styles.cellBr, styles.cellBt)}>
-                     {data?.header?.hours}
-                  </div>
-                  <div className={classNames("flex align-items-center justify-content-center w-6rem font-bold", styles.cellHeader, styles.cellBr, styles.cellBt)}>
-                     {data?.header?.total}
-                  </div>
-               </div>
+               <ItrCalendarHeader header={data?.header}/>               
                {
                   data?.rows?.map((row) => { return <ItrCalendarRow key={`row`} row={row}/> })
                }
-               <div className={classNames("flex justify-content-center", styles.calendarFooter)}>
-                  <div className={classNames("flex vertical-align-middle w-8rem font-bold pl-2", styles.cellHeader, styles.cellBl, styles.cellBb, styles.cellBr, styles.calendarLeftCell)}>
-                     {data?.footer?.name}
-                  </div>
-                  {
-                     data?.footer?.hours?.map((day) => {
-                        return (
-                           <div key="calendar-footer" className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBr, styles.cellBb, styles.cellVertical)}>
-                              {day}
-                           </div>
-                        )
-                     })
-                  }
-                  <div className={classNames("w-4rem font-bold pr-2 text-right", styles.cellBr, styles.cellBb, styles.calendarLeftCell)}>
-                     {data?.footer?.sum?.toLocaleString()}
-                  </div>
-                  <div className={classNames("w-6rem font-bold pr-2 text-right", styles.cellBr, styles.cellBb, styles.calendarLeftCell)}>
-                     {data?.footer?.total?.toLocaleString()}
-                  </div>
-               </div>
+               <ItrCalendarFooter footer={data?.footer}/>
             </div>
             <Dialog
                className="itr-dialog"
