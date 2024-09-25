@@ -9,6 +9,7 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Dropdown } from "primereact/dropdown";
+import ItrCalendarRow from "./ItrCalendarRow";
 
 interface Exclusion {
    value: number,
@@ -194,46 +195,7 @@ const ItrCalendar = ({year, month, division_id, session, refresh}: {year: number
                   </div>
                </div>
                {
-                  data?.rows?.map((row) => {
-                     return (
-                        <div key="row" className={classNames("flex justify-content-center", styles.calendarRow)}>
-                           <div className={classNames("flex align-items-start justify-content-start w-8rem font-bold pl-2", styles.cellHeader, styles.cellBl)}>{row.name}</div>
-                           {
-                              row?.cells?.map((day) => {
-                                 let cellClass = styles.dataCell;
-                                 switch (day.type) {
-                                    case 0: cellClass = "cell-0"; break;
-                                    case 1: cellClass = "cell-1"; break;
-                                    case 2: cellClass = "cell-2"; break;
-                                    case 3: cellClass = "cell-3"; break;
-                                    case 4: cellClass = "cell-4"; break;
-                                    case 5: cellClass = "cell-5"; break;
-                                    case 6: cellClass = "cell-6"; break;
-                                    case 7: cellClass = "cell-7"; break;
-                                    case 8: cellClass = "cell-8"; break;
-                                    case 9: cellClass = "cell-9"; break;
-                                    case 10: cellClass = "cell-010"; break;
-                                 }
-                                 return (
-                                    <div 
-                                       id={`calendar-cell-id-${day.id}`} 
-                                       key={`calendar-cell-id-${day.id}`} 
-                                       onClick={(e) => onCellClick(day.id, e)}
-                                       onMouseDown={() => beginSelection(day.id)}
-                                       onMouseUp={() => endSelection(day.id)} 
-                                       onMouseMove={() => updateSelection(day.id)}
-                                       className={classNames("flex align-items-center justify-content-center w-4rem font-bold noselect", styles.dataCell, cellClass,
-                                          (end <= day.id && day.id <= start) || (start <= day.id && day.id <= end) ? "bg-red-600" : ""
-                                       )}
-                                    >{day.hours}</div>
-                                 )
-                              })
-                           }
-                           <div className={classNames("flex align-items-end justify-content-end w-4rem pr-2 font-bold", styles.cellHeader, styles.cellBr)}>{row.hours}</div>
-                           <div className={classNames("flex align-items-end justify-content-end w-6rem pr-2 font-bold", styles.cellHeader, styles.cellBr)}>{row.total?.toLocaleString()}</div>
-                        </div>
-                     )
-                  })
+                  data?.rows?.map((row) => { return <ItrCalendarRow key={`row`} row={row}/> })
                }
                <div className={classNames("flex justify-content-center", styles.calendarFooter)}>
                   <div className={classNames("flex vertical-align-middle w-8rem font-bold pl-2", styles.cellHeader, styles.cellBl, styles.cellBb, styles.cellBr, styles.calendarLeftCell)}>
