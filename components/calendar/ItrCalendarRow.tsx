@@ -8,6 +8,7 @@ const ItrCalendarRow = ({row, writeMode}:{row:ICalendarRow, writeMode: boolean})
    const [start, setStart] = useState<number>(0);
    const [end, setEnd] = useState<number>(0);
    const [selecting, setSelecting] = useState<boolean>(false);
+   const [newClass, setNewClass] = useState<string>('cell-4')
 
    const beginSelection = (i: number) => {
       if (!writeMode) return;
@@ -27,6 +28,10 @@ const ItrCalendarRow = ({row, writeMode}:{row:ICalendarRow, writeMode: boolean})
          setEnd(i);
       }
    };
+
+   const changeClass = (name: string): string => {
+      return newClass;
+   }
 
    return (
       <React.Fragment>
@@ -51,12 +56,13 @@ const ItrCalendarRow = ({row, writeMode}:{row:ICalendarRow, writeMode: boolean})
                   return (
                      <div 
                         id={`calendar-cell-id-${day.id}`} 
-                        key={`calendar-cell-id-${day.id}`} 
+                        key={`calendar-cell-id-${day.id}`}
+                        data-base-type={day.type} 
                         //onClick={(e) => onCellClick(day.id, e)}                        
                         onMouseDown={() => beginSelection(day.id)}
                         onMouseUp={() => endSelection(day.id)} 
                         onMouseMove={() => updateSelection(day.id)}
-                        className={classNames("flex align-items-center justify-content-center w-4rem font-bold noselect", styles.dataCell, cellClass,
+                        className={classNames("flex align-items-center justify-content-center w-4rem font-bold noselect", styles.dataCell, changeClass(cellClass),
                            (end <= day.id && day.id <= start) || (start <= day.id && day.id <= end) ? "bg-red-600" : ""
                         )}
                      >{day.hours}</div>
