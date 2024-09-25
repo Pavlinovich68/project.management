@@ -4,22 +4,25 @@ import styles from "@/app/(main)/workplace/department/calendar/styles.module.scs
 import React, {useRef, useState, useEffect} from "react";
 import { ICalendar, ICalendarRow } from "@/models/ICalendar";
 
-const ItrCalendarRow = ({row}:{row:ICalendarRow}) => {
+const ItrCalendarRow = ({row, writeMode}:{row:ICalendarRow, writeMode: boolean}) => {
    const [start, setStart] = useState<number>(0);
    const [end, setEnd] = useState<number>(0);
    const [selecting, setSelecting] = useState<boolean>(false);
 
    const beginSelection = (i: number) => {
+      if (!writeMode) return;
       setSelecting(true);
       setStart(i);
       updateSelection(i);
    };
    const endSelection = (i = end) => {
+      if (!writeMode) return;
       setSelecting(false);
       updateSelection(i);
    };
 
    const updateSelection = (i: number) => {
+      if (!writeMode) return;
       if (selecting) {
          setEnd(i);
       }
@@ -49,7 +52,7 @@ const ItrCalendarRow = ({row}:{row:ICalendarRow}) => {
                      <div 
                         id={`calendar-cell-id-${day.id}`} 
                         key={`calendar-cell-id-${day.id}`} 
-                        //onClick={(e) => onCellClick(day.id, e)}
+                        //onClick={(e) => onCellClick(day.id, e)}                        
                         onMouseDown={() => beginSelection(day.id)}
                         onMouseUp={() => endSelection(day.id)} 
                         onMouseMove={() => updateSelection(day.id)}

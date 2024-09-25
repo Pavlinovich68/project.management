@@ -18,6 +18,8 @@ import ItrCard from "@/components/ItrCard";
 import { useSession } from "next-auth/react";
 import { Calendar } from "primereact/calendar";
 import DateHelper from "@/services/date.helpers";
+import RolesHelper from "@/services/roles.helper";
+import { Button } from "primereact/button";
 
 const Staff = () => {
    const controllerName = 'staff';
@@ -63,7 +65,8 @@ const dateTemplate1 = (rowData: IStaff) => {
 const dateTemplate2 = (rowData: IStaff) => {
    return DateHelper.formatDate(rowData.end_date);
 };
-   const gridColumns = [
+
+const gridColumns = [      
       <Column
          key="staffGridColumn1"
          field="rate.name"
@@ -91,7 +94,7 @@ const dateTemplate2 = (rowData: IStaff) => {
          header="Дата окончания"
          sortable
          style={{ width: '10%' }}>
-      </Column>,
+      </Column>      
    ];
 //#endregion //!SECTION
 
@@ -264,7 +267,7 @@ const dateTemplate2 = (rowData: IStaff) => {
                   create={createMethod}
                   update={updateMethod}
                   tableStyle={{ minWidth: '50rem' }}
-                  showClosed={false}
+                  showClosed={true}
                   deleteVisible={false}
                   columns={gridColumns}
                   params={{division_id: session.user.division_id}}

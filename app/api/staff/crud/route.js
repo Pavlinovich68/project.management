@@ -81,6 +81,12 @@ export const POST = async (request) => {
 
    const read = async (model, params) => {
       const currentDate = new Date();
+      const dateFilter = !model.showClosed ? {
+         OR: [
+            { end_date: null },
+            { end_date: { gt: currentDate } }
+         ]
+      } : {}
       let filter = {
          AND: [
             {
@@ -96,12 +102,7 @@ export const POST = async (request) => {
                   lte: currentDate
                }
             },
-            {
-               OR: [
-                  { end_date: null },
-                  { end_date: { gt: currentDate } }
-               ]
-            }
+            dateFilter
          ]
       };
       
