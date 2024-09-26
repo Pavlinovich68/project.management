@@ -328,39 +328,46 @@ $color-10: #DCAA44;
 .day-cell {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
+   height: 24px;
+   width: 24px !important;
 }
 
-.cell-0 {   
+.day-header-cell {
+   width: 24px !important;
+   border-bottom: 1px solid var(--surface-50);
+}
+
+.cell-tc-0 {   
    color: $color-0;
 }
-.cell-1 {
+.cell-tc-1 {
    color: $color-def; 
 }
-.cell-2 {
+.cell-tc-2 {
    color: $color-2
 }
-.cell-3 {
+.cell-tc-3 {
    color: $color-def
 }
-.cell-4 {
+.cell-tc-4 {
    color: $color-def
 }
-.cell-5 {
+.cell-tc-5 {
    color: $color-5
 }
-.cell-6 {
+.cell-tc-6 {
    color: $color-6;
 }
-.cell-7 {
+.cell-tc-7 {
    color: $color-7;
 }
-.cell-8 {
+.cell-tc-8 {
    color: $color-8;
 }
-.cell-9 {
+.cell-tc-9 {
    color: $color-9;
 }
-.cell-10 {
+.cell-tc-10 {
    color: $color-def;
 }
 

@@ -19,7 +19,7 @@ interface Exclusion {
 }
 
 const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, dayType}: 
-   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number}) => {
+   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number | undefined}) => {
    const toast = useRef<Toast>(null);
    const [data, setData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -115,46 +115,6 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
    if (data === 'Календарь не обнаружен!' || isLoaded) 
       return <React.Fragment/>
 
-   // const checkRoles = (arr: string[]):boolean => {
-   //    const userRoles = session?.user?.roles;
-   //    if (!userRoles) {
-   //       return false;
-   //    }
-   //    const roles = Object.keys(userRoles);
-   //    const intersection = arr.filter(x => roles.includes(x));
-   //    return intersection.length > 0
-   // }
-
-   // const onCellClick = async (id: number, e: SyntheticEvent) => {
-   //    if (!checkRoles(['master'])) {
-   //    }    
-   //    await getCardHeader(id);
-   //    setSelectedId(id);
-   //    setCardVisible(true);
-   // }
-
-   // const confirmSave = (event: any) => {
-   //    confirmPopup({
-   //       target: event.currentTarget,
-   //       message: (
-   //          <div className="flex flex-column align-items-center w-full gap-3 border-bottom-1 surface-border">
-   //                <i className="pi pi-exclamation-circle text-6xl text-primary-500"></i>
-   //                <span>Вы действительно хотите изменить тип выбранного дня?</span>
-   //          </div>
-   //       ),
-   //       defaultFocus: 'accept',
-   //       accept: saveCellType
-   //    });
-   // }
-
-   // const dialogFooter = (
-   //    <div className="itr-dialog-footer">
-   //       <Button label="Отмена" icon="pi pi-times" className="p-button-text" onClick={() => {setCardVisible(false);}}/>
-   //       <Button label="Сохранить" icon="pi pi-check" autoFocus onClick={confirmSave} type="submit"/>
-   //       <ConfirmPopup/>
-   //    </div>
-   // );
-
    return (
       <React.Fragment>         
             <div className={classNames('card', styles.monthCalendar)} style={{marginTop: "1em"}}>
@@ -164,27 +124,6 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
                }
                <ItrCalendarFooter footer={data?.footer}/>
             </div>
-            {/* <Dialog
-               className="itr-dialog"
-               header={cardHeader}               
-               visible={cardVisible}
-               style={{width: 600}}
-               footer={dialogFooter}
-               onHide={()=> setCardVisible(false)}>
-               <div className="card flex justify-content-center">
-                  <Dropdown 
-                     value={selectedExclusion} 
-                     filter
-                     onChange={(e) => setSelectedExclusion(e.value)}                        
-                     options={exclusions} 
-                     optionLabel="name" 
-                     optionValue="value"
-                     placeholder="Выберите тип исключения" 
-                     className="w-full" 
-                     highlightOnSelect={true}
-                  />
-               </div>
-            </Dialog> */}
             <Toast ref={toast} />
       </React.Fragment>
    );
