@@ -4,34 +4,34 @@ import styles from "@/app/(main)/workplace/department/calendar/styles.module.scs
 import React, {useRef, useState, useEffect} from "react";
 import { ICalendar, ICalendarRow } from "@/models/ICalendar";
 
-const ItrCalendarRow = ({row, writeMode}:{row:ICalendarRow, writeMode: boolean}) => {
+const ItrCalendarRow = ({row, writeMode, dayType}:{row:ICalendarRow, writeMode: boolean, dayType: number}) => {
    const [start, setStart] = useState<number>(0);
    const [end, setEnd] = useState<number>(0);
    const [selecting, setSelecting] = useState<boolean>(false);
-   const [newClass, setNewClass] = useState<string>('cell-4')
+   const [startUpdate, setStartUpdate] = useState<boolean>(false)
 
-   const beginSelection = (i: number) => {
+   const beginSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, i: number) => {
       if (!writeMode) return;
+      setStartUpdate(true);
       setSelecting(true);
       setStart(i);
-      updateSelection(i);
+      updateSelection(e, i);
    };
-   const endSelection = (i = end) => {
-      if (!writeMode) return;
+   const endSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, i = end) => {      
+      if (!writeMode || !startUpdate) return;
+      const el = e.target as HTMLDivElement;
+      console.log(`end ${el.getAttribute('data-base-type')}`);
+      setStartUpdate(false)
       setSelecting(false);
-      updateSelection(i);
+      updateSelection(e, i);
    };
 
-   const updateSelection = (i: number) => {
-      if (!writeMode) return;
+   const updateSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, i: number) => {      
+      if (!writeMode || !startUpdate) return;
       if (selecting) {
          setEnd(i);
       }
    };
-
-   const changeClass = (name: string): string => {
-      return newClass;
-   }
 
    return (
       <React.Fragment>
@@ -41,17 +41,17 @@ const ItrCalendarRow = ({row, writeMode}:{row:ICalendarRow, writeMode: boolean})
                row?.cells?.map((day) => {
                   let cellClass = styles.dataCell;
                   switch (day.type) {
-                     case 0: cellClass = "cell-0"; break;
-                     case 1: cellClass = "cell-1"; break;
-                     case 2: cellClass = "cell-2"; break;
-                     case 3: cellClass = "cell-3"; break;
-                     case 4: cellClass = "cell-4"; break;
-                     case 5: cellClass = "cell-5"; break;
-                     case 6: cellClass = "cell-6"; break;
-                     case 7: cellClass = "cell-7"; break;
-                     case 8: cellClass = "cell-8"; break;
-                     case 9: cellClass = "cell-9"; break;
-                     case 10: cellClass = "cell-010"; break;
+                     case 0: cellClass = "day-cell cell-0 cell-bg-0"; break;
+                     case 1: cellClass = "day-cell cell-1 cell-bg-1"; break;
+                     case 2: cellClass = "day-cell cell-2 cell-bg-2"; break;
+                     case 3: cellClass = "day-cell cell-3 cell-bg-3"; break;
+                     case 4: cellClass = "day-cell cell-4 cell-bg-4"; break;
+                     case 5: cellClass = "day-cell cell-5 cell-bg-5"; break;
+                     case 6: cellClass = "day-cell cell-6 cell-bg-6"; break;
+                     case 7: cellClass = "day-cell cell-7 cell-bg-7"; break;
+                     case 8: cellClass = "day-cell cell-8 cell-bg-8"; break;
+                     case 9: cellClass = "day-cell cell-9 cell-bg-9"; break;
+                     case 10: cellClass = "day-cell cell-010 cell-bg-10"; break;
                   }
                   return (
                      <div 
@@ -59,12 +59,10 @@ const ItrCalendarRow = ({row, writeMode}:{row:ICalendarRow, writeMode: boolean})
                         key={`calendar-cell-id-${day.id}`}
                         data-base-type={day.type} 
                         //onClick={(e) => onCellClick(day.id, e)}                        
-                        onMouseDown={() => beginSelection(day.id)}
-                        onMouseUp={() => endSelection(day.id)} 
-                        onMouseMove={() => updateSelection(day.id)}
-                        className={classNames("flex align-items-center justify-content-center w-4rem font-bold noselect", styles.dataCell, changeClass(cellClass),
-                           (end <= day.id && day.id <= start) || (start <= day.id && day.id <= end) ? "bg-red-600" : ""
-                        )}
+                        onMouseDown={(e) => beginSelection(e, day.id)}
+                        onMouseUp={(e) => endSelection(e, day.id)} 
+                        onMouseMove={(e) => updateSelection(e, day.id)}
+                        className={classNames("flex align-items-center justify-content-center w-4rem font-bold noselect", styles.dataCell, cellClass)}
                      >{day.hours}</div>
                   )
                })

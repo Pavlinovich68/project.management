@@ -1,5 +1,5 @@
 'use client'
-import React, {useRef, useState, useEffect, cache, SyntheticEvent} from "react";
+import React, {useRef, useState, useEffect, cache, SyntheticEvent, Ref, forwardRef} from "react";
 import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
@@ -18,7 +18,8 @@ interface Exclusion {
    name: string
 }
 
-const ItrCalendar = ({year, month, division_id, session, refresh, writeMode}: {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean}) => {
+const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, dayType}: 
+   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number}) => {
    const toast = useRef<Toast>(null);
    const [data, setData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -159,7 +160,7 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode}: {y
             <div className={classNames('card', styles.monthCalendar)} style={{marginTop: "1em"}}>
                <ItrCalendarHeader header={data?.header}/>               
                {
-                  data?.rows?.map((row) => { return <ItrCalendarRow key={`row`} row={row} writeMode={writeMode}/> })
+                  data?.rows?.map((row) => { return <ItrCalendarRow key={`row`} row={row} writeMode={writeMode} dayType={dayType}/> })
                }
                <ItrCalendarFooter footer={data?.footer}/>
             </div>
