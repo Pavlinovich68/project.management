@@ -9,6 +9,7 @@ import { Toolbar } from "primereact/toolbar";
 import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
+import CellTypes from "@/services/cell.types";
 
 
 //TODO - Пример использования useSession
@@ -65,17 +66,7 @@ const Calendar = () => {
                   writeMode={editMode}
                   dayType={editDayType}
                />
-               <Tag className="calendar-tag cell-bg-0" onClick={(e) => setEditDayType(0)} value="Выходной"></Tag>
-               <Tag className="calendar-tag cell-bg-1" onClick={(e) => setEditDayType(1)} value="Сокращенный"></Tag>
-               <Tag className="calendar-tag cell-bg-2" onClick={(e) => setEditDayType(2)} value="Перенесенный выходной"></Tag>
-               <Tag className="calendar-tag cell-bg-3" onClick={(e) => setEditDayType(3)} value="Перенесенный рабочий"></Tag>
-               <Tag className="calendar-tag cell-bg-4" onClick={(e) => setEditDayType(4)} value="Рабочий"></Tag>
-               <Tag className="calendar-tag cell-bg-5" onClick={(e) => setEditDayType(5)} value="Отпуск"></Tag>
-               <Tag className="calendar-tag cell-bg-6" onClick={(e) => setEditDayType(6)} value="Больничный"></Tag>
-               <Tag className="calendar-tag cell-bg-7" onClick={(e) => setEditDayType(7)} value="Без содержания"></Tag>
-               <Tag className="calendar-tag cell-bg-8" onClick={(e) => setEditDayType(8)} value="Прогул"></Tag>
-               <Tag className="calendar-tag cell-bg-9" onClick={(e) => setEditDayType(9)} value="Вакансия"></Tag>
-               <Tag className="calendar-tag cell-bg-10" onClick={(e) => setEditDayType(10)} value="Работа в выходной"></Tag>
+               {CellTypes.list.map((item) => <Tag key={`tag-${item.id}`} className={`calendar-tag cell-bg-${item.id}`} onClick={(e) => setEditDayType(item.id??undefined)} value={item.name}></Tag>)}
             </div>
          </div>
       </div> : <React.Fragment/>

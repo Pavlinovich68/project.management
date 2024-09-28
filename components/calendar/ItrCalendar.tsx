@@ -28,20 +28,6 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
    const [selectedExclusion, setSelectedExclusion] = useState<Exclusion | null>(null);
    const [selectedId, setSelectedId] = useState<number | undefined>(undefined);   
 
-   const exclusions: Exclusion[] = [
-      {name: 'Выходной',               value: 0},
-      {name: 'Сокращенный',            value: 1},
-      {name: 'Перенесенный выходной',  value: 2},
-      {name: 'Перенесенный рабочий',   value: 3},
-      {name: 'Рабочий',                value: 4},
-      {name: 'Отпуск',                 value: 5},
-      {name: 'Больничный',             value: 6},
-      {name: 'Без содержания',         value: 7},
-      {name: 'Прогул',                 value: 8},
-      {name: 'Вакансия',               value: 9},
-      {name: 'Работа в выходной',      value: 10},
-   ];
-
    useEffect(() => {
       getCalendarData();
    }, [year, month, division_id, refresh]);
@@ -79,36 +65,6 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
       const data = await res.json();
       setSelectedExclusion(null);
       setCardHeader(`Исключение для ${data.data.name} на дату ${data.data.date}`);
-   }
-
-   const saveCellType = async () => {
-      const el = document.getElementById(`calendar-cell-id-${selectedId}`);
-      el?.classList.remove('cell-0');
-      el?.classList.remove('cell-1');
-      el?.classList.remove('cell-2');
-      el?.classList.remove('cell-3');
-      el?.classList.remove('cell-4');
-      el?.classList.remove('cell-5');
-      el?.classList.remove('cell-6');
-      el?.classList.remove('cell-7');
-      el?.classList.remove('cell-8');
-      el?.classList.remove('cell-9');
-      el?.classList.remove('cell-10');
-      el?.classList.add(`cell-${selectedExclusion}`);
-      setSelectedId(undefined);
-      
-      await fetch(`/api/calendar/department/update_cell`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-            id: selectedId, 
-            type: selectedExclusion}),
-         cache: 'force-cache'
-      });
-      setCardVisible(false);
-      getCalendarData();
    }
 
    //@ts-ignore

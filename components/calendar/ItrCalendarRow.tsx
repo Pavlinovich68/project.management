@@ -11,7 +11,7 @@ const ItrCalendarRow = ({row, writeMode, dayType}:{row:ICalendarRow, writeMode: 
          <div key="row" className={classNames("flex justify-content-center", styles.calendarRow)}>
             <div className={classNames("flex align-items-start justify-content-start w-8rem font-bold pl-2", styles.cellHeader, styles.cellBl)}>{row.name}</div>
             {
-               row?.cells?.map((day) => <ItrCalendarCell key={`calendar-cell-id-${day.id}`} id={day.id} day={day.day} hours={day.hours} type={day.type} writeMode={writeMode}/>)
+               row?.cells?.map((day) => <ItrCalendarCell key={`calendar-cell-id-${day.id}`} cell={day} writeMode={writeMode} dayType={dayType}/>)
             }
             <div className={classNames("flex align-items-end justify-content-end w-4rem pr-2 font-bold", styles.cellHeader, styles.cellBr)}>{row.hours}</div>
             <div className={classNames("flex align-items-end justify-content-end w-6rem pr-2 font-bold", styles.cellHeader, styles.cellBr)}>{row.total?.toLocaleString()}</div>
