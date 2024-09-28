@@ -67,6 +67,10 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
       setCardHeader(`Исключение для ${data.data.name} на дату ${data.data.date}`);
    }
 
+   const recalcFooter = (day: number, delta: number) => {
+      console.log(day, delta);
+   }
+
    //@ts-ignore
    if (data === 'Календарь не обнаружен!' || isLoaded) 
       return <React.Fragment/>
@@ -76,7 +80,7 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
             <div className={classNames('card', styles.monthCalendar)} style={{marginTop: "1em"}}>
                <ItrCalendarHeader header={data?.header}/>               
                {
-                  data?.rows?.map((row) => { return <ItrCalendarRow key={`row`} row={row} writeMode={writeMode} dayType={dayType}/> })
+                  data?.rows?.map((row, i) => { return <ItrCalendarRow key={`row`} row={row} index={i} writeMode={writeMode} dayType={dayType} recalcFooter={recalcFooter}/> })
                }
                <ItrCalendarFooter footer={data?.footer}/>
             </div>
