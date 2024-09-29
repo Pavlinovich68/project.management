@@ -31,12 +31,17 @@ export interface ICalendarCell {
 
 export interface ICalendarFooter {
    name: string | undefined,
-   hours: number[] | undefined,
+   hours: ICalendarFooterItem[] | undefined,
    sum: number | undefined,
    total: number | undefined
 }
 
 export interface ICellProperty {
    type: number,
+   hours: number
+}
+
+export interface ICalendarFooterItem {
+   day: number,
    hours: number
 }

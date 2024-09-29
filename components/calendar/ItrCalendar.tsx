@@ -69,6 +69,15 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
 
    const recalcFooter = (day: number, delta: number) => {
       console.log(day, delta);
+      debugger;
+      const item = data?.footer?.hours?.find((i) => i.day === day);
+      if (item)
+         item.hours - delta;
+      if (data?.footer?.sum)
+         data.footer.sum -= delta;
+      if (data?.footer?.total)
+         data.footer.total -= delta;
+
    }
 
    //@ts-ignore

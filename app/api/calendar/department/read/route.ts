@@ -143,10 +143,10 @@ export const POST = async (request: NextRequest) => {
             }
          });
 
-         _footer.hours?.push(_sum._sum.hours??0);
+         _footer.hours?.push({day: _day, hours: _sum._sum.hours??0});
       }
 
-      _footer.sum = _footer.hours?.reduce((item, a) => item + a, 0);
+      _footer.sum = _footer.hours?.reduce((item, a) => item + a.hours, 0);
       _footer.total = 0;
       for (const _row of result.rows??[]) {
          _footer.total += _row.total??0;

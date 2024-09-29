@@ -14,7 +14,7 @@ const ItrCalendarFooter = ({footer}:{footer: ICalendarFooter | null | undefined}
             footer?.hours?.map((day) => {
                return (
                   <div key="calendar-footer" className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBr, styles.cellBb, styles.cellVertical)}>
-                     {day}
+                     {day.hours}
                   </div>
                )
             })
