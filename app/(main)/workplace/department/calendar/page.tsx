@@ -10,6 +10,7 @@ import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import CellTypes from "@/services/cell.types";
+import { ICellDictionary } from "@/models/ICalendar";
 
 
 //TODO - Пример использования useSession
@@ -18,7 +19,8 @@ const Calendar = () => {
    const {data: session} = useSession();
    const [refresh, setRefresh] = useState<boolean>(false);
    const [editMode, setEditMode] = useState<boolean>(false);
-   const [editDayType, setEditDayType] = useState<number | undefined>(undefined);
+   const [editDayType, setEditDayType] = useState<number | undefined>(undefined);   
+   const [dict, setDict] = useState<ICellDictionary>({});
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -47,8 +49,14 @@ const Calendar = () => {
       <React.Fragment>         
          <InputSwitch checked={editMode} onChange={(e) => setEditMode(e.value)} />
          <div className={classNames(styles.circleIndicator, `cell-bg-${editDayType}`)}></div>
+         <Button icon="pi pi-save" className="ml-3" rounded outlined severity="danger" aria-label="User" onClick={() => save()} />
       </React.Fragment>
    ) : (<React.Fragment/>);
+
+   const save = async () => {
+      console.log(dict);
+   }
+
 
    return (
       session ?
@@ -65,6 +73,7 @@ const Calendar = () => {
                   refresh={refresh}
                   writeMode={editMode}
                   dayType={editDayType}
+                  dict={dict}
                />
                {CellTypes.list.map((item) => <Tag key={`tag-${item.id}`} className={`calendar-tag cell-bg-${item.id}`} onClick={(e) => setEditDayType(item.id??undefined)} value={item.name}></Tag>)}
             </div>

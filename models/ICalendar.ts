@@ -45,3 +45,7 @@ export interface ICalendarFooterItem {
    day: number,
    hours: number
 }
+
+export interface ICellDictionary {
+   [key: number]: number | undefined;
+}

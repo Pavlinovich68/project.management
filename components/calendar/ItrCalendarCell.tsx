@@ -1,11 +1,11 @@
 'use client'
-import { ICalendarCell } from "@/models/ICalendar";
+import { ICalendarCell, ICellDictionary } from "@/models/ICalendar";
 import CellTypes from "@/services/cell.types";
 import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 
 
-const ItrCalendarCell = ({row, cell, writeMode, dayType, recalc}:{row: number, cell: ICalendarCell, writeMode: boolean, dayType: number | undefined, recalc: any}) => {
+const ItrCalendarCell = ({row, cell, writeMode, dayType, recalc, dict}:{row: number, cell: ICalendarCell, writeMode: boolean, dayType: number | undefined, recalc: any, dict: ICellDictionary}) => {
    const [hours, setHours] = useState<number>(cell.hours)
 
    const getHours = (type: number): number => {
@@ -28,6 +28,7 @@ const ItrCalendarCell = ({row, cell, writeMode, dayType, recalc}:{row: number, c
       el?.setAttribute('data-hours', _hours.toString());
       setHours(_hours);
       recalc(cell.day, oldVal-_hours);
+      dict[cell.id] = dayType;
    }
 
    return (

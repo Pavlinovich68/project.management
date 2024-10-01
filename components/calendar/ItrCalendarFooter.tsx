@@ -4,7 +4,13 @@ import React, {useRef, useState, useEffect} from "react";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { ICalendarFooter } from "@/models/ICalendar";
 
-const ItrCalendarFooter = ({footer}:{footer: ICalendarFooter | null | undefined}) => {
+const ItrCalendarFooter = ({footerData, checker}:{footerData: ICalendarFooter | null | undefined, checker: boolean}) => {
+   const [footer, setFooter] = useState<ICalendarFooter | undefined | null>(footerData);
+
+   useEffect(()=>{
+      setFooter(footerData);
+   }, [footerData, checker])
+
    return (
       <div className={classNames("flex justify-content-center", styles.calendarFooter)}>
          <div className={classNames("flex vertical-align-middle w-8rem font-bold pl-2", styles.cellHeader, styles.cellBl, styles.cellBb, styles.cellBr, styles.calendarLeftCell)}>
