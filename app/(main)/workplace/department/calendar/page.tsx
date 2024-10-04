@@ -20,7 +20,7 @@ const Calendar = () => {
    const [refresh, setRefresh] = useState<boolean>(false);
    const [editMode, setEditMode] = useState<boolean>(false);
    const [editDayType, setEditDayType] = useState<number | undefined>(undefined);   
-   const [dict, setDict] = useState<ICellDictionary>({});
+   let values: ICellDictionary = {};
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -54,7 +54,21 @@ const Calendar = () => {
    ) : (<React.Fragment/>);
 
    const save = async () => {
-      console.log(dict);
+      if (!values) {
+         return;
+      }
+      const res = await fetch(`/api/calendar/department/update_cell`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            values
+         }),
+         cache: 'force-cache'
+      });
+      const response = await res.json();
+      console.log(response.data);
    }
 
 
@@ -73,7 +87,7 @@ const Calendar = () => {
                   refresh={refresh}
                   writeMode={editMode}
                   dayType={editDayType}
-                  dict={dict}
+                  dict={values}
                />
                {CellTypes.list.map((item) => <Tag key={`tag-${item.id}`} className={`calendar-tag cell-bg-${item.id}`} onClick={(e) => setEditDayType(item.id??undefined)} value={item.name}></Tag>)}
             </div>
