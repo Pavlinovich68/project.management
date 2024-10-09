@@ -18,8 +18,9 @@ const ItrCalendarFooter = ({footerData, checker}:{footerData: ICalendarFooter | 
          </div>
          {
             footer?.hours?.map((day) => {
+               const key = `calendar-footer-${day.day}`
                return (
-                  <div key="calendar-footer" className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBr, styles.cellBb, styles.cellVertical)}>
+                  <div key={key} className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBr, styles.cellBb, styles.cellVertical)}>
                      {day.hours}
                   </div>
                )

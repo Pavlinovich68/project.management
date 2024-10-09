@@ -11,9 +11,10 @@ const ItrCalendarHeader = ({header}:{header: ICalendarHeader | null | undefined}
             {header?.name}
          </div>
          {
-            header?.days?.map((day) => {                        
+            header?.days?.map((day, i) => {   
+               const key = `calendar-header-${i}`                      
                return (
-                  <div key="calendar-header" className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBt, styles.cellBr)}>
+                  <div key={key} className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBt, styles.cellBr)}>
                      {day}
                   </div>
                )

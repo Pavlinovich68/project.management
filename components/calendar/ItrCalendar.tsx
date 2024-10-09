@@ -18,15 +18,11 @@ interface Exclusion {
    name: string
 }
 
-const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, dayType, dict}: 
-   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number | undefined, dict: ICellDictionary}) => {
+const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, dayType, dict, onEdit}: 
+   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number | undefined, dict: ICellDictionary, onEdit: any}) => {
    const toast = useRef<Toast>(null);
    const [calendarData, setCalendarData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
-   const [cardHeader, setCardHeader] = useState<string>('');
-   const [cardVisible, setCardVisible] = useState<boolean>(false);
-   const [selectedExclusion, setSelectedExclusion] = useState<Exclusion | null>(null);
-   const [selectedId, setSelectedId] = useState<number | undefined>(undefined); 
    const [checker, setChecker] = useState<boolean>(false);
 
    useEffect(() => {
@@ -78,7 +74,10 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
             <div className={classNames('card', styles.monthCalendar)} style={{marginTop: "1em"}}>
                <ItrCalendarHeader header={calendarData?.header}/>               
                {
-                  calendarData?.rows?.map((row, i) => { return <ItrCalendarRow key={`row`} row={row} index={i} writeMode={writeMode} dayType={dayType} recalcFooter={recalcFooter} dict={dict}/> })
+                  calendarData?.rows?.map((row, i) => {
+                     const key = `calendar-row-${i}`
+                     return <ItrCalendarRow key={key} row={row} index={i} writeMode={writeMode} dayType={dayType} recalcFooter={recalcFooter} dict={dict} onEdit={onEdit}/> 
+                  })
                }
                <ItrCalendarFooter footerData={calendarData?.footer} checker={checker}/>
             </div>

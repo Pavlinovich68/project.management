@@ -19,7 +19,8 @@ const Calendar = () => {
    const {data: session} = useSession();
    const [refresh, setRefresh] = useState<boolean>(false);
    const [editMode, setEditMode] = useState<boolean>(false);
-   const [editDayType, setEditDayType] = useState<number | undefined>(undefined);   
+   const [editDayType, setEditDayType] = useState<number | undefined>(undefined);
+   const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
    let values: ICellDictionary = {};
 
    const monthSwitch = (xdate: Date) => {
@@ -38,7 +39,11 @@ const Calendar = () => {
 
    const startContent = (
       <div>
-         <Button icon="pi pi-refresh" severity="secondary" className="mr-2" onClick={() => setRefresh(!refresh)}/>
+         <Button icon="pi pi-refresh" severity="secondary" className="mr-2" onClick={() => { 
+               setRefresh(!refresh);
+               values = {};
+               setSaveEnabled(false);
+         }}/>
       </div>
    );
    const centerContent = (
@@ -49,7 +54,7 @@ const Calendar = () => {
       <React.Fragment>         
          <InputSwitch checked={editMode} onChange={(e) => setEditMode(e.value)} />
          <div className={classNames(styles.circleIndicator, `cell-bg-${editDayType}`)}></div>
-         <Button icon="pi pi-save" className="ml-3" rounded outlined severity="danger" aria-label="User" onClick={() => save()} />
+         <Button icon="pi pi-save" className="ml-3" disabled={!saveEnabled} severity="danger" aria-label="User" onClick={() => save()} />
       </React.Fragment>
    ) : (<React.Fragment/>);
 
@@ -71,6 +76,18 @@ const Calendar = () => {
       console.log(response.data);
    }
 
+   const onEdit = () => {
+      //setSaveEnabled(true)
+      setSaveEnabled(Object.keys(values).length > 0)
+      console.log(values);
+      // if (values[id] === undefined) {
+      //    values[id] = type;
+      // } else {
+      //    delete values[id];
+      // }
+      // console.log(values);
+   }
+
 
    return (
       session ?
@@ -79,6 +96,7 @@ const Calendar = () => {
             <div className="card pt-1">
                <h3>Рабочий календарь</h3>
                <Toolbar start={startContent} center={centerContent} end={endContent} />                
+               {CellTypes.list.map((item) => <Tag key={`tag-${item.id}`} className={`calendar-tag cell-bg-${item.id}`} onClick={(e) => setEditDayType(item.id??undefined)} value={item.name}></Tag>)}
                <ItrCalendar 
                   year={date.getFullYear()} 
                   month={date.getMonth()+1} 
@@ -88,8 +106,8 @@ const Calendar = () => {
                   writeMode={editMode}
                   dayType={editDayType}
                   dict={values}
-               />
-               {CellTypes.list.map((item) => <Tag key={`tag-${item.id}`} className={`calendar-tag cell-bg-${item.id}`} onClick={(e) => setEditDayType(item.id??undefined)} value={item.name}></Tag>)}
+                  onEdit={onEdit}
+               />               
             </div>
          </div>
       </div> : <React.Fragment/>
