@@ -77,15 +77,7 @@ const Calendar = () => {
    }
 
    const onEdit = () => {
-      //setSaveEnabled(true)
       setSaveEnabled(Object.keys(values).length > 0)
-      console.log(values);
-      // if (values[id] === undefined) {
-      //    values[id] = type;
-      // } else {
-      //    delete values[id];
-      // }
-      // console.log(values);
    }
 
 
