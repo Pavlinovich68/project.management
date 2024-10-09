@@ -31,11 +31,11 @@ const AppMenu = () => {
                label: 'Администрирование',
                icon: 'pi pi-fw pi-cog',
                tabler: <IconAdjustmentsHorizontal className='mr-1' stroke={1.5}/>,
-               visible: checkRoles(['admin']),
+               visible: checkRoles(['admin', 'master']),
                items: [
                   {
                      label: 'Пользователи',
-                     visible: checkRoles(['admin', 'master', 'developer']),
+                     visible: checkRoles(['admin', 'master']),
                      icon: 'pi pi-fw pi-user',
                      to: '/workplace/admin/users',
                      tabler: <IconUsers className='mr-1' stroke={1.5}/>
@@ -110,7 +110,7 @@ const AppMenu = () => {
                   {
                      label: 'Сотрудники организации',
                      tabler: <IconUsersGroup className='mr-1' stroke={1.5}/>,
-                     visible: checkRoles(['developer', 'master']),
+                     visible: checkRoles(['admin', 'boss', 'master']),
                      to: '/workplace/references/employee'
                   },
                ]

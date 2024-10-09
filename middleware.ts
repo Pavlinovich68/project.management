@@ -23,7 +23,7 @@ export default withAuth(
             return NextResponse.rewrite( new URL("/denided", request.url))
          }
          if (request.nextUrl.pathname.startsWith("/workplace/admin") && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
-            ['admin'])) {
+            ['admin','master'])) {
             return NextResponse.rewrite( new URL("/denided", request.url))
          }
          if (request.nextUrl.pathname.startsWith("/users/crud") && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
