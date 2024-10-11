@@ -1,0 +1,92 @@
+.monthCalendar {
+   margin-top: 1rem;
+   font-size: 12px;   
+   .cellBl {
+      border-left: 1px solid #999999 !important;
+   }
+   
+   .cellBr {
+      border-right: 1px solid #999999 !important;
+   }
+   
+   .cellBb {
+      border-bottom: 1px solid #999999 !important;
+   }
+   
+   .cellBt {
+      border-top: 1px solid #999999 !important;
+   }
+   .calendarHeader {
+      .cellHeader {
+         height: 24px;
+         border-right: 1px solid var(--surface-50);
+         padding-top: 6px;
+      }
+      .cellWork {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--surface-200);
+      }
+      .cellHoliday {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--red-500);
+      }
+      .cellPreHoliday {
+         border-right: 1px solid var(--surface-50);
+         background-color: var(--red-300);
+      }
+   }
+   .dataCell {
+      height: 24px;
+      width: 24px !important;
+   }
+   .calendarRow {      
+      .cellHeader {         
+         height: 24px;
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--surface-200);
+         padding-top: 6px !important;
+      }
+      .cellWork {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         color: var(--gray-600);
+         background-color: var(--surface-900);
+      }
+      .cellHoliday {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--red-500);
+         color: var(--red-500);
+      }
+      .cellPreHoliday {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         background-color: var(--red-300);
+      }
+      .cellVacancy {
+         border-right: 1px solid var(--surface-50);
+         border-top: 1px solid var(--surface-50);
+         color: var(--orange-500);
+         background-color: var(--orange-500);
+      }
+   }
+   .calendarFooter {      
+      .calendarLeftCell {   
+         height: 36px !important;
+         padding-top: 8px;
+      }
+      .cellVertical {
+         height: 36px !important;
+         font-weight: 700;
+         writing-mode: vertical-rl;
+      }
+   }
+}
+
+.circleIndicator {
+   width: 16px;
+   height: 16px;
+   border-radius: 8px;
+   margin-left: 10px;
+}

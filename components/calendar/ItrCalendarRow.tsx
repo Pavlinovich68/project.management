@@ -1,61 +1,32 @@
 'use client'
 import { classNames } from "primereact/utils";
+import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import React, {useRef, useState, useEffect} from "react";
+import { ICalendar, ICalendarRow, ICellDictionary } from "@/models/ICalendar";
+import ItrCalendarCell from "./ItrCalendarCell";
 
-const ItrCalendarRow = ({id, name, year, month, days, colors}: {id: number, name: string, year: number, month: number, days?: number, colors: any[]}) => {
-   const [daysData, setDaysData] = useState<any[]>([]);
+const ItrCalendarRow = ({row, index, writeMode, dayType, recalcFooter, dict, onEdit}:
+   {row:ICalendarRow, index: number, writeMode: boolean, dayType: number | undefined, recalcFooter: any, dict: ICellDictionary, onEdit: void}) => {
+   const [hours, setHours] = useState<number>(row.hours)
+   const [total, setTotal] = useState<number | undefined>(row.total)
+   const recalcRow = (day: number, delta: number) => {
+      setHours(hours - delta);
+      setTotal((total??0) - delta);
+      recalcFooter(day, delta);
+   }
    
-   useEffect(() => {
-      readDays();
-   }, [id, year, month]);
-
-   const readDays = async () => {
-      const res = await fetch(`/api/calendar/production/days`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({profile_id: id, year: year, month: month-1})
-      });
-      const data = await res.json();
-      setDaysData(data.data);
-   }   
-   let totalHours = 0;
    return (
-      <div className="flex justify-content-center calendar-row">
-            <div className="flex align-items-center justify-content-start w-12rem data-cell-h font-bold name-cell pl-2">{name}</div>
-            {daysData.map((day) => {
-               let hours = undefined;
-               switch (day.exclusion_type) {
-                  case 1: {
-                     hours = 7;
-                     break;
-                  }
-                  case -1: {
-                     hours = 8;
-                     break;
-                  }
-                  case 4: {
-                     hours = 0;
-                     break;
-                  }
-                  default: {
-                     hours = 0;
-                     break;
-                  }
-               }
-               totalHours += hours;
-               return (
-                  <div key="calendar-profile-cell" className={classNames("flex align-items-center justify-content-center data-cell font-bold", day.background_class)}>
-                     {hours}
-                  </div>
-               )
-            })}
-            <div className="flex align-items-center justify-content-end w-4rem data-cell-h font-bold name-cell pr-2">
-               {totalHours}
-            </div>
-      </div>
-   );
+      <React.Fragment>
+         <div key="row" className={classNames("flex justify-content-center", styles.calendarRow)}>
+            <div className={classNames("flex align-items-start justify-content-start w-8rem font-bold pl-2", styles.cellHeader, styles.cellBl)}>{row.name}</div>
+            {
+               row?.cells?.map((day) => <ItrCalendarCell key={`calendar-cell-id-${day.id}`} row={index} cell={day} writeMode={writeMode} dayType={dayType} recalc={recalcRow} dict={dict} onEdit={onEdit}/>)
+            }
+            <div data-row={index} data-col-type={1} className={classNames("flex align-items-end justify-content-end w-4rem pr-2 font-bold", styles.cellHeader, styles.cellBr)}>{hours}</div>
+            <div data-row={index} data-col-type={2} className={classNames("flex align-items-end justify-content-end w-6rem pr-2 font-bold", styles.cellHeader, styles.cellBr)}>{total?.toLocaleString()}</div>
+         </div>
+      </React.Fragment>
+   ); 
 };
 
 export default ItrCalendarRow;

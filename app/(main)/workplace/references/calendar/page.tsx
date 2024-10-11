@@ -111,6 +111,7 @@ const card = (
             <label htmlFor="exclusion_type">Тип исключения</label>
             <Dropdown 
                value={calendar.values.exclusion_type} 
+               filter
                onChange={(e) => calendar.setFieldValue('exclusion_type', e.value)}
                optionValue="exclusion_type"
                optionLabel="exclusion_type_name" 

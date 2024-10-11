@@ -111,13 +111,16 @@ export const POST = async (request) => {
    }
 
    const drop = async (model) => {
-      const result = await prisma.exclusion.delete({
-         where: {
-            id: model.id
-         }
-      });
-
-      return result;
+      try {
+         const result = await prisma.exclusion.delete({
+            where: {
+               id: model.id
+            }
+         });
+         return result;  
+      } catch (error) {
+         throw error;
+      }      
    }
 
    const { operation, model, params } = await request.json();

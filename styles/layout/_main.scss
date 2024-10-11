@@ -299,57 +299,123 @@ tr.node-closed-color {
       text-align: center;
    }   
 }
+.prod-calendar-switch {
+   input {
+      text-align: center;
+      text-transform: capitalize;
+      font-size: large;
+      font-weight: 600;
+   }
+}
 
-.cell-white {
+.p-input-icon-left > i {
+   display: none;
+}
+
+$color-def: #776688;
+$color-0: #D9124A;
+$color-1: #e681b3;
+$color-2: #64BDE1;
+$color-3: #45B97C;
+$color-4: #eeeeee;
+$color-5: #fd9741;
+$color-6: #208076;
+$color-7: #d76b11;
+$color-8: #7C6EB0;
+$color-9: #576375;
+$color-10: #DCAA44;
+
+.day-cell {
    border-right: 1px solid var(--surface-50);
    border-top: 1px solid var(--surface-50);
-   color: var(--gray-600);
-   background-color: var(--surface-900);
-}
-.cell-gray {
-   background-color: var(--gray-800);
-}
-.cell-red {
-   border-right: 1px solid var(--surface-50);
-   border-top: 1px solid var(--surface-50);
-   background-color: var(--red-500);
-   color: var(--red-500);
-}
-.cell-pink {
-   border-right: 1px solid var(--surface-50);
-   border-top: 1px solid var(--surface-50);
-   background-color: var(--red-300);
-}
-.cell-yellow {
-   border-right: 1px solid var(--surface-50);
-   border-top: 1px solid var(--surface-50);
-   color: var(--yellow-500);
-   background-color: var(--yellow-500);
-}
-.cell-vertical {
-   height: 36px !important;
-   font-weight: 700;
-   writing-mode: vertical-rl;
+   height: 24px;
+   width: 24px !important;
 }
 
-.calendar-left-cell {   
-   height: 36px !important;
-   background-color: var(--gray-800);
-   padding-top: 8px;
+.day-header-cell {
+   width: 24px !important;
+   border-bottom: 1px solid var(--surface-50);
 }
 
-.cell-bl {
-   border-left: 1px solid #999999 !important;
+.cell-tc-0 {   
+   color: $color-0;
+}
+.cell-tc-1 {
+   color: $color-def; 
+}
+.cell-tc-2 {
+   color: $color-2
+}
+.cell-tc-3 {
+   color: $color-def
+}
+.cell-tc-4 {
+   color: $color-def
+}
+.cell-tc-5 {
+   color: $color-5
+}
+.cell-tc-6 {
+   color: $color-6;
+}
+.cell-tc-7 {
+   color: $color-7;
+}
+.cell-tc-8 {
+   color: $color-8;
+}
+.cell-tc-9 {
+   color: $color-9;
+}
+.cell-tc-10 {
+   color: $color-def;
 }
 
-.cell-br {
-   border-right: 1px solid #999999 !important;
+.cell-bg-0 {
+   background-color: $color-0;
+}
+.cell-bg-1 {
+   background-color: $color-1;
+}
+.cell-bg-2 {
+   background-color: $color-2;
+}
+.cell-bg-3 {
+   background-color: $color-3;
+}
+.cell-bg-4 {
+   background-color: $color-4;
+}
+.cell-bg-5 {
+   background-color: $color-5;
+}
+.cell-bg-6 {
+   background-color: $color-6;
+}
+.cell-bg-7 {
+   background-color: $color-7;
+}
+.cell-bg-8 {
+   background-color: $color-8;
+}
+.cell-bg-9 {
+   background-color: $color-9;
+}
+.cell-bg-10 {
+   background-color: $color-10;
 }
 
-.cell-bb {
-   border-bottom: 1px solid #999999 !important;
+.noselect {
+   -webkit-touch-callout: none; /* iOS Safari */
+     -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+         -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                   supported by Chrome and Opera */
 }
 
-.cell-bt {
-   border-top: 1px solid #999999 !important;
+.calendar-tag {
+   margin-right: 0.5rem;
+   margin-top: 0.5rem;
 }

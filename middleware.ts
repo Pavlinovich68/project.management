@@ -10,7 +10,7 @@ export default withAuth(
          const session = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
          
          if (request.nextUrl.pathname.match('/crud') && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
-            ['developer', 'rpo_user', 'oiv_user', 'mo_user']))
+            ['admin', 'boss', 'master', 'developer']))
          {
             //NOTE - Получение параметров запроса
             const requestParams : any  = await request.json();
@@ -19,11 +19,11 @@ export default withAuth(
          }
 
          if (request.nextUrl.pathname.startsWith("/workplace") && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
-            ['developer', 'rpo_user', 'oiv_user', 'mo_user', 'read_only'])) {
+            ['admin', 'boss', 'master', 'developer'])) {
             return NextResponse.rewrite( new URL("/denided", request.url))
          }
          if (request.nextUrl.pathname.startsWith("/workplace/admin") && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
-            ['admin'])) {
+            ['admin','master'])) {
             return NextResponse.rewrite( new URL("/denided", request.url))
          }
          if (request.nextUrl.pathname.startsWith("/users/crud") && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
@@ -31,7 +31,7 @@ export default withAuth(
             return NextResponse.rewrite( new URL("/denided", request.url))
          }
          if (request.nextUrl.pathname === '/' && !RolesHelper.checkRoles(request.nextauth.token?.roles as IDictionary, 
-            ['admin', 'rpo_user', 'oiv_user', 'mo_user', 'read_only'])) {
+            ['admin', 'boss', 'master', 'developer'])) {
             return NextResponse.rewrite( new URL("/denided", request.url))
          }
       }

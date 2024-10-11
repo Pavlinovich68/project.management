@@ -33,14 +33,15 @@ model Session {
 }
 //NOTE - Подразделение
 model division {
-   id            Int         @id @default(autoincrement())
-   name          String?     @unique(map: "division_u_ind") @db.VarChar(200)
-   parent_id     Int?
-   parent        division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   childrens     division[]  @relation("divisionTodivision")
-   users         users[]
-   projects      project[]
-   stuff_units   stuff_unit[]
+   id             Int         @id @default(autoincrement())
+   name           String?     @unique(map: "division_u_ind") @db.VarChar(200)
+   parent_id      Int?
+   parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   childrens      division[]  @relation("divisionTodivision")
+   users          users[]
+   projects       project[]
+   rate           rate[]
+   dept_calendar  dept_calendar[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -100,7 +101,7 @@ model production_calendar {
    year        Int
    exclusions  exclusion[]
 }
-//NOTE - Исключение
+//NOTE - Исключение для всех
 //SECTION
 //NOTE - exclusion_type
 // 0 - holiday
@@ -110,7 +111,7 @@ model production_calendar {
 //!SECTION
 model exclusion {
    id                      Int @id @default(autoincrement())
-   date                    DateTime? @db.Timestamp(6)
+   date                    DateTime @db.Timestamp(6)
    exclusion_type          Int
    production_calendar_id  Int
    production_calendar     production_calendar @relation(fields: [production_calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -132,16 +133,16 @@ model employee {
    email       String?     @db.VarChar(50)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
-   state_units state_unit[]
+   staff staff[]
 }
 //NOTE - График отпусков
 model vacation {
-   id             Int      @id @default(autoincrement())
-   year           Int
-   start_date     DateTime @db.Timestamp(6)
-   end_date       DateTime @db.Timestamp(6)
-   state_unit_id  Int
-   state_unit     state_unit? @relation(fields: [state_unit_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+   id          Int      @id @default(autoincrement())
+   year        Int
+   start_date  DateTime @db.Timestamp(6)
+   end_date    DateTime @db.Timestamp(6)
+   staff_id    Int
+   staff       staff?   @relation(fields: [staff_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 //NOTE - Дорожная карта
 model roadmap {
@@ -166,11 +167,11 @@ model roadmap_item {
 }
 //NOTE - Контрольная точка
 model control_point {
-   id                Int   @id @default(autoincrement())
-   date              DateTime    @db.Timestamp(6)
-   name              String      @db.VarChar(250)
+   id                Int            @id @default(autoincrement())
+   date              DateTime       @db.Timestamp(6)
+   name              String         @db.VarChar(250)
    roadmap_item_id   Int
-   roadmap_item      roadmap_item @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 //NOTE - Дни пропуска
 //SECTION
@@ -191,24 +192,73 @@ model days_off {
 model post {
    id          Int      @id @default(autoincrement())
    name        String   @db.VarChar(250)
-   stuff_units stuff_unit[]
+   rate rate[]
 }
 //NOTE - Ставки
-model stuff_unit {
-   id          Int         @id @default(autoincrement())
-   count       Int
-   post_id     Int   
-   post        post       @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division_id Int
-   division    division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   state_units state_unit[]
+model rate {
+   id             Int         @id @default(autoincrement())
+   no             Int         
+   post_id        Int   
+   post           post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division_id    Int         
+   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   staff          staff[]
+   calendar_rows  dept_calendar_row[]
+   @@unique([no,  division_id])
 }
 //NOTE - Штатные идиницы
-model state_unit {
-   id             Int         @id @default(autoincrement())
-   stuff_unit_id  Int
-   stuff_unit     stuff_unit  @relation(fields: [stuff_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   employee_id    Int
-   employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   vacations      vacation[]
+model staff {
+   id          Int         @id @default(autoincrement())
+   rate_id     Int
+   rate        rate        @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee_id Int
+   employee    employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   begin_date  DateTime    @db.Timestamp(6)
+   end_date    DateTime?   @db.Timestamp(6)   
+   vacations   vacation[]
+   @@unique([id])
+}
+//NOTE - Рабочий кале   ндарь подразделения
+model dept_calendar {
+   id          Int                  @id @default(autoincrement())
+   year        Int
+   division_id Int   
+   division    division             @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   rows        dept_calendar_row[]
+   @@unique([year, division_id])
+}
+
+model dept_calendar_row {
+   id          Int            @id @default(autoincrement())
+   no          Int
+   rate_id     Int
+   rate        rate           @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   cells       dept_calendar_cell[]
+   calendar_id Int
+   calendar    dept_calendar  @relation(fields: [calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([rate_id, calendar_id])
+}
+//NOTE - Типы дня. Частично совпадает с типами исключений
+//SECTION
+//NOTE - exclusion_type
+// 0 - holiday
+// 1 - reduced
+// 2 - holiday transfer
+// 3 - worked transfer
+// 4 - worked
+// 5 - vacation
+// 6 - hospital
+// 7 - without pay
+// 8 - absense from work
+// 9 - vacancy
+// 10 - work on weekends
+model dept_calendar_cell {
+   id       Int               @id @default(autoincrement())
+   month    Int
+   day      Int
+   hours    Int
+   type     Int
+   row_id   Int
+   row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([month, day, row_id])
 }

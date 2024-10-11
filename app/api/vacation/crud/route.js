@@ -1,17 +1,133 @@
 import prisma from "@/prisma/client";
 import {NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type.ts";
+import DateHelper from "@/services/date.helpers";
+import CalendarHelper from "@/services/calendar.helper";
 
 export const POST = async (request) => {
+   const getVacationDayId = async (staff_id, year, month, day) => {
+      const _cell = await prisma.$queryRaw`
+         select
+            dcc.id
+         from
+            dept_calendar_row dcr
+            inner join dept_calendar_cell dcc on dcr.id = dcc.row_id
+            inner join rate r on dcr.rate_id = r.id
+            inner join staff s on r.id = s.rate_id
+            inner join public.dept_calendar dc on dc.id = dcr.calendar_id
+         where
+            dc.year = ${year}
+            and dcc.month = ${month}
+            and dcc.day = ${day}
+            and s.id = ${staff_id}
+      `
+      const result = _cell ? _cell[0].id : undefined;
+      return result;
+   }
+   
+   const dropVacationDay = async (staff_id, year, month, day) => {
+      const _cell_id = await getVacationDayId(staff_id, year, month, day);
+      const _date = new Date(year, month-1, day);
+      const _dayOfWeek = _date.getDay();
+      const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
+      const _ex_date = new Date(Date.UTC(year, month-1, day));
+
+      const type = await prisma.exclusion.findFirst({
+         where: {
+            date: _ex_date
+         }
+      })
+
+      const _type = type ? type.exclusion_type : (_isHoliday ? 0 : 4)
+
+      if (!_cell_id) return;      
+      await prisma.dept_calendar_cell.update({
+         where: {id: _cell_id},
+         data: {
+            type: _type
+         }
+      })
+   }
+
+   const dropVacation = async (staff_id, _start_date, _end_date) => {
+      while(_start_date <= _end_date){   
+         const _year = _start_date.getFullYear();
+         const _month = _start_date.getMonth()+1;
+         const _day = _start_date.getDate();
+         await dropVacationDay(staff_id, _year, _month, _day);
+         _start_date = DateHelper.addDays(_start_date, 1);
+      }
+   }
+
+   const createVacation = async (staff_id, start_date, end_date) => {
+      let _start_date = new Date(start_date);
+      const _end_date = new Date(end_date);
+      while(_start_date <= _end_date){      
+         const _year = _start_date.getFullYear();   
+         const _month = _start_date.getMonth();
+         const _day = _start_date.getDate();         
+         
+         const _row_id = await getVacationDayId(staff_id, _year, _month+1, _day)
+
+         await prisma.dept_calendar_cell.updateMany({
+            where: {
+               id: _row_id
+            },
+            data: {
+               type: 5
+            }
+         })
+
+         _start_date = DateHelper.addDays(_start_date, 1);
+      }
+   }
+
    const create = async (model, params) => {
       const result = await prisma.vacation.create({
          data: {
             year: params.year,
-            state_unit_id: model.state_unit_id,
+            staff_id: model.staff_id,
             start_date: new Date(model.start_date),
             end_date: new Date(model.end_date),
          }
       })
+
+      const _calendar = await prisma.dept_calendar.findFirst({
+         where: {
+            year: params.year,
+            division_id: Number(params.division_id)
+         }
+      })
+      const _staff = await prisma.staff.findUnique({
+         where: {
+            id: model?.staff_id
+         }
+      })
+      const _row = await prisma.dept_calendar_row.findFirst({
+         where: {
+            calendar_id: _calendar.id,
+            rate_id: _staff.rate_id
+         }
+      })
+      let _date = new Date(model.start_date);
+      const _end_date = new Date(model.end_date);
+      while(_date <= _end_date){         
+         const _month = _date.getMonth();
+         const _day = _date.getDate();         
+         
+         await prisma.dept_calendar_cell.updateMany({
+            where: {
+               row_id: _row.id,
+               month: _month+1,
+               day: _day
+            },
+            data: {
+               type: 5
+            }
+         })
+
+         _date = DateHelper.addDays(_date, 1);
+      }
 
       return result;
    }
@@ -22,11 +138,11 @@ export const POST = async (request) => {
             *
          from
             vacation v
-            left join state_unit sta on v.state_unit_id = sta.id
+            left join staff sta on v.staff_id = sta.id
             left join employee e on sta.employee_id = e.id
-            left join stuff_unit stu on sta.stuff_unit_id = stu.id
+            left join rate r on sta.rate_id = r.id
          where
-            stu.division_id = ${division_id}
+            r.division_id = ${division_id}
             and v.year = ${year}
             and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0 
       `;
@@ -40,14 +156,14 @@ export const POST = async (request) => {
             v.start_date,
             v.end_date,
             e.surname || ' ' || e.name || ' ' || e.pathname as name,
-            sta.id as state_unit_id
+            sta.id as staff_id
          from
             vacation v
-            left join state_unit sta on v.state_unit_id = sta.id
+            left join staff sta on v.staff_id = sta.id
             left join employee e on sta.employee_id = e.id
-            left join stuff_unit stu on sta.stuff_unit_id = stu.id
+            left join rate r on sta.rate_id = r.id
          where
-            stu.division_id = ${division_id}
+            r.division_id = ${division_id}
             and v.year = ${year}
             and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0  
          order by
@@ -68,26 +184,43 @@ export const POST = async (request) => {
    }
 
    const update = async (model) => {
+      const _old = await prisma.vacation.findUnique({where: {id: model.id}});
       const result = await prisma.vacation.update({
          where: {
             id: model.id
          },
          data: {
-            profile_id: model.profile_id,
+            staff_id: model.staff_id,
             start_date: new Date(model.start_date),
             end_date: new Date(model.end_date),
          }
       })
 
+      await dropVacation(model.staff_id, _old.start_date, _old.end_date);
+      await createVacation(model.staff_id, model.start_date, model.end_date);
+
       return result;
    }
 
    const drop = async (model) => {
+      const _vacation = await prisma.vacation.findUnique({
+         where: {
+            id: model.id
+         }
+      });
+
+      const _staff_id = _vacation.staff_id;
+      let _start_date = _vacation.start_date;
+      const _end_date = _vacation.end_date;
+      
       const result = await prisma.vacation.delete({
          where: {
             id: model.id
          }
       });
+
+      await dropVacation(_staff_id, _start_date, _end_date);
+
       return result;
    }
 

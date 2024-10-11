@@ -24,7 +24,7 @@ const main = async () => {
    };
 
 
-   await execute(`SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'regionalprojects'`, client);
+   await execute(`SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'projectmanagement'`, client);
    console.log(`\x1b[32mSessions successful cleaning!\x1b[0m`);
 
    const client1 = new pkg.Client({
