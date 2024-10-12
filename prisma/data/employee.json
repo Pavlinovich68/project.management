@@ -2,8 +2,8 @@
    {      
       "surname": "Савельев",
       "name": "Павел",
-      "pathname": "Отчество",
-      "email": null,
+      "pathname": "Иванович",
+      "email": "p.savelev@localhost",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",

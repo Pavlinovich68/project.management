@@ -38,52 +38,54 @@ async function main() {
    });
    
    interface UserInterface {
-      name: string;
-      role: string;
-      prefix: string;
+      name: string
+      role: string
+      email: string
+      attachment_id?: number | null
    }
    
    const _users:UserInterface[] = [ 
       {
          name: "Администратор",
          role: "admin",
-         prefix: "administrator"
+         email: "admin@localhost"
       },
       {
          name: "Руководитель",
          role: "boss",
-         prefix: "boss"
+         email: "boss@localhost"
       },
       {
-         name: "Начальник отдела",
+         name: "Павлов С.П.",
          role: "master",
-         prefix: "master"
+         email: "s.pavlov@localhost",
+         attachment_id: 1
       },
       {
-         name: "Разработчик",
+         name: "Савельев П.И.",
          role: "developer",
-         prefix: "developer"
+         email: "p.savelev@localhost"
       },
       {
          name: "Аналитик",
          role: "analyst",
-         prefix: "analyst"
+         email: "analyst@localhost"
       },
       {
          name: "Тестировщик",
          role: "tester",
-         prefix: "tester"
+         email: "tester@localhost"
       },
       {
          name: "Только чтение",
          role: "read_only",
-         prefix: "read_only"
+         email: "read_only@localhost"
       },
    ];
    
    for (const _user of _users) {
-      const hashPassword = await bcrypt.hashSync(`${_user.prefix}1!`, 8);
-      const email = `${_user.prefix}@localhost`;
+      const hashPassword = await bcrypt.hashSync(`localhost`, 8);
+      const email = _user.email;
       const role: Record<string, string> = {};
       role[_user.role] = _user.name;
       if (division) {

@@ -21,7 +21,7 @@ const Calendar = () => {
    const [editMode, setEditMode] = useState<boolean>(false);
    const [editDayType, setEditDayType] = useState<number | undefined>(undefined);
    const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
-   let values: ICellDictionary = {};
+   const [values, setValues] = useState<ICellDictionary>({});
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -41,7 +41,7 @@ const Calendar = () => {
       <div>
          <Button icon="pi pi-refresh" severity="secondary" className="mr-2" onClick={() => { 
                setRefresh(!refresh);
-               values = {};
+               setValues({});
                setSaveEnabled(false);
          }}/>
       </div>
@@ -76,7 +76,10 @@ const Calendar = () => {
       console.log(response.data);
    }
 
-   const onEdit = () => {
+   const onEdit = (id: number, type: number) => {
+      const _values = values;
+      _values[id] = type;
+      setValues(_values);
       setSaveEnabled(Object.keys(values).length > 0)
    }
 
@@ -97,7 +100,6 @@ const Calendar = () => {
                   refresh={refresh}
                   writeMode={editMode}
                   dayType={editDayType}
-                  dict={values}
                   onEdit={onEdit}
                />               
             </div>

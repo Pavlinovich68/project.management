@@ -5,8 +5,8 @@ import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 
 
-const ItrCalendarCell = ({row, cell, writeMode, dayType, recalc, dict, onEdit}:
-   {row: number, cell: ICalendarCell, writeMode: boolean, dayType: number | undefined, recalc: any, dict: ICellDictionary, onEdit: any}) => {
+const ItrCalendarCell = ({row, cell, writeMode, dayType, recalc, onEdit}:
+   {row: number, cell: ICalendarCell, writeMode: boolean, dayType: number | undefined, recalc: any, onEdit: any}) => {
    const [hours, setHours] = useState<number>(cell.hours)
 
    const getHours = (type: number): number => {
@@ -30,8 +30,7 @@ const ItrCalendarCell = ({row, cell, writeMode, dayType, recalc, dict, onEdit}:
          el?.setAttribute('data-hours', _hours.toString());
          setHours(_hours);
          recalc(cell.day, oldVal-_hours);
-         dict[cell.id] = dayType;
-         onEdit();
+         onEdit(cell.id, dayType);
       }     
    }
 
