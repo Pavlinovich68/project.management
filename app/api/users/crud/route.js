@@ -47,8 +47,6 @@ export const POST = async (request) => {
          data: {
             name: model.name,
             email: model.email.trim(),
-            begin_date: new Date(model.begin_date),
-            end_date: model.end_date !== null ? new Date(model.end_date) : null,
             roles: roles,
             division_id: model.division_id,
             password: hashedPassword,
@@ -63,13 +61,6 @@ export const POST = async (request) => {
       let filter = {};
       if (model.searchStr) {
          filter['OR'] = prismaHelper.OR(['name', 'email', 'division.name'], model.searchStr);
-         if (!model.showClosed) {
-            filter['AND'] = [{ OR: [{ end_date: null }, { end_date: { gt: new Date() } }]}];
-         }
-      } else {
-         if (!model.showClosed) {
-            filter['OR'] = [{end_date: null}, {end_date: { gt: new Date() }}];
-         }
       }
 
       const totalCount = await prisma.users.count({where: filter});
@@ -112,8 +103,6 @@ export const POST = async (request) => {
          data: {
             name: model.name,
             email: model.email,
-            begin_date: new Date(model.begin_date),
-            end_date: model.end_date !== null ? new Date(model.end_date) : null,
             roles: roles,
             division_id: model.division_id,
             attachment_id: model.attachment_id
@@ -124,11 +113,8 @@ export const POST = async (request) => {
    }
 
    const drop = async (model) => {
-      const result = await prisma.users.update({
-         where: {id: model.id},
-         data: {
-            end_date: new Date()
-         }
+      const result = await prisma.users.delete({
+         where: {id: model.id.id}
       });
       return result;
    }

@@ -30,7 +30,7 @@ import AttachService from "@/services/attachment.service"
 
 const Users = () => {
    const controllerName = 'users';
-   const emptyUser: IUser = {name: '', begin_date: new Date, end_date: null, roles: [], attachment_id: null};
+   const emptyUser: IUser = {name: '', roles: [], attachment_id: null};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -52,30 +52,6 @@ const Users = () => {
 
 
 //#region GRID
-   const periodColumn = (
-      <ColumnGroup>
-         <Row>
-            <Column header="" rowSpan={2}/>
-            <Column header="Фамилия Имя Отчество" rowSpan={2} sortable field="name"/>
-            <Column header="Подразделение" rowSpan={2} sortable field="division.name"/>
-            <Column header="Учетная запись" rowSpan={2} sortable field="email"/>
-            <Column header="Период действия" colSpan={2}/>
-            <Column header="" rowSpan={2}/>
-         </Row>
-         <Row>
-            <Column header="Дата начала" sortable field="begin_date"/>
-            <Column header="Дата окончания" sortable field="end_date"/>
-         </Row>
-      </ColumnGroup>
-   );
-
-   const beginDateTemplate = (rowData: IUser) => {
-      return DateHelper.formatDate(rowData.begin_date);
-   };
-
-   const endDateTemplate = (rowData: IUser) => {
-      return DateHelper.formatDate(rowData.end_date);
-   };
    const gridColumns = [
          <Column
             key={0}
@@ -97,20 +73,6 @@ const Users = () => {
             sortable
             header="Учетная запись"
             style={{ width: '15%' }}>
-         </Column>,
-         <Column
-            key={3}
-            sortable
-            field="begin_date"
-            body={beginDateTemplate}
-            style={{ width: '10%' }}>
-         </Column>,
-         <Column
-            key={4}
-            sortable
-            field="end_date"
-            body={endDateTemplate}
-            style={{ width: '10%' }}>
          </Column>
       ];
 //#endregion
@@ -148,9 +110,6 @@ const Users = () => {
          }
          if (!data.email){
             errors.email = "Адрес электронной почты должен быть заполнен!";
-         }
-         if (!data.begin_date){
-            errors.begin_date = "Дата начала действия должна быть заполнена!";
          }
          return errors;
       },
@@ -263,14 +222,6 @@ const Users = () => {
                            filter
                            id="division" className={classNames({"p-invalid": submitted && !user.values.division_id})}
                            required options={divisions} value={user.values.division_id?.toString()} onChange={(e) => user.setFieldValue('division_id', e.target.value)}/>
-                  </div>
-                  <div className="field col-12 md:col-6">
-                     <label htmlFor="begin_date">Дата начала действия</label>
-                     <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !user.values.begin_date})} value={new Date(user.values.begin_date)} onChange={(e) => user.setFieldValue('begin_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала действия"/>
-                  </div>
-                  <div className="field col-12 md:col-6">
-                     <label htmlFor="end_date">Дата окончания действия</label>
-                     <Calendar id="end_date" value={user.values.end_date !== null ? new Date(user.values.end_date as Date) : null} onChange={(e) => user.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата окончания действия"/>
                   </div>
                </div>
             </TabPanel>
@@ -422,7 +373,7 @@ const Users = () => {
                   drop={deleteUser}
                   tableStyle={{ minWidth: '50rem' }}
                   showClosed={true}
-                  headerColumnGroup={periodColumn}
+                  headerColumnGroup={gridColumns}
                   columns={gridColumns}
                   sortMode="multiple"
                   ref={grid}/>

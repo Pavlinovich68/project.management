@@ -95,14 +95,12 @@ async function main() {
                name: _user.name,
                password: hashPassword,
                roles: role,
-               begin_date: new Date(),
                division_id: division.id,
             },
             create: {
                   email: email,
                   name: _user.name,
                   password: hashPassword,
-                  begin_date: new Date(),
                   roles: role,
                   division_id: division.id
             }
