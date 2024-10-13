@@ -47,7 +47,6 @@ export const POST = async (request) => {
          data: {
             name: model.name,
             email: model.email.trim(),
-            contacts: model.contacts,
             begin_date: new Date(model.begin_date),
             end_date: model.end_date !== null ? new Date(model.end_date) : null,
             roles: roles,
@@ -113,7 +112,6 @@ export const POST = async (request) => {
          data: {
             name: model.name,
             email: model.email,
-            contacts: model.contacts,
             begin_date: new Date(model.begin_date),
             end_date: model.end_date !== null ? new Date(model.end_date) : null,
             roles: roles,

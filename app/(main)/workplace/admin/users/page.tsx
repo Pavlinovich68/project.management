@@ -149,9 +149,6 @@ const Users = () => {
          if (!data.email){
             errors.email = "Адрес электронной почты должен быть заполнен!";
          }
-         if (!data.contacts){
-            errors.contacts = "Контактная информация должна быть заполнена!";
-         }
          if (!data.begin_date){
             errors.begin_date = "Дата начала действия должна быть заполнена!";
          }
@@ -259,21 +256,9 @@ const Users = () => {
                                           value={user.values.email}
                                           onChange={(e) => user.setFieldValue('email', e.target.value)} required autoFocus type="email" tooltip="Адрес электронной почты"/>
                      </div>
-                  </div>
+                  </div>                  
                   <div className="field col-12">
-                     <label htmlFor="contacts">Контактная информация</label>
-                     <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                           <i className="pi pi-phone"></i>
-                        </span>
-                        <InputText id="contacts"  placeholder="Контактная информация"
-                                          className={classNames({"p-invalid": submitted && !user.values.contacts})}
-                                          value={user.values.contacts}
-                                          onChange={(e) => user.setFieldValue('contacts', e.target.value)} required autoFocus type="text" tooltip="Контактная информация"/>
-                     </div>
-                  </div>
-                  <div className="field col-12">
-                     <label htmlFor="contacts">Подразделение</label>
+                     <label htmlFor="division_id">Подразделение</label>
                      <TreeSelect
                            filter
                            id="division" className={classNames({"p-invalid": submitted && !user.values.division_id})}

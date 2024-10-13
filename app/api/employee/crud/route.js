@@ -9,6 +9,7 @@ export const POST = async (request) => {
          data: {
             name: model.name,
             email: model.email,
+            contacts: model.contacts,
             begin_date: model.begin_date,
             end_date: model.end_date
          }
@@ -19,7 +20,7 @@ export const POST = async (request) => {
    const read = async (model, params) => {
       let filter = {};
       if (model.searchStr) {
-         filter['OR'] = prismaHelper.OR(['name', 'email'], model.searchStr);
+         filter['OR'] = prismaHelper.OR(['name', 'email', 'contacts'], model.searchStr);
          if (!model.showClosed) {
             filter['AND'] = [{ OR: [{ end_date: null }, { end_date: { gt: new Date() } }]}];
          }
@@ -54,6 +55,8 @@ export const POST = async (request) => {
          },
          data: {
             name: model.name,
+            email: model.email,
+            contacts: model.contacts,
             begin_date: model.begin_date,
             end_date: model.end_date
          }

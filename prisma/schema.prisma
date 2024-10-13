@@ -56,7 +56,6 @@ model users {
    roles          Json?       @db.Json
    attachment_id  Int?
    emailVerified  DateTime?
-   contacts       String?     @db.VarChar(50)                                    //FIXME - 6 Пернести в employee
    accounts       Account[]
    sessions       Session[]
    avatar         attachment? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

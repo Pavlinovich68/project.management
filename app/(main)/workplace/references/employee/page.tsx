@@ -19,7 +19,7 @@ import React, {useRef, useState, useEffect} from "react";
 
 const Employees = () => {
    const controllerName = 'employee';
-   const model: IEmployee = {id: undefined, name: undefined, email: undefined, begin_date: undefined, end_date: undefined};
+   const model: IEmployee = {id: undefined, name: undefined, email: undefined, begin_date: undefined, end_date: undefined, contacts: undefined};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -101,11 +101,28 @@ const card = (
                                  onChange={(e) => employee.setFieldValue('name', e.target.value)} required autoFocus type="text"/>
          </div>
          <div className="field col-12">
-            <label htmlFor="email">Электронная почта</label>
-            <InputText id="email"  placeholder="Электронная почта"
+            <label htmlFor="email">Адрес электронной почты</label>
+            <div className="p-inputgroup">
+               <span className="p-inputgroup-addon">
+                  <i className="pi pi-envelope"></i>
+               </span>
+               <InputText id="name"  placeholder="Адрес электронной почты"
                                  className={classNames({"p-invalid": submitted && !employee.values.email})}
                                  value={employee.values.email}
-                                 onChange={(e) => employee.setFieldValue('email', e.target.value)} required autoFocus type="text"/>
+                                 onChange={(e) => employee.setFieldValue('email', e.target.value)} required autoFocus type="email" tooltip="Адрес электронной почты"/>
+            </div>
+         </div>
+         <div className="field col-12">
+            <label htmlFor="contacts">Контактная информация</label>
+            <div className="p-inputgroup">
+               <span className="p-inputgroup-addon">
+                  <i className="pi pi-phone"></i>
+               </span>
+               <InputText id="contacts"  placeholder="Контактная информация"
+                                 className={classNames({"p-invalid": submitted && !employee.values.contacts})}
+                                 value={employee.values.contacts}
+                                 onChange={(e) => employee.setFieldValue('contacts', e.target.value)} required autoFocus type="text" tooltip="Контактная информация"/>
+            </div>
          </div>
          <div className="field col-12 md:col-6">
             <label htmlFor="begin_date">Дата начала</label>

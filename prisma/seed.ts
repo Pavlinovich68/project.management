@@ -330,6 +330,15 @@ async function main() {
    }
 
    const seedEmployees = async () => {
+      interface IEmployee {
+         name: string,
+         email: string,
+         contacts: string,
+         begin_date: string,
+         end_date: string | null,
+         post: string,
+         no: number
+      }
       try {
          await prisma.$queryRaw`delete from employee`;
 
@@ -338,7 +347,7 @@ async function main() {
          const _count = employee.length;
          let _index = 0;
          while (_index < _count) {
-            let _node = employee[_index];
+            let _node = employee[_index] as IEmployee;
             const emp = await prisma.employee.create({
                data: {
                   name: _node.name,
