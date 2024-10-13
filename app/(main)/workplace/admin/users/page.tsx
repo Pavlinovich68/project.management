@@ -30,7 +30,7 @@ import AttachService from "@/services/attachment.service"
 
 const Users = () => {
    const controllerName = 'users';
-   const emptyUser: IUser = {roles: [], attachment_id: null};
+   const emptyUser: IUser = {begin_date: new Date, end_date: null, roles: [], attachment_id: null};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -52,21 +52,60 @@ const Users = () => {
 
 
 //#region GRID
+   const periodColumn = (
+      <ColumnGroup>
+         <Row>
+            <Column header="" rowSpan={2}/>
+            <Column header="Подразделение" rowSpan={2} sortable field="division.name"/>
+            <Column header="Учетная запись" rowSpan={2} sortable field="email"/>
+            <Column header="Период действия" colSpan={2}/>
+            <Column header="" rowSpan={2}/>
+         </Row>
+         <Row>
+            <Column header="Дата начала" sortable field="begin_date"/>
+            <Column header="Дата окончания" sortable field="end_date"/>
+         </Row>
+      </ColumnGroup>
+   );
+
+   const beginDateTemplate = (rowData: IUser) => {
+      return DateHelper.formatDate(rowData.begin_date);
+   };
+
+   const endDateTemplate = (rowData: IUser) => {
+      return DateHelper.formatDate(rowData.end_date);
+   };
+
    const gridColumns = [
          <Column
             key={1}
             field="division.name"
             sortable
             header="Подразделение"
-            style={{ width: '50%' }}>
+            style={{ width: '40%' }}>
          </Column>,
          <Column
             key={2}
             field="email"
             sortable
             header="Учетная запись"
-            style={{ width: '50%' }}>
+            style={{ width: '40%' }}>
+         </Column>,
+         <Column
+            key={3}
+            sortable
+            field="begin_date"
+            body={beginDateTemplate}
+            style={{ width: '10%' }}>
+         </Column>,
+         <Column
+            key={4}
+            sortable
+            field="end_date"
+            body={endDateTemplate}
+            style={{ width: '10%' }}>
          </Column>
+         
       ];
 //#endregion
 
@@ -351,7 +390,7 @@ const Users = () => {
                   drop={deleteUser}
                   tableStyle={{ minWidth: '50rem' }}
                   showClosed={true}
-                  headerColumnGroup={gridColumns}
+                  headerColumnGroup={periodColumn}
                   columns={gridColumns}
                   sortMode="multiple"
                   ref={grid}/>
