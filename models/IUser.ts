@@ -5,7 +5,6 @@ export interface IUser {
    email?: string,
    division?: IDivision,
    division_id?: number,
-   name: string,
    contacts?: string,
    roles: any,
    attachment_id?: number | undefined | null

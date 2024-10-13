@@ -47,7 +47,6 @@ model division {
 model users {
    id             Int         @id @default(autoincrement())
    email          String      @unique(map: "users_email_u_ind") @db.VarChar(50)  //FIXME - 1
-   name           String?     @db.VarChar(100)                                   //FIXME - 2
    password       String?     @db.VarChar(255)
    division_id    Int                                                            //FIXME - 5
    employee_id    Int?                                                           //FIXME - not null

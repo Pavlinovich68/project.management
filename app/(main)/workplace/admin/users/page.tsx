@@ -30,7 +30,7 @@ import AttachService from "@/services/attachment.service"
 
 const Users = () => {
    const controllerName = 'users';
-   const emptyUser: IUser = {name: '', roles: [], attachment_id: null};
+   const emptyUser: IUser = {roles: [], attachment_id: null};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -54,25 +54,18 @@ const Users = () => {
 //#region GRID
    const gridColumns = [
          <Column
-            key={0}
-            field="name"
-            sortable
-            header="Фамилия Имя Отчество"
-            style={{ width: '20%' }}>
-         </Column>,
-         <Column
             key={1}
             field="division.name"
             sortable
             header="Подразделение"
-            style={{ width: '45%' }}>
+            style={{ width: '50%' }}>
          </Column>,
          <Column
             key={2}
             field="email"
             sortable
             header="Учетная запись"
-            style={{ width: '15%' }}>
+            style={{ width: '50%' }}>
          </Column>
       ];
 //#endregion
@@ -105,9 +98,6 @@ const Users = () => {
       initialValues: emptyUser,
       validate: (data) => {
          let errors: FormikErrors<IUser> = {};
-         if (!data.name){
-            errors.name = "Наименование подразделения должно быть заполнено!";
-         }
          if (!data.email){
             errors.email = "Адрес электронной почты должен быть заполнен!";
          }
@@ -192,18 +182,6 @@ const Users = () => {
          <TabView>
             <TabPanel header="Основные данные">
                <div className="p-fluid formgrid grid">
-                  <div className="field col-12">
-                     <label htmlFor="name">Фамилия, имя и отчество</label>
-                     <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                           <i className="pi pi-user"></i>
-                        </span>
-                        <InputText id="name"  placeholder="Фамилия, имя и отчество"
-                                          className={classNames({"p-invalid": submitted && !user.values.name})}
-                                          value={user.values.name}
-                                          onChange={(e) => user.setFieldValue('name', e.target.value)} required autoFocus type="text" tooltip="Фамилия, имя и отчество"/>
-                     </div>
-                  </div>
                   <div className="field col-12">
                      <label htmlFor="email">Адрес электронной почты</label>
                      <div className="p-inputgroup">

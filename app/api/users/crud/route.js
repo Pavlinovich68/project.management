@@ -45,7 +45,6 @@ export const POST = async (request) => {
 
       const result = await prisma.users.create({
          data: {
-            name: model.name,
             email: model.email.trim(),
             roles: roles,
             division_id: model.division_id,
@@ -101,7 +100,6 @@ export const POST = async (request) => {
       const result = await prisma.users.update({
          where: {id: model.id},
          data: {
-            name: model.name,
             email: model.email,
             roles: roles,
             division_id: model.division_id,
