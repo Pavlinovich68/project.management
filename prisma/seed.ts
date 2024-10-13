@@ -343,6 +343,7 @@ async function main() {
                data: {
                   name: _node.name,
                   email: _node.email,
+                  contacts: _node.contacts,
                   begin_date: new Date(_node.begin_date),
                   end_date: null
                }

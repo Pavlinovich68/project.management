@@ -46,21 +46,21 @@ model division {
 //NOTE - Пользователи системы
 model users {
    id             Int         @id @default(autoincrement())
-   email          String      @unique(map: "users_email_u_ind") @db.VarChar(50)
-   name           String?     @db.VarChar(100)
-   begin_date     DateTime    @db.Timestamp(6)
-   end_date       DateTime?   @db.Timestamp(6)
+   email          String      @unique(map: "users_email_u_ind") @db.VarChar(50)  //FIXME - 1
+   name           String?     @db.VarChar(100)                                   //FIXME - 2
+   begin_date     DateTime    @db.Timestamp(6)                                   //FIXME - 3
+   end_date       DateTime?   @db.Timestamp(6)                                   //FIXME - 4
    password       String?     @db.VarChar(255)
-   division_id    Int
-   employee_id    Int?
+   division_id    Int                                                            //FIXME - 5
+   employee_id    Int?                                                           //FIXME - not null
    roles          Json?       @db.Json
    attachment_id  Int?
    emailVerified  DateTime?
-   contacts       String?     @db.VarChar(50)
+   contacts       String?     @db.VarChar(50)                                    //FIXME - 6 Пернести в employee
    accounts       Account[]
    sessions       Session[]
    avatar         attachment? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)   //FIXME - 5
    employee       employee?   @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    restoreGuid    String?     @db.VarChar(32)
    restoreTime    DateTime?
@@ -129,8 +129,9 @@ model exclusion {
 //!SECTION
 model employee {
    id          Int         @id @default(autoincrement())
-   name        String     @db.VarChar(75)
-   email       String     @db.VarChar(50)
+   name        String      @db.VarChar(75)
+   email       String      @db.VarChar(50)
+   contacts    String?     @db.VarChar(50)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
    staff       staff[]
