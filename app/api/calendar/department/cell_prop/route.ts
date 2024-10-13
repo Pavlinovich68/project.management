@@ -9,7 +9,7 @@ export const GET = async (request: NextRequest) => {
          const row = await prisma.$queryRaw`
             select
                dcc.id as id,
-               e.surname || ' ' || substring(e.name for 1) || '.' || substring(e.pathname for 1) || '.' as name,
+               e.name,
                lpad(dcc.day::varchar, 2, '0') || '.' || lpad(dcc.month::varchar, 2, '0') || '.' || dc.year::varchar as date
             from
                dept_calendar_row dcr

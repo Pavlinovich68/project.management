@@ -52,6 +52,7 @@ model users {
    end_date       DateTime?   @db.Timestamp(6)
    password       String?     @db.VarChar(255)
    division_id    Int
+   employee_id    Int?
    roles          Json?       @db.Json
    attachment_id  Int?
    emailVerified  DateTime?
@@ -60,6 +61,7 @@ model users {
    sessions       Session[]
    avatar         attachment? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee       employee?   @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    restoreGuid    String?     @db.VarChar(32)
    restoreTime    DateTime?
 }
@@ -127,13 +129,12 @@ model exclusion {
 //!SECTION
 model employee {
    id          Int         @id @default(autoincrement())
-   name        String?     @db.VarChar(25)
-   surname     String?     @db.VarChar(25)
-   pathname    String?     @db.VarChar(25)
-   email       String?     @db.VarChar(50)
+   name        String     @db.VarChar(75)
+   email       String     @db.VarChar(50)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
-   staff staff[]
+   staff       staff[]
+   users       users[]
 }
 //NOTE - График отпусков
 model vacation {

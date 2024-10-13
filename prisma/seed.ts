@@ -342,8 +342,6 @@ async function main() {
             const emp = await prisma.employee.create({
                data: {
                   name: _node.name,
-                  surname: _node.surname,
-                  pathname: _node.pathname,
                   email: _node.email,
                   begin_date: new Date(_node.begin_date),
                   end_date: null
@@ -442,12 +440,9 @@ async function main() {
          let _index = 0;         
          while (_index < _count) {
             const _node = vacations[_index];
-            const names = _node.name.split(' ');
             const employee = await prisma.employee.findFirst({
                where: {
-                  surname: names[0],
-                  name: names[1],
-                  pathname: names[2]
+                  name: _node.name
                }
             });
             const staff = await prisma.staff.findFirst({

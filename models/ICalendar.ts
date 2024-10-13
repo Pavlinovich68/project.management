@@ -16,7 +16,7 @@ export interface ICalendarHeader {
 }
 
 export interface ICalendarRow {
-   name: string | undefined,
+   name: string | undefined | null | void,
    cells: ICalendarCell[] | undefined
    hours: number
    total: number | undefined

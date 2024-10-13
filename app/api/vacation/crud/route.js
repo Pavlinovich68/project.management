@@ -144,7 +144,7 @@ export const POST = async (request) => {
          where
             r.division_id = ${division_id}
             and v.year = ${year}
-            and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0 
+            and position(lower(${model.searchStr??''}) in lower(e.name)) > 0 
       `;
 
       const totalCount = Number(count.length);
@@ -155,7 +155,7 @@ export const POST = async (request) => {
             v.year,
             v.start_date,
             v.end_date,
-            e.surname || ' ' || e.name || ' ' || e.pathname as name,
+            e.name,
             sta.id as staff_id
          from
             vacation v
@@ -165,9 +165,9 @@ export const POST = async (request) => {
          where
             r.division_id = ${division_id}
             and v.year = ${year}
-            and position(lower(${model.searchStr??''}) in lower(e.surname || ' ' || e.name || ' ' || e.pathname)) > 0  
+            and position(lower(${model.searchStr??''}) in lower(e.name)) > 0  
          order by
-            e.surname || ' ' || e.name || ' ' || e.pathname,
+            e.name,
             v.start_date
          limit ${model.pageSize}
          offset (${model.pageNo} -1) * ${model.pageSize}

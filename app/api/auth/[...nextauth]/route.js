@@ -45,12 +45,6 @@ export const authOptions = {
             const { password, ...userWithoutPass } = user;
             const accessToken = signJwtAccessToken(userWithoutPass);
 
-            const division = await prisma.division.findUnique({
-               where: {
-                  id: user.division.id
-               }
-            });
-
             user.avatar = user.avatar?.body;
 
             const result = {
@@ -73,6 +67,7 @@ export const authOptions = {
             token.roles = user.roles;
             token.avatar = user.attachment_id;
             token.user_id = user.id;
+            token.employee_id = user.employee_id;
          }
          return token;
       },
@@ -84,6 +79,7 @@ export const authOptions = {
             session.user.roles = token.roles;
             session.user.avatar = token.avatar;
             session.user.id = token.user_id;
+            session.user.employee_id = token.employee_id;
          }
          return session;
       }

@@ -110,11 +110,11 @@ export const POST = async (request) => {
          filter = {
             AND:  [
                      {
-                        OR: [
-                           { employee: { name: { contains: model.searchStr, mode: 'insensitive' }}},
-                           { employee: { surname: { contains: model.searchStr, mode: 'insensitive'}}},
-                           { employee: { pathname: { contains: model.searchStr, mode: 'insensitive'}}}
-                        ]
+                        employee: { 
+                           name: { 
+                              contains: model.searchStr, mode: 'insensitive' 
+                           }
+                        }
                      },
                      {
                         rate: {
@@ -157,9 +157,7 @@ export const POST = async (request) => {
             employee: {
                select: {
                   id: true,
-                  name: true,
-                  surname: true,
-                  pathname: true
+                  name: true
                }            
             },
             rate: {
@@ -182,9 +180,7 @@ export const POST = async (request) => {
             end_date: item.end_date,
             employee: {
                id: item.employee_id,
-               name: item.employee.surname + ' ' +
-                     item.employee.name + ' ' +
-                     item.employee.pathname
+               name: item.employee.name
             },
             rate: {
                id: item.rate_id,
