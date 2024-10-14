@@ -10,6 +10,20 @@ import DateHelper from "@/services/date.helpers";
 
 // TODO Seed
 async function main() {
+   interface IEmployee {
+      name: string,
+      email: string,
+      contacts: string,
+      begin_date: string,
+      end_date: string | null,
+      post: string,
+      role: {
+         name: string,
+         description: string
+      }
+      no: number
+   }
+
    const upsertDivision = async (model: any, parentId: number | null) => {
       const result = await prisma.division.upsert({
          where: {name: model.name},
@@ -36,74 +50,25 @@ async function main() {
          name: 'Отдел автоматизации процессов и веб-технологий'
       }
    });
-   
-   interface UserInterface {
-      name: string
-      role: string
-      email: string
-      attachment_id?: number | null
-   }
-   
-   const _users:UserInterface[] = [ 
-      {
-         name: "Администратор",
-         role: "admin",
-         email: "admin@localhost"
-      },
-      {
-         name: "Руководитель",
-         role: "boss",
-         email: "boss@localhost"
-      },
-      {
-         name: "Павлов С.П.",
-         role: "master",
-         email: "s.pavlov@localhost",
-         attachment_id: 1
-      },
-      {
-         name: "Савельев П.И.",
-         role: "developer",
-         email: "p.savelev@localhost"
-      },
-      {
-         name: "Аналитик",
-         role: "analyst",
-         email: "analyst@localhost"
-      },
-      {
-         name: "Тестировщик",
-         role: "tester",
-         email: "tester@localhost"
-      },
-      {
-         name: "Только чтение",
-         role: "read_only",
-         email: "read_only@localhost"
-      },
-   ];
-   
-   for (const _user of _users) {
+
+   const createUser = async (emp: IEmployee, id: number) => {
       const hashPassword = await bcrypt.hashSync(`localhost`, 8);
-      const email = _user.email;
       const role: Record<string, string> = {};
-      role[_user.role] = _user.name;
-      if (division) {
-         const user = await prisma.users.upsert({
-            where: {email: email},
-            update: {
-               password: hashPassword,
-               roles: role,
-               division_id: division.id,
-            },
-            create: {
-                  email: email,
-                  password: hashPassword,
-                  roles: role,
-                  division_id: division.id
-            }
-         }).finally(() => console.log(`\x1b[32mUser \"${_user.name}\" created\x1b[0m`));
-      }
+      role[emp.role.name] = emp.role.description;
+      await prisma.users.upsert({
+         where: {email: emp.email},
+         update: {
+            employee_id: id,
+            password: hashPassword,
+            roles: role,
+         },
+         create: {
+            employee_id: id,
+            email: emp.email,
+            password: hashPassword,
+            roles: role
+         }
+      });
    }
 
    const seedProjects = async () => {
@@ -325,16 +290,7 @@ async function main() {
       }
    }
 
-   const seedEmployees = async () => {
-      interface IEmployee {
-         name: string,
-         email: string,
-         contacts: string,
-         begin_date: string,
-         end_date: string | null,
-         post: string,
-         no: number
-      }
+   const seedEmployees = async () => {      
       try {
          await prisma.$queryRaw`delete from employee`;
 
@@ -353,31 +309,33 @@ async function main() {
                   end_date: null
                }
             });
+            await createUser(_node, emp.id);
             _index++;
-
-            const post = posts.find(p => p.name === _node.post);
-            if (!post)
-               throw new Error('Не удалось найти должность');
-            if (!division)
-               throw new Error('Не удалось найти подразделение');
-            const rate = await prisma.rate.findFirst({
-               where: {
-                  post_id: post.id,
-                  division_id: division.id,
-                  no: _node.no
-               }
-            });
-            if (!rate)
-               throw new Error(`Не удалось найти ставку ${_node.no}`);
-            if (!emp)
-               throw new Error('Не удалось найти сотрудника');
-            await prisma.staff.create({
-               data: {
-                  begin_date: new Date(2024, 0, 1),
-                  employee_id: emp.id,
-                  rate_id: rate.id
-               }
-            })
+            if (_node.post) {
+               const post = posts.find(p => p.name === _node.post);
+               if (!post)
+                  throw new Error('Не удалось найти должность');
+               if (!division)
+                  throw new Error('Не удалось найти подразделение');
+               const rate = await prisma.rate.findFirst({
+                  where: {
+                     post_id: post.id,
+                     division_id: division.id,
+                     no: _node.no
+                  }
+               });
+               if (!rate)
+                  throw new Error(`Не удалось найти ставку ${_node.no}`);
+               if (!emp)
+                  throw new Error('Не удалось найти сотрудника');
+               await prisma.staff.create({
+                  data: {
+                     begin_date: new Date(2024, 0, 1),
+                     employee_id: emp.id,
+                     rate_id: rate.id
+                  }
+               })
+            }
          }
          return _index;  
       } catch (error) {

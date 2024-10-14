@@ -47,7 +47,6 @@ export const POST = async (request) => {
          data: {
             email: model.email.trim(),
             roles: roles,
-            division_id: model.division_id,
             password: hashedPassword,
             attachment_id: model.attachment_id
          }
@@ -67,8 +66,7 @@ export const POST = async (request) => {
          skip: model.pageSize * (model.pageNo -1),
          take: model.pageSize,
          where: filter,
-         orderBy: model.orderBy,
-         include: {division: true}
+         orderBy: model.orderBy
       });
 
       for (const user of result) {
@@ -102,7 +100,6 @@ export const POST = async (request) => {
          data: {
             email: model.email,
             roles: roles,
-            division_id: model.division_id,
             attachment_id: model.attachment_id
          }
       });

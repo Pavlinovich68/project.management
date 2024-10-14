@@ -38,7 +38,6 @@ model division {
    parent_id      Int?
    parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    childrens      division[]  @relation("divisionTodivision")
-   users          users[]
    projects       project[]
    rate           rate[]
    dept_calendar  dept_calendar[]
@@ -48,7 +47,6 @@ model users {
    id             Int         @id @default(autoincrement())
    email          String      @unique(map: "users_email_u_ind") @db.VarChar(50)  //FIXME - 1
    password       String?     @db.VarChar(255)
-   division_id    Int                                                            //FIXME - 5
    employee_id    Int?                                                           //FIXME - not null
    roles          Json?       @db.Json
    attachment_id  Int?
@@ -56,7 +54,6 @@ model users {
    accounts       Account[]
    sessions       Session[]
    avatar         attachment? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)   //FIXME - 5
    employee       employee?   @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    restoreGuid    String?     @db.VarChar(32)
    restoreTime    DateTime?

@@ -6,6 +6,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 2
    },
    {
@@ -15,6 +19,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 3
    },
    {
@@ -24,6 +32,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 4
    },
    {
@@ -33,6 +45,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Ведущий техник-технолог",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 16
    },
    {
@@ -42,6 +58,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 5
    },
    {
@@ -51,6 +71,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 6
    },
    {
@@ -60,6 +84,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 7
    },
    {
@@ -69,6 +97,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 8
    },
    {
@@ -78,6 +110,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 9
    },
    {
@@ -87,6 +123,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 10
    },
    {
@@ -96,6 +136,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 11
    },
    {
@@ -105,6 +149,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Начальник отдела",
+      "role": {
+         "name": "master",
+         "description": "Начальник отдела"
+      },
       "no": 1
    },
    {
@@ -114,6 +162,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 12
    },
    {
@@ -123,6 +175,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 13
    },
    {
@@ -132,6 +188,10 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 14
    },
    {
@@ -141,6 +201,75 @@
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 15
+   },
+   {
+      "name": "Тамендарова Алиса Асхатовна",
+      "email": "a.tamendarova@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "analyst",
+         "description": "Аналитик"
+      },
+      "no": 0
+   },
+   {
+      "name": "Пичик Михаил Михайлович",
+      "email": "m.pichik@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "boss",
+         "description": "Руководитель"
+      },
+      "no": 0
+   },
+   {
+      "name": "Тептеев Александр Александрович",
+      "email": "a.tepteev@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "admin",
+         "description": "Администратор"
+      },
+      "no": 0
+   },
+   {
+      "name": "Иванов Иван Иванович",
+      "email": "i.ivanov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "tester",
+         "description": "Тестировщик"
+      },
+      "no": 0
+   },
+   {
+      "name": "Петров Петр Петрович",
+      "email": "p.petrov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "reader",
+         "description": "Только чтение"
+      },
+      "no": 0
    }
 ]

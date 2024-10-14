@@ -17,11 +17,8 @@ import RecordState from "@/models/enums/record-state";
 import { TabView, TabPanel } from 'primereact/tabview';
 import {InputText} from 'primereact/inputtext';
 import {classNames} from "primereact/utils";
-import {Calendar} from "primereact/calendar";
-import {TreeSelect} from "primereact/treeselect";
 import {appRoles} from "@/prisma/roles/index";;
 import { InputSwitch } from "primereact/inputswitch";
-import circleProgress from '@/services/circle.progress.js'
 import CrudHelper from "@/services/crud.helper.js"
 import CRUD from "@/models/enums/crud-type";
 import { FileUpload, FileUploadHeaderTemplateOptions, ItemTemplateOptions } from 'primereact/fileupload';
@@ -38,7 +35,6 @@ const Users = () => {
    const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
    const [submitted, setSubmitted] = useState(false);
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const [divisions, setDivisions] = useState<TreeNode[]>([]);
    // При закрытии карточки через отмену восстанавливаем роли отсюда
    const [savedUserRoles, setSavedUserRoles] = useState<any>({});
    const [currentUserRoles, setCurrentUserRoles] = useState<any>({});
@@ -110,29 +106,6 @@ const Users = () => {
 //#endregion
 
 //#region Card
-   const getDivisionsTree = () => {
-      const prepareData = (data: any) : TreeNode[] => {
-         const result: TreeNode[] = [];
-         //@ts-ignore
-         data?.map((item, index) => {
-            result.push({
-                  id: item.data.id?.toString(),
-                  key: item.data.id,
-                  label: item.data.name,
-                  icon: `pi pi-fw ${item.children?.length === 0 ? "pi-briefcase" : "pi-folder"}`,
-                  children: prepareData(item.children)
-            });
-         });
-         return result;
-      }
-      CrudHelper.crud('division', CRUD.read, {}).then((item) => {
-         if (item.status === 'success') {
-            let treeNodes = prepareData(item.data);
-            setDivisions(treeNodes);
-         }
-      });
-   }
-
    const user = useFormik<IUser>({
       initialValues: emptyUser,
       validate: (data) => {
@@ -233,13 +206,6 @@ const Users = () => {
                                           onChange={(e) => user.setFieldValue('email', e.target.value)} required autoFocus type="email" tooltip="Адрес электронной почты"/>
                      </div>
                   </div>                  
-                  <div className="field col-12">
-                     <label htmlFor="division_id">Подразделение</label>
-                     <TreeSelect
-                           filter
-                           id="division" className={classNames({"p-invalid": submitted && !user.values.division_id})}
-                           required options={divisions} value={user.values.division_id?.toString()} onChange={(e) => user.setFieldValue('division_id', e.target.value)}/>
-                  </div>
                </div>
             </TabPanel>
             <TabPanel header="Роли">
@@ -276,7 +242,6 @@ const Users = () => {
          }
       });
       setCardHeader('Создание нового пользователя');
-      getDivisionsTree();
       user.setValues(emptyUser);
       setAttachmentId(null);
       setCurrentUserRoles(emptyUser.roles);
@@ -290,7 +255,6 @@ const Users = () => {
 
    const updateUser = async (data: IUser) => {
       setCardHeader('Редактирование пользователя');
-      getDivisionsTree();
       user.setValues(data);
       const attach = await AttachService.read(data.attachment_id);
       setImageSrc(attach);
@@ -389,7 +353,7 @@ const Users = () => {
                   update={updateUser}
                   drop={deleteUser}
                   tableStyle={{ minWidth: '50rem' }}
-                  showClosed={true}
+                  showClosed={false}
                   headerColumnGroup={periodColumn}
                   columns={gridColumns}
                   sortMode="multiple"
