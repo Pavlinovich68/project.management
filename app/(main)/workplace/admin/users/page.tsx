@@ -23,11 +23,12 @@ import CrudHelper from "@/services/crud.helper.js"
 import CRUD from "@/models/enums/crud-type";
 import { FileUpload, FileUploadHeaderTemplateOptions, ItemTemplateOptions } from 'primereact/fileupload';
 import AttachService from "@/services/attachment.service"
-
+import { Dropdown } from "primereact/dropdown";
+import { IBaseEntity } from "@/models/IBaseEntity";
 
 const Users = () => {
    const controllerName = 'users';
-   const emptyUser: IUser = {begin_date: new Date, end_date: null, roles: [], attachment_id: null};
+   const emptyUser: IUser = {roles: [], attachment_id: null};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -45,14 +46,24 @@ const Users = () => {
    const [attachChanged, setAttachChanged] = useState<boolean>(false);
    const [attachmentId, setAttachmentId] = useState<number | undefined | null>(null);
    const [imageSrc, setImageSrc] = useState('');
+   const [employees, setEmployees] = useState<IBaseEntity[]>();
 
-
+   const readEmployees = async () => {
+      const res = await fetch(`/api/staff/employee/list`, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+         }
+      });
+      const data = await res.json();
+      setEmployees(data.data);
+   }   
 //#region GRID
    const periodColumn = (
       <ColumnGroup>
          <Row>
             <Column header="" rowSpan={2}/>
-            <Column header="Подразделение" rowSpan={2} sortable field="division.name"/>
+            <Column header="Сотрудник" rowSpan={2} sortable field="division.name"/>
             <Column header="Учетная запись" rowSpan={2} sortable field="email"/>
             <Column header="Период действия" colSpan={2}/>
             <Column header="" rowSpan={2}/>
@@ -65,19 +76,19 @@ const Users = () => {
    );
 
    const beginDateTemplate = (rowData: IUser) => {
-      return DateHelper.formatDate(rowData.begin_date);
+      return DateHelper.formatDate(rowData.employee?.begin_date);
    };
 
    const endDateTemplate = (rowData: IUser) => {
-      return DateHelper.formatDate(rowData.end_date);
+      return DateHelper.formatDate(rowData.employee?.end_date);
    };
 
    const gridColumns = [
          <Column
             key={1}
-            field="division.name"
+            field="employee.name"
             sortable
-            header="Подразделение"
+            header="Сотрудник"
             style={{ width: '40%' }}>
          </Column>,
          <Column
@@ -193,6 +204,26 @@ const Users = () => {
          <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
          <TabView>
             <TabPanel header="Основные данные">
+               <div className="field col-12">
+                  <label htmlFor="rate" className="mr-3">Сотрудник</label>
+                  <div>
+                     <Dropdown
+                        value={user.values.employee?.id}
+                        className={classNames({"p-invalid": submitted && !user.values.employee})} 
+                        required 
+                        optionLabel="name" 
+                        optionValue="id" 
+                        filter
+                        options={employees}
+                        onChange={(e) => {
+                           const item = employees?.find(item => item.id === e.value);
+                           if (item) {
+                              user.setFieldValue('employee', item)
+                           }
+                        }}
+                     />
+                  </div>
+               </div>
                <div className="p-fluid formgrid grid">
                   <div className="field col-12">
                      <label htmlFor="email">Адрес электронной почты</label>
@@ -241,6 +272,7 @@ const Users = () => {
             active: false
          }
       });
+      readEmployees();
       setCardHeader('Создание нового пользователя');
       user.setValues(emptyUser);
       setAttachmentId(null);
@@ -254,6 +286,7 @@ const Users = () => {
    }
 
    const updateUser = async (data: IUser) => {
+      readEmployees();
       setCardHeader('Редактирование пользователя');
       user.setValues(data);
       const attach = await AttachService.read(data.attachment_id);

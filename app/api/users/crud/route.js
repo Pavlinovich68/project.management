@@ -66,7 +66,27 @@ export const POST = async (request) => {
          skip: model.pageSize * (model.pageNo -1),
          take: model.pageSize,
          where: filter,
-         orderBy: model.orderBy
+         orderBy: model.orderBy,
+         select: {
+            id: true,
+            email: true,
+            roles: true,
+            avatar: {
+               select: {
+                  id: true,
+                  body: true
+               }
+            },
+            employee: {
+               select: {
+                  id: true,
+                  name: true,
+                  begin_date: true,
+                  end_date: true,
+                  email: true
+               }
+            }
+         }
       });
 
       for (const user of result) {
