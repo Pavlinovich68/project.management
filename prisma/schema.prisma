@@ -45,16 +45,15 @@ model division {
 //NOTE - Пользователи системы
 model users {
    id             Int         @id @default(autoincrement())
-   email          String      @unique(map: "users_email_u_ind") @db.VarChar(50)  //FIXME - 1
    password       String?     @db.VarChar(255)
-   employee_id    Int?                                                           //FIXME - not null
+   employee_id    Int         @unique(map: "user_employee_u_ind")
    roles          Json?       @db.Json
    attachment_id  Int?
    emailVerified  DateTime?
    accounts       Account[]
    sessions       Session[]
    avatar         attachment? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   employee       employee?   @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    restoreGuid    String?     @db.VarChar(32)
    restoreTime    DateTime?
 }
@@ -123,7 +122,7 @@ model exclusion {
 model employee {
    id          Int         @id @default(autoincrement())
    name        String      @db.VarChar(75)
-   email       String      @db.VarChar(50)
+   email       String      @unique(map: "employee_email_u_ind") @db.VarChar(50)
    contacts    String?     @db.VarChar(50)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)

@@ -19,9 +19,12 @@ export const POST = async (request) => {
 
    const create = async (model) => {
       const _exists = await prisma.users.findFirst({
+         include: {
+            employee: true
+         },
          where: {
-            email: {
-               equals: model.email.trim(),
+            employee: {
+               email: model.email.trim(),
                mode: 'insensitive'
             }
          }
