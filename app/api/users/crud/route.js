@@ -44,11 +44,10 @@ export const POST = async (request) => {
       }
 
       //TODO Отправка пароля на почту
-      await mailService.newUser(model.email, password);
+      await mailService.newUser(password);
 
       const result = await prisma.users.create({
          data: {
-            email: model.email.trim(),
             roles: roles,
             password: hashedPassword,
             attachment_id: model.attachment_id
@@ -72,7 +71,6 @@ export const POST = async (request) => {
          orderBy: model.orderBy,
          select: {
             id: true,
-            email: true,
             roles: true,
             avatar: {
                select: {
@@ -84,6 +82,7 @@ export const POST = async (request) => {
                select: {
                   id: true,
                   name: true,
+                  email: true,
                   begin_date: true,
                   end_date: true,
                   email: true
@@ -121,7 +120,6 @@ export const POST = async (request) => {
       const result = await prisma.users.update({
          where: {id: model.id},
          data: {
-            email: model.email,
             roles: roles,
             attachment_id: model.attachment_id
          }

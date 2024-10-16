@@ -25,6 +25,8 @@ import { FileUpload, FileUploadHeaderTemplateOptions, ItemTemplateOptions } from
 import AttachService from "@/services/attachment.service"
 import { Dropdown } from "primereact/dropdown";
 import { IBaseEntity } from "@/models/IBaseEntity";
+import { IconUser } from '@tabler/icons-react';
+import { Avatar } from "primereact/avatar";
 
 const Users = () => {
    const controllerName = 'users';
@@ -64,7 +66,7 @@ const Users = () => {
          <Row>
             <Column header="" rowSpan={2}/>
             <Column header="Сотрудник" rowSpan={2} sortable field="division.name"/>
-            <Column header="Учетная запись" rowSpan={2} sortable field="email"/>
+            <Column header="Учетная запись" rowSpan={2} sortable field="employee.email"/>
             <Column header="Период действия" colSpan={2}/>
             <Column header="" rowSpan={2}/>
          </Row>
@@ -93,7 +95,7 @@ const Users = () => {
          </Column>,
          <Column
             key={2}
-            field="email"
+            field="employee.email"
             sortable
             header="Учетная запись"
             style={{ width: '40%' }}>
@@ -130,6 +132,10 @@ const Users = () => {
          user.resetForm();
       }
    });
+
+   const icon = (
+      <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="0 -960 960 960" width="100   px" fill="#e8eaed"><path d="M480-481q-66 0-108-42t-42-108q0-66 42-108t108-42q66 0 108 42t42 108q0 66-42 108t-108 42ZM160-160v-94q0-38 19-65t49-41q67-30 128.5-45T480-420q62 0 123 15.5t127.92 44.69q31.3 14.13 50.19 40.97Q800-292 800-254v94H160Zm60-60h520v-34q0-16-9.5-30.5T707-306q-64-31-117-42.5T480-360q-57 0-111 11.5T252-306q-14 7-23 21.5t-9 30.5v34Zm260-321q39 0 64.5-25.5T570-631q0-39-25.5-64.5T480-721q-39 0-64.5 25.5T390-631q0 39 25.5 64.5T480-541Zm0-90Zm0 411Z"/></svg>
+   )
 
    const checkBox = (entry: any) => {
       return (
@@ -223,21 +229,14 @@ const Users = () => {
                         }}
                      />
                   </div>
-               </div>
-               <div className="p-fluid formgrid grid">
-                  <div className="field col-12">
-                     <label htmlFor="email">Адрес электронной почты</label>
-                     <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                           <i className="pi pi-envelope"></i>
-                        </span>
-                        <InputText id="name"  placeholder="Адрес электронной почты"
-                                          className={classNames({"p-invalid": submitted && !user.values.email})}
-                                          value={user.values.email}
-                                          onChange={(e) => user.setFieldValue('email', e.target.value)} required autoFocus type="email" tooltip="Адрес электронной почты"/>
-                     </div>
-                  </div>                  
-               </div>
+               </div>               
+               <button type="button" className="p-link user-avatar-button" onClick={(e) => {
+                  //@ts-ignore
+                     e.current.toggle(e);
+                  }}>                  
+                  {/* {avatar ? <Avatar image={avatar} size="large" shape="circle" className='itr-avatar'/> : */}
+                  <Avatar icon={icon} size="large" shape="circle" className='itr-card-avatar'/>
+               </button>
             </TabPanel>
             <TabPanel header="Роли">
                {
