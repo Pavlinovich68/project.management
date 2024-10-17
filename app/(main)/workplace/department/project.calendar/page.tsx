@@ -27,26 +27,18 @@ const ProjectCalendar = () => {
       <ItrCalendarSwitch xdate={date} onClick={monthSwitch}/>
    );
 
+   if (!session) return;
+
    return (
-      session ?
       <div className="grid">
          <div className="col-12">
             <div className="card">
-               <h3>Проекты в работе</h3>
+               <h3>Проекты в работе</h3>               
                <Toolbar center={centerContent}/>
-               <ItrProjectCalendar 
-                  year={date.getFullYear()} 
-                  month={date.getMonth()+1} 
-                  division_id={session?.user?.division_id}
-                  refresh={refresh}
-                  writeMode={editMode}
-                  dayType={editDayType}
-                  dict={values}
-                  onEdit={onEdit}
-               />
+               <h5 className="flex justify-content-center flex-wrap">{session.user?.name}</h5>
             </div>
          </div>
-      </div> : <React.Fragment/>
+      </div>
    );
 };
 
