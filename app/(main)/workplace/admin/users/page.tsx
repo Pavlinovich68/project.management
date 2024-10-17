@@ -1,5 +1,4 @@
 'use client'
-import {TreeNode} from "primereact/treenode";
 import ItrGrid from "@/components/ItrGrid";
 import React, {useRef, useState} from "react";
 import {ColumnGroup} from "primereact/columngroup";
@@ -15,17 +14,15 @@ import {ICardRef} from '@/models/ICardRef'
 import {FormikErrors, useFormik} from "formik";
 import RecordState from "@/models/enums/record-state";
 import { TabView, TabPanel } from 'primereact/tabview';
-import {InputText} from 'primereact/inputtext';
 import {classNames} from "primereact/utils";
 import {appRoles} from "@/prisma/roles/index";;
 import { InputSwitch } from "primereact/inputswitch";
 import CrudHelper from "@/services/crud.helper.js"
 import CRUD from "@/models/enums/crud-type";
-import { FileUpload, FileUploadHeaderTemplateOptions, ItemTemplateOptions } from 'primereact/fileupload';
+import { FileUpload, ItemTemplateOptions } from 'primereact/fileupload';
 import AttachService from "@/services/attachment.service"
 import { Dropdown } from "primereact/dropdown";
 import { IBaseEntity } from "@/models/IBaseEntity";
-import { IconUser } from '@tabler/icons-react';
 import { Avatar } from "primereact/avatar";
 
 const Users = () => {
@@ -123,8 +120,8 @@ const Users = () => {
       initialValues: emptyUser,
       validate: (data) => {
          let errors: FormikErrors<IUser> = {};
-         if (!data.email){
-            errors.email = "Адрес электронной почты должен быть заполнен!";
+         if (!data.employee){
+            errors.employee = "Сотрудник должен быть указан!";
          }
          return errors;
       },
@@ -156,19 +153,22 @@ const Users = () => {
       setCurrentUserRoles(_roles);
    }
 
-   const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
-      const { className, chooseButton, cancelButton } = options;
-
+   const emptyTemplate = () => {
       return (
-         <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
-            {chooseButton}
-            {cancelButton}
-         </div>
-      );
-   };
-
-   const onTemplateRemove = (file: File, callback: Function) => {
-      callback();
+            <div className="flex align-items-center flex-column">
+               {
+                  imageSrc ?
+                     <Avatar image={imageSrc} size="large" shape="circle" className='itr-card-avatar block-h-center'/>
+                  :
+                     <React.Fragment>
+                        <Avatar icon={icon} size="large" shape="circle" className='itr-card-avatar block-h-center'/>
+                        <span style={{ fontSize: '1em', color: 'var(--text-color-secondary)' }} className="my-5">
+                           Перетащите сюда изображение
+                        </span>
+                     </React.Fragment>
+               }
+            </div>
+         );
    };
 
    const itemTemplate = (inFile: object, props: ItemTemplateOptions) => {
@@ -176,31 +176,8 @@ const Users = () => {
       //@ts-ignore
       const objectURL = file.objectURL;
       return (
-         <div className="flex align-items-center flex-wrap">
-            <div className="flex align-items-center" style={{ width: '40%' }}>
-               <img alt={file.name} role="presentation" src={objectURL} width={100} />
-            </div>
-         </div>
-      );
-   };
-
-   const loadedTemplate = () => {
-      return (
-         <div className="flex align-items-center flex-wrap">
-            <div className="flex align-items-center" style={{ width: '40%' }}>
-               <img alt={"loadedFromDataBaseImage"} role="presentation" src={imageSrc} width={100} />
-            </div>
-         </div>
-      );
-   };
-
-   const emptyTemplate = () => {
-      return (
          <div className="flex align-items-center flex-column">
-            <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-            <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-               Перетащите сюда изображение
-            </span>
+            <Avatar image={objectURL} size="large" shape="circle" className='itr-card-avatar block-h-center'/>
          </div>
       );
    };
@@ -213,7 +190,7 @@ const Users = () => {
                <div className="field col-12">
                   <label htmlFor="rate" className="mr-3">Сотрудник</label>
                   <div>
-                     <Dropdown
+                     <Dropdown                        
                         value={user.values.employee?.id}
                         className={classNames({"p-invalid": submitted && !user.values.employee})} 
                         required 
@@ -229,25 +206,23 @@ const Users = () => {
                         }}
                      />
                   </div>
-               </div>               
-               <button type="button" className="p-link user-avatar-button" onClick={(e) => {
-                  //@ts-ignore
-                     e.current.toggle(e);
-                  }}>                  
-                  {/* {avatar ? <Avatar image={avatar} size="large" shape="circle" className='itr-avatar'/> : */}
-                  <Avatar icon={icon} size="large" shape="circle" className='itr-card-avatar'/>
-               </button>
+               </div>
+               <FileUpload ref={fileUploadRef} accept="image/*" maxFileSize={1000000}
+                  headerTemplate={<></>} 
+                  itemTemplate={itemTemplate} 
+                  emptyTemplate={emptyTemplate}
+                  chooseOptions={chooseOptions} 
+                  uploadOptions={uploadOptions} 
+                  cancelOptions={cancelOptions} 
+                  onSelect={(e) => setAttachChanged(true)} 
+                  onRemove={(e) => setAttachChanged(true)}
+               />
             </TabPanel>
             <TabPanel header="Роли">
                {
                   //@ts-ignore
                   user.values?.roles?.map((entry) => checkBox(entry))
                }
-            </TabPanel>
-            <TabPanel header="Фото">
-            <FileUpload ref={fileUploadRef} accept="image/*" maxFileSize={1000000}
-               headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={imageSrc === '' ? emptyTemplate : loadedTemplate}
-               chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} onSelect={(e) => setAttachChanged(true) } onRemove={(e) => setAttachChanged(true) }/>
             </TabPanel>
          </TabView>
       </div>
@@ -288,7 +263,8 @@ const Users = () => {
       readEmployees();
       setCardHeader('Редактирование пользователя');
       user.setValues(data);
-      const attach = await AttachService.read(data.attachment_id);
+      //@ts-ignore
+      const attach = await AttachService.read(data.avatar?.id);
       setImageSrc(attach);
       setCurrentUserRoles(data.roles);
       saveUserRoles(data.roles);
