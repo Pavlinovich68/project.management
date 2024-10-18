@@ -38,7 +38,6 @@ model division {
    parent_id      Int?
    parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    childrens      division[]  @relation("divisionTodivision")
-   projects       project[]
    rate           rate[]
    dept_calendar  dept_calendar[]
 }
@@ -73,21 +72,8 @@ model attachment {
 model project {
    id                Int       @id @default(autoincrement())
    code              String    @unique @db.VarChar(3)
-   name              String    @db.VarChar(250)
-   division_id       Int?
-   division          division? @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   begin_date        DateTime  @default(now()) @db.Timestamp(6)
-   end_date          DateTime? @db.Timestamp(6)
-   modules           module[]
+   name              String    @db.VarChar(250)   
    roadmap_items     roadmap_item[]
-}
-//NOTE - Модули
-model module {
-   id             Int            @id @default(autoincrement())
-   name           String         @db.VarChar(250)
-   project_id     Int
-   project        project        @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-   roadmap_items  roadmap_item[]
 }
 //NOTE - Рабочий календарь
 model production_calendar {
@@ -151,8 +137,6 @@ model roadmap_item {
    roadmap           roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    project_id        Int?
    project           project?       @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   module_id         Int?
-   module            module?        @relation(fields: [module_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    start_date        DateTime       @db.Timestamp(6)
    end_date          DateTime       @db.Timestamp(6)
    labour_intensity  Int?

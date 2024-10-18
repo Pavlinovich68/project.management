@@ -56,15 +56,13 @@ async function main() {
       const role: Record<string, string> = {};
       role[emp.role.name] = emp.role.description;
       await prisma.users.upsert({
-         where: {email: emp.email},
+         where: {employee_id: id},
          update: {
-            employee_id: id,
             password: hashPassword,
             roles: role,
          },
          create: {
             employee_id: id,
-            email: emp.email,
             password: hashPassword,
             roles: role
          }
@@ -75,12 +73,6 @@ async function main() {
       try {
          await prisma.$queryRaw`delete from project`;
 
-         const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
-
-         if (!division) {
-            throw new Error('Не удалось найти подразделение');
-         }
-      
          const _count = projects.length;
          let _index = 0;
          const _date = new Date(2024, 0, 1);
@@ -89,9 +81,7 @@ async function main() {
             await prisma.project.create({
                data: {
                   code: _node.code,
-                  name: _node.name,
-                  begin_date: _date,
-                  division_id: _division ? _division.id : null
+                  name: _node.name
                }
             });
             _index++;

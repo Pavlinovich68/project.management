@@ -20,7 +20,7 @@ import React, {useRef, useState, useEffect} from "react";
 
 const Projects = () => {
    const controllerName = 'project';
-   const model: IProject = {code: "", name: "", division: undefined, begin_date: undefined};
+   const model: IProject = {code: "", name: ""};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -78,12 +78,6 @@ const project = useFormik<IProject>({
       if (!data.name){
          errors.name = "Наименование проекта должно быть заполнено!";
       }
-      if (!data.division){
-         errors.division = "Ответственное подразделение должно быть заполнено!";
-      }
-      if (!data.begin_date){
-         errors.begin_date = "Дата начала действия должна быть заполнена!";
-      }
       return errors;
    },
    onSubmit: () => {
@@ -94,29 +88,7 @@ const project = useFormik<IProject>({
 const card = (
    <div className="card p-fluid">
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
-      <div className="p-fluid formgrid grid">
-         <div className="field col-12">
-            <label htmlFor="is_priority" className="mr-3">Ответственное подразделение</label>
-            <div>
-               <Dropdown 
-                  value={project.values.division?.id} 
-                  className={classNames({"p-invalid": submitted && !project.values.division})} 
-                  required 
-                  optionLabel="name" 
-                  optionValue="id" 
-                  filter
-                  //@ts-ignore
-                  options={divisions}
-                  onChange={(e) => {
-                     //@ts-ignore
-                     const item = divisions?.find(item => item.id === e.value);
-                     if (item) {
-                        project.setFieldValue('division', item)
-                     }
-                  }}
-               />
-            </div>
-         </div>
+      <div className="p-fluid formgrid grid">         
          <div className="field col-12">
             <label htmlFor="code">Код проекта</label>
             <InputText id="code"  placeholder="Код проекта"
@@ -130,14 +102,6 @@ const card = (
                                  className={classNames({"p-invalid": submitted && !project.values.name})}
                                  value={project.values.name}
                                  onChange={(e) => project.setFieldValue('name', e.target.value)} required autoFocus type="text"/>
-         </div>
-         <div className="field col-12 md:col-6">
-            <label htmlFor="begin_date">Дата старта проекта</label>
-            <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !project.values.begin_date})} value={new Date(project.values.begin_date as Date)} onChange={(e) => project.setFieldValue('begin_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата старта"/>
-         </div>
-         <div className="field col-12 md:col-6">
-            <label htmlFor="end_date">Дата закрытия проекта</label>
-            <Calendar id="end_date" value={project.values.end_date !== null ? new Date(project.values.end_date as Date) : null} onChange={(e) => project.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата закрытия проекта"/>
          </div>
       </div>
    </div>
