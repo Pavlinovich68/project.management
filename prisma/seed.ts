@@ -7,6 +7,7 @@ import employee from "./data/employee.json";
 import production_calendar from "./data/calendar.json";
 import vacations from "./data/vacation.json";
 import DateHelper from "@/services/date.helpers";
+import { IBaseEntity } from "@/models/IBaseEntity";
 
 // TODO Seed
 async function main() {
@@ -75,13 +76,20 @@ async function main() {
 
          const _count = projects.length;
          let _index = 0;
-         const _date = new Date(2024, 0, 1);
-         while (_index < _count) {
+         const parent: IBaseEntity = {};         
+         while (_index < _count) {            
             let _node = projects[_index];
+            if (!_node.parent) {
+               parent.id = null;
+            } else {
+               const _parent = await prisma.project.findFirst({where: {code: _node.parent}});
+               parent.id = _parent?.id
+            }
             await prisma.project.create({
                data: {
                   code: _node.code,
-                  name: _node.name
+                  name: _node.name,
+                  parent_id: parent.id
                }
             });
             _index++;

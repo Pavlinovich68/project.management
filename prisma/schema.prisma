@@ -72,7 +72,10 @@ model attachment {
 model project {
    id                Int       @id @default(autoincrement())
    code              String    @unique @db.VarChar(3)
-   name              String    @db.VarChar(250)   
+   name              String    @db.VarChar(250)
+   parent_id      Int?
+   parent         project?   @relation("projectToProject", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   childrens      project[]  @relation("projectToProject")   
    roadmap_items     roadmap_item[]
 }
 //NOTE - Рабочий календарь
