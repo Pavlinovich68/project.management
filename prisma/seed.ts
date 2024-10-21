@@ -221,11 +221,12 @@ async function main() {
          await prisma.$queryRaw`delete from staff`;
          await prisma.$queryRaw`delete from rate`;
          await prisma.$queryRaw`delete from post`;
-         const posts: string[] = ['Начальник отдела', 'Главный специалист', 'Ведущий техник-технолог'];
+         const posts = [{name: 'Начальник отдела', level: 1}, {name: 'Главный специалист', level: 0}, {name: 'Ведущий техник-технолог', level: 0}];
          for (const post of posts){
             await prisma.post.create({
                data: {
-                  name: post
+                  name: post.name,
+                  hierarchy_level: post.level
                }
             });
          }

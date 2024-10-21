@@ -171,9 +171,10 @@ model days_off {
 }
 //NOTE Должности
 model post {
-   id          Int      @id @default(autoincrement())
-   name        String   @db.VarChar(250)
-   rate rate[]
+   id                Int      @id @default(autoincrement())
+   name              String   @db.VarChar(250)
+   hierarchy_level   Int      @default(0)
+   rate              rate[]
 }
 //NOTE - Ставки
 model rate {
@@ -189,14 +190,14 @@ model rate {
 }
 //NOTE - Штатные идиницы
 model staff {
-   id          Int         @id @default(autoincrement())
-   rate_id     Int
-   rate        rate        @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   employee_id Int
-   employee    employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   begin_date  DateTime    @db.Timestamp(6)
-   end_date    DateTime?   @db.Timestamp(6)   
-   vacations   vacation[]
+   id                Int         @id @default(autoincrement())
+   rate_id           Int
+   rate              rate        @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee_id       Int
+   employee          employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   begin_date        DateTime    @db.Timestamp(6)
+   end_date          DateTime?   @db.Timestamp(6)   
+   vacations         vacation[]
    @@unique([id])
 }
 //NOTE - Рабочий кале   ндарь подразделения
