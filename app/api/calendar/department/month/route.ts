@@ -4,10 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (request: NextRequest) => {
    try {
       const { employee_id, year, month } = await request.json();
-      // const firstDay = new Date(year, month-1, 1);
-      // const lastDay = new Date(year, month, 0)
-      
-      //NOTE - Находим ставку
 
       const _staff = await prisma.staff.findFirst({where: {employee_id: employee_id}});
       if (!_staff) throw new Error('Не найдена штатная еденица связанная с сотрудником');
@@ -31,6 +27,22 @@ export const POST = async (request: NextRequest) => {
             month: month 
          }
       })
+
+      const firstDate: Date = new Date(year, month-1, 1);
+      const firstDay: number = firstDate.getDay();
+      let counter: number = firstDay === 0 ? 6 : firstDay -1;
+
+      while (counter > 0) {
+         _cells.unshift({ type: -1} as any);
+         counter--;
+      }
+
+      const lastDay = new Date(year, month, 0).getDay();
+      counter = lastDay === 0 ? 0 : 7 - lastDay;
+      
+      for (let index = 0; index < counter; index++){
+         _cells.push({ type: -1} as any);
+      }
       
       return await NextResponse.json({status: 'success', data: _cells});
    } catch (error: Error | unknown) {      
