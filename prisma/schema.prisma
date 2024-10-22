@@ -200,7 +200,7 @@ model staff {
    vacations         vacation[]
    @@unique([id])
 }
-//NOTE - Рабочий кале   ндарь подразделения
+//NOTE - Рабочий календарь подразделения
 model dept_calendar {
    id          Int                  @id @default(autoincrement())
    year        Int

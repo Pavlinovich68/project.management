@@ -4,76 +4,35 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (request: NextRequest) => {
    try {
       const { employee_id, year, month } = await request.json();
-      const firstDay = new Date(year, month-1, 1);
-      const lastDay = new Date(year, month, 0)
+      // const firstDay = new Date(year, month-1, 1);
+      // const lastDay = new Date(year, month, 0)
       
       //NOTE - Находим ставку
 
-      // let _calendar = await prisma.dept_calendar.findFirst({
-      //    where: { division_id, year }
-      // });
+      const _staff = await prisma.staff.findFirst({where: {employee_id: employee_id}});
+      if (!_staff) throw new Error('Не найдена штатная еденица связанная с сотрудником');
 
-      // if (!_calendar) {
-      //    _calendar = await prisma.dept_calendar.create({
-      //       data: { division_id, year }
-      //    })
-      // }
+      const _rate = await prisma.rate.findFirst({where: {id: _staff.rate_id}});
+      if (!_rate) throw new Error('Не найдена ставка');
+
+      const _calendar = await prisma.dept_calendar.findFirst({
+         where: {
+            division_id: _rate.division_id,
+            year: year
+         }
+      });
+
+      const _cells = await prisma.dept_calendar_cell.findMany({
+         where: {
+            row: {
+               rate_id: _rate.id,
+               calendar_id: _calendar?.id,               
+            },
+            month: month 
+         }
+      })
       
-      // // Строки
-
-      // await prisma.dept_calendar_cell.deleteMany({
-      //    where: {
-      //       row: {
-      //          calendar_id: _calendar.id
-      //       }
-      //    }
-      // })
-
-      // await prisma.dept_calendar_row.deleteMany({
-      //    where: {
-      //       calendar_id: _calendar.id
-      //    }
-      // })
-
-      // let rates = await prisma.rate.findMany({
-      //    where: { division_id },
-      //    orderBy: { no: 'asc' }
-      // })
-      
-      // //Holidays      
-      // const _daysCount = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
-      // for (const rate of rates) {
-      //    const _worker = await prisma.staff.findFirst({
-      //       where: {rate_id: rate.id},
-      //       select: {employee: true}
-      //    })
-         
-      //    const _row = await prisma.dept_calendar_row.create({
-      //       data: {
-      //          no: rate.no,
-      //          calendar_id: _calendar.id,
-      //          rate_id: rate.id
-      //       }
-      //    });
-      //    let _i = 0;
-      //    while (_i < _daysCount) {
-      //       _i++
-      //       let _date = new Date(Date.UTC(year, 0, _i))
-      //       const _dayOfWeek = _date.getDay();
-      //       const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
-      //       await prisma.dept_calendar_cell.create({
-      //          data: {
-      //             month: _date.getMonth() +1,
-      //             day: _date.getDate(),
-      //             hours: _isHoliday ? 0 : 8,
-      //             type: _isHoliday ? 0 : 4,
-      //             row_id: _row.id
-      //          }
-      //       });
-      //    }
-      // }
-      
-      // return await NextResponse.json({status: 'success', data: _calendar});
+      return await NextResponse.json({status: 'success', data: _cells});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }
