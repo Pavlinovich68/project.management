@@ -30,18 +30,21 @@ export const POST = async (request: NextRequest) => {
 
       const firstDate: Date = new Date(year, month-1, 1);
       const firstDay: number = firstDate.getDay();
+      let _day = new Date(year, month-1, 0).getDate();
       let counter: number = firstDay === 0 ? 6 : firstDay -1;
 
       while (counter > 0) {
-         _cells.unshift({ type: -1} as any);
+         _cells.unshift({ type: -1, day: _day } as any);
+         _day--;
          counter--;
       }
 
       const lastDay = new Date(year, month, 0).getDay();
       counter = lastDay === 0 ? 0 : 7 - lastDay;
-      
+      _day = 1;
       for (let index = 0; index < counter; index++){
-         _cells.push({ type: -1} as any);
+         _cells.push({ type: -1, day: _day} as any);
+         _day++;
       }
       
       return await NextResponse.json({status: 'success', data: _cells});
