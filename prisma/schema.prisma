@@ -136,15 +136,16 @@ model roadmap {
 //NOTE - Элемент дорожной карты
 model roadmap_item {
    id                Int            @id @default(autoincrement())
+   comment           String         @db.VarChar(250)
    roadmap_id        Int
    roadmap           roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    project_id        Int?
    project           project?       @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    start_date        DateTime       @db.Timestamp(6)
    end_date          DateTime       @db.Timestamp(6)
-   labour_intensity  Int?
    documents         attachment[]
    control_points    control_point[]
+   project_divisions project_division[]
 }
 //NOTE - Контрольная точка
 model control_point {
@@ -243,4 +244,11 @@ model dept_calendar_cell {
    row_id   Int
    row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    @@unique([month, day, row_id])
+}
+//NOTE - Элементы дорожной карты в работе у подразделения
+model project_division {
+   id                Int            @id @default(autoincrement())
+   labour_intensity  Int?
+   roadmap_item_id   Int
+   roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

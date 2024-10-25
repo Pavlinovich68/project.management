@@ -23,8 +23,11 @@ export const POST = async (request: NextRequest) => {
             row: {
                rate_id: _rate.id,
                calendar_id: _calendar?.id,               
-            },
+            },            
             month: month 
+         },
+         orderBy: {
+            day: 'asc'
          }
       })
 
@@ -34,7 +37,7 @@ export const POST = async (request: NextRequest) => {
       let counter: number = firstDay === 0 ? 6 : firstDay -1;
 
       while (counter > 0) {
-         _cells.unshift({ type: -1, day: _day } as any);
+         _cells.unshift({ type: 100, day: _day } as any);
          _day--;
          counter--;
       }
@@ -43,7 +46,7 @@ export const POST = async (request: NextRequest) => {
       counter = lastDay === 0 ? 0 : 7 - lastDay;
       _day = 1;
       for (let index = 0; index < counter; index++){
-         _cells.push({ type: -1, day: _day} as any);
+         _cells.push({ type: 100, day: _day} as any);
          _day++;
       }
       

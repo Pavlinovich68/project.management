@@ -19,34 +19,6 @@ const ProjectCalendar = () => {
    const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
    let values: ICellDictionary = {};
 
-   useEffect(() => {
-      getCalendarData();
-   }, [date]);
-
-   const getCalendarData = async () => {
-      //@ts-ignore
-      if (!session?.user?.employee_id) {
-         toast.current?.show({severity:'error', summary: 'Сессия приложения', detail: 'Идентификатор сотрудника недоступен!', life: 3000});
-         return;
-      }
-      setIsLoaded(true);
-      const res = await fetch(`/api/calendar/department/month`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-            //@ts-ignore
-            employee_id: session.user.employee_id, 
-            year: date.getFullYear(), 
-            month: date.getMonth()+1}),
-         cache: 'force-cache'
-      });
-      const response = await res.json();
-      setCalendarData(response.data);
-      setIsLoaded(false);
-   }
-
    const onEdit = () => {
       setSaveEnabled(Object.keys(values).length > 0)
    }

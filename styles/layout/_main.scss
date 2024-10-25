@@ -367,6 +367,7 @@ $color-7: #d76b11;
 $color-8: #7C6EB0;
 $color-9: #576375;
 $color-10: #DCAA44;
+$color-100: #b7b7b7;
 
 .day-cell {
    border-right: 1px solid var(--surface-50);
@@ -448,13 +449,24 @@ $color-10: #DCAA44;
    background-color: $color-10;
 }
 
+.cell-text-100 {
+   color: #999;
+}
+.cell-text-4 {
+   color: #333;
+}
+
+.cell-bg-100 {
+   background-color: $color-100;
+}
+
 .noselect {
    -webkit-touch-callout: none; /* iOS Safari */
      -webkit-user-select: none; /* Safari */
       -khtml-user-select: none; /* Konqueror HTML */
         -moz-user-select: none; /* Firefox */
          -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+            user-select: none;  /* Non-prefixed version, currently
                                    supported by Chrome and Opera */
 }
 

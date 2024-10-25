@@ -1,0 +1,7 @@
+.roadmapContainer {
+   display: grid;
+   grid-template-columns: repeat(366, 1fr);
+   .cellItem {
+      background-color: darkcyan;
+   }
+}

@@ -5,10 +5,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import AppMenuitem from './AppMenuitem';
 import {useSession} from "next-auth/react";
 import { MenuProvider } from './context/menucontext';
-import { IconAdjustmentsHorizontal, IconCalendarBolt, IconCalendarUser } from '@tabler/icons-react';
+import { IconAdjustmentsHorizontal, IconAlignLeft2, IconCalendarBolt, IconCalendarUser } from '@tabler/icons-react';
 import { IconBooks, IconUsers } from '@tabler/icons-react';
 import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup,
-   IconStar, IconStars, IconStackMiddle, IconShare } from '@tabler/icons-react';
+   IconStar, IconStars, IconStackMiddle, IconShare, IconAlignLeft, IconTower  } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -39,6 +39,19 @@ const AppMenu = () => {
                      icon: 'pi pi-fw pi-user',
                      to: '/workplace/admin/users',
                      tabler: <IconUsers className='mr-1' stroke={1.5}/>
+                  }
+               ]
+            },
+            {
+               label: 'Моя организация',
+               visible: checkRoles(['admin', 'boss', 'master', 'analyst']),
+               tabler: <IconTower className='mr-1' stroke={1.5}/>,
+               items: [
+                  {
+                     label: 'Дорожная карта',
+                     visible: checkRoles(['admin', 'boss', 'master', 'analyst']),
+                     to: '/workplace/organization/roadmap',
+                     tabler: <IconAlignLeft2 className='mr-1' stroke={1.5}/>
                   }
                ]
             },
@@ -76,7 +89,7 @@ const AppMenu = () => {
                      label: 'Проекты в работе',
                      tabler: <IconCalendarBolt className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/department/project.calendar',               
+                     to: '/workplace/department/projectcalendar',               
                   },
                ]
             },
