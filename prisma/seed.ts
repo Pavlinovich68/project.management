@@ -5,6 +5,7 @@ import divisions from "./data/divisions";
 import projects from "./data/projects.json";
 import employee from "./data/employee.json";
 import production_calendar from "./data/calendar.json";
+import roadmap_data from "./data/roadmap.json";
 import vacations from "./data/vacation.json";
 import DateHelper from "@/services/date.helpers";
 import { IBaseEntity } from "@/models/IBaseEntity";
@@ -98,6 +99,36 @@ async function main() {
       } catch (error) {
          throw error;
       }      
+   }
+
+   const seedRoadmap = async () => {
+      await prisma.$queryRaw`delete from roadmap_item`;
+      await prisma.$queryRaw`delete from roadmap`;
+
+      const roadmap = await prisma.roadmap.create({data: {year: 2024}});
+      const count = roadmap_data.length;
+      let index = 0;
+      while (index < count) {
+         const item = roadmap_data[index];
+         let project = undefined;
+         try {
+            project = await prisma.project.findFirst({where: {code: item.project}});
+            if (!project)
+               throw new Error(`Не удалось получить проект ${item.project}`)
+         } catch (error) {
+            throw new Error(`Не удалось получить проект ${item.project}`)
+         }
+
+         await prisma.roadmap_item.create({
+            data: {
+               start_date: new Date(item.start_date),
+               end_date: new Date(item.end_date),
+               project_id: project.id,
+               roadmap_id: roadmap.id
+            }
+         })
+         index++;
+      }
    }
 
    const seedCalendar = async () => {
@@ -430,6 +461,7 @@ async function main() {
    }  
    
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
+   await seedRoadmap().finally(() => console.log(`\x1b[32mRoadmap seeded\x1b[0m`));
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
    await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));

@@ -136,11 +136,11 @@ model roadmap {
 //NOTE - Элемент дорожной карты
 model roadmap_item {
    id                Int            @id @default(autoincrement())
-   comment           String         @db.VarChar(250)
+   comment           String?        @db.VarChar(250)
    roadmap_id        Int
    roadmap           roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   project_id        Int?
-   project           project?       @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   project_id        Int
+   project           project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    start_date        DateTime       @db.Timestamp(6)
    end_date          DateTime       @db.Timestamp(6)
    documents         attachment[]

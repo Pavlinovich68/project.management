@@ -1,7 +1,25 @@
 .roadmapContainer {
-   display: grid;
-   grid-template-columns: repeat(366, 1fr);
-   .cellItem {
-      background-color: darkcyan;
+   margin-top: 5px;
+   padding: 1px;  
+   background: #2a323d;
+   border: 1px solid #3f4b5b;
+   padding: 1rem 1.25rem;
+   border-radius: 4px;
+   gap: 0.5rem; 
+   .roadmapRow {
+      display: flex;
+      flex-direction: row;      
+      .dataItem {
+         border-radius: 12px;
+         height: 1.5rem;
+         margin: 1px;
+         width: 100%;      
+         background-color: blueviolet;
+         display: grid;
+         grid-template-columns: repeat(366, 1fr);
+         .cellItem {
+            background-color: darkcyan;
+         }
+      }
    }
 }

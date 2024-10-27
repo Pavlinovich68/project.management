@@ -10,13 +10,13 @@ export const POST = async (request: NextRequest) => {
             year: year
          },
          select: {
-            id: true,
             roadmap_items: {
                select: {
                   id: true,
                   project: {
                      select: {
                         id: true,
+                        code: true,
                         name: true
                      }
                   }
@@ -24,9 +24,9 @@ export const POST = async (request: NextRequest) => {
                distinct: ['project_id']
             }
          }
-      })
+      });
       
-      return await NextResponse.json({status: 'success', data: data});
+      return await NextResponse.json({status: 'success', data: data?.roadmap_items});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }
