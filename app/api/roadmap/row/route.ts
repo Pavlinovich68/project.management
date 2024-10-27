@@ -1,5 +1,6 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import DateHelper from "@/services/date.helpers";
 
 export const POST = async (request: NextRequest) => {
    interface IDataRecord {
@@ -12,6 +13,7 @@ export const POST = async (request: NextRequest) => {
          name: string
       }
    }
+
    try {
       const { year, roadmap_id, project_id } = await request.json();
 
@@ -46,11 +48,20 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
-      let result: any = []
-      for(const item of data) {
-         const dates = dateArray(item.start_date, item.end_date);
-         //@ts-ignore
-         result.push[dates];
+      let result: Boolean[] = [];
+      const max_date = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
+      
+      for (const item of data) {         
+         let index = 1;
+         let date = new Date(year, 0, 1);
+         const startDate = new Date(DateHelper.currentLocaleDate(item.start_date));
+         const endDate = new Date(DateHelper.currentLocaleDate(item.end_date));
+         while(index <= max_date) {
+            const isOk = date >= startDate && date <= endDate;             
+            result.push(isOk);
+            date = new Date(date.getTime() + (1000 * 60 * 60 * 24));
+            index++;
+         }
       }
       
       return await NextResponse.json({status: 'success', data: result});

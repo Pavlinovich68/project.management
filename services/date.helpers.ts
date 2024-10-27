@@ -47,6 +47,13 @@ export default class DateHelper {
       return xDate.toLocaleDateString('fr-CA');
    }
 
+   static currentLocaleDate = (date: Date): Date => {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const day = date.getDate();
+      return new Date(year, month, day);
+   }
+
    static withoutTimeExt = (year: number, month: number, day: number) => {
       const xDate = new Date(year, month, day);
       return xDate.toLocaleDateString('fr-CA');
