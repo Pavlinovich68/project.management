@@ -2,11 +2,11 @@
 import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 import ItrRoadmapRow from "./ItrRoadmapRow";
-import { IRoadmapData } from "@/models/IRoadmapData";
+import { IRoadmapItem } from "@/models/IRoadmapItem";
 import styles from "@/app/(main)/workplace/organization/roadmap/styles.module.scss"
 
 const Roadmap = ({year}:{year: number}) => {   
-   const [roadmapData, setRoadmapData] = useState<IRoadmapData[]>();
+   const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
 
@@ -33,7 +33,7 @@ const Roadmap = ({year}:{year: number}) => {
    return (
       <div className={classNames(styles.roadmapContainer)}>
          {
-            roadmapData?.map((item) => <ItrRoadmapRow data={item}/>)
+            roadmapData?.map((item) => <ItrRoadmapRow id={item.id} project_id={item.project_id} project_code={item.project_code} project_name={item.project_name}/>)
          }
       </div>
    );
