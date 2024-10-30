@@ -64,4 +64,16 @@ export default class DateHelper {
       _date.setDate(_date.getDate() + days);
       return _date;
    }
+
+   static daysBetween = (startDate: Date, endDate: Date) => {
+      if (!(startDate instanceof Date) || !(endDate instanceof Date)) {
+         throw new Error('Применяйте корректные объекты Date.');
+      }      
+      
+      const diffTime = Math.abs(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) -
+         Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+      
+      return diffDays;
+   }
 }
