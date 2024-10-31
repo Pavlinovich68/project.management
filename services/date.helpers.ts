@@ -1,4 +1,6 @@
+const MILLISECONDS = 1000 * 60 * 60 * 24;
 export default class DateHelper {
+   
    static formatDate = (date?: Date | null | undefined) => {
       if (!date || date === undefined) {
          return '';
@@ -72,8 +74,21 @@ export default class DateHelper {
       
       const diffTime = Math.abs(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) -
          Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
-      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+      const diffDays = Math.round(diffTime / MILLISECONDS);
       
       return diffDays;
+   }
+
+   static dayNumber = (date: Date): number => {
+      let result = 0;
+      const month = date.getMonth();
+      for (let i = 0; i <= 11; i++){
+         if (month === i) {
+            result = result + date.getDate();
+            break;
+         }
+         result = result + new Date(date.getFullYear(), i+1, 0).getDate();
+      }
+      return result;
    }
 }

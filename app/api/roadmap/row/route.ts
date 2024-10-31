@@ -2,6 +2,7 @@ import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import DateHelper from "@/services/date.helpers";
 import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
+import { Extensions } from "@prisma/client/runtime/library";
 
 const palette = [
    "#0f2d5c",
@@ -38,16 +39,17 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
-      const data:IRoadmapItemSegment[] = records.map((item) => {
+      if (!records) {
+         throw Error('Дорожная карта не содержит проектов!');
+      }
+
+      let data:IRoadmapItemSegment[] = records.map((item) => {
          return {
             id: item.id,
             name: item.comment,
-            start_date: item.start_date,
-            end_date: item.end_date,
-            width: undefined,
-            height: '32px',
-            value: undefined,//DateHelper.numberDay(item.start_date),
-            color: "#0f2d5c",
+            start: DateHelper.dayNumber(item.start_date),
+            end: DateHelper.dayNumber(item.end_date),
+            type: 1,
             percent: undefined
          }
       }).sort(function(a, b) {
@@ -55,11 +57,57 @@ export const POST = async (request: NextRequest) => {
          return a.start_date - b.start_date
       })
 
-      // let _date = new Date(year, 0, 1);
+      const passArray = [];
+      // добавляем пропуск перед сегментом
+      if (data[0].start > 1) {
+         passArray.push({
+            id: -1,
+            name: '',
+            start: 1,
+            end: data[0].start - 1,
+            type: 0,
+            percent: undefined
+         })
+      }
+      // после каждого сегмента добавляем пропуск      
+      if (data.length > 1) {
+         let index = 0;
+         for (const item of data) {
+            if (data.length-1 > index) {
+               passArray.push({
+                  id: -1,
+                  name: '',
+                  start: item.end + 1,
+                  end: data[index+1].start - 1,
+                  type: 0,
+                  percent: undefined
+               })
+               index++;
+            }
+         }
+      }
+      // если дата окончания последнего сегмента не последний день года то добавляем сегмент в конце;
+      const dayCount = DateHelper.dayNumber(new Date(year+1, 0, 0));
+      const lastSegment = data[data.length-1];
+      if (lastSegment.end < dayCount) {
+         passArray.push({
+            id: -1,
+            name: '',
+            start: lastSegment.end + 1,
+            end: dayCount,
+            type: 0,
+            percent: undefined
+         })
+      }
 
-      // const max_date = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
-      
-      return await NextResponse.json({status: 'success', data: data});
+      data = data.concat(passArray);
+
+      const result = data.sort(function(a, b) {
+         //@ts-ignore
+         return a.start - b.start
+      })
+
+      return await NextResponse.json({status: 'success', data: result});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }
