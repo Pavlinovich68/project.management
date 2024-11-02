@@ -123,6 +123,7 @@ async function main() {
             data: {
                start_date: new Date(item.start_date),
                end_date: new Date(item.end_date),
+               hours: item.hours,
                comment: item.comment,
                project_id: project.id,
                roadmap_id: roadmap.id

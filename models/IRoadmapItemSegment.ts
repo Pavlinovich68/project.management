@@ -6,5 +6,6 @@ export interface IRoadmapItemSegment {
    value: number | undefined,
    type: number,
    percent: number | undefined,
+   hours: number | undefined,
    color: string
 }

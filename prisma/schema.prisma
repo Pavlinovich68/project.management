@@ -143,6 +143,7 @@ model roadmap_item {
    project           project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    start_date        DateTime       @db.Timestamp(6)
    end_date          DateTime       @db.Timestamp(6)
+   hours             Int
    documents         attachment[]
    control_points    control_point[]
    project_divisions project_division[]

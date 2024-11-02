@@ -5,16 +5,11 @@ import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
 import { Extensions } from "@prisma/client/runtime/library";
 
 const palette = [
-   "#0f2d5c",
-   "#143d79",
-   "#1b4b91",
-   "#255ab2",
-   "#316dca",
-   "#4184e4",
-   "#539bf5",
-   "#6cb6ff",
-   "#96d0ff",
-   "#c6e6ff"
+   "#d63384",
+   "#de5a9b",
+   "#e681b3",
+   "#eda7ca",
+   "#f5cee1",
 ];
 
 const BASE_COLOR = "#e0e4ea"
@@ -41,6 +36,7 @@ export const POST = async (request: NextRequest) => {
             comment: true,
             start_date: true,
             end_date: true,
+            hours: true,
             roadmap: true
          },
          orderBy: {
@@ -66,7 +62,8 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 1,
             percent: undefined,
-            color: colorIt.next().value??''
+            color: colorIt.next().value??'',
+            hours: item.hours
          }
       }).sort(function(a, b) {
          //@ts-ignore
@@ -84,7 +81,8 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 0,
             percent: undefined,
-            color: BASE_COLOR
+            color: BASE_COLOR,
+            hours: 0
          })
       }
       // после каждого сегмента добавляем пропуск      
@@ -100,7 +98,8 @@ export const POST = async (request: NextRequest) => {
                   value: undefined,
                   type: 0,
                   percent: undefined,
-                  color: BASE_COLOR
+                  color: BASE_COLOR,
+                  hours: 0
                })
                index++;
             }
@@ -118,7 +117,8 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 0,
             percent: undefined,
-            color: BASE_COLOR
+            color: BASE_COLOR,
+            hours: 0
          })
       }
 

@@ -32,18 +32,21 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
    }
 
    return (      
-      <div className={classNames(styles.segmentBar)}>
-         {            
-            data?.map((elem) =>
-                  <div className={classNames(styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`, backgroundColor: elem.color}}>
-                     {/* <span className={classNames(styles.segmentItemPercentage)}>{elem.percent??0 * 100}%</span> */}
-                     {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
-                     <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней' : ''}</span>
-                     {/* <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> */}                     
-                  </div>
-            )
-         }
-      </div>
+      <React.Fragment>
+         <div className="text-center mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
+         <div className={classNames(styles.segmentBar)}>         
+            {            
+               data?.map((elem) =>
+                     <div className={classNames(styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`, backgroundColor: elem.color}}>
+                        {/* <span className={classNames(styles.segmentItemPercentage)}>{elem.percent??0 * 100}%</span> */}
+                        {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
+                        <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней' : ''}</span>
+                        {/* <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> */}                     
+                     </div>
+               )
+            }
+         </div>
+      </React.Fragment>      
    );
 };
 
