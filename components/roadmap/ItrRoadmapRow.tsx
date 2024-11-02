@@ -5,8 +5,31 @@ import { classNames } from "primereact/utils";
 import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
-const RoadmapRow = ({id, project_id, project_code, project_name}:{id: number, project_id: number, project_code: string, project_name: string}) => {
+const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name}:{roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string}) => {
    const [data, setData] = useState<IRoadmapItemSegment[]>();
+   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+   useEffect(() => {
+      getSegments();
+   }, [roadmap_id, project_id])
+
+   const getSegments = async () => {
+      setIsLoaded(true);
+      const res = await fetch(`/api/roadmap/row`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            roadmap_id: roadmap_id,
+            project_id: project_id
+         }),
+         cache: 'force-cache'
+      });
+      const response = await res.json();
+      setData(response.data);
+      setIsLoaded(false);
+   }
 
    return (
       <div className={classNames(styles.segmentBar)} style={{width:"100%", height:"60px"}}>

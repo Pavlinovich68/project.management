@@ -11,6 +11,7 @@ export const POST = async (request: NextRequest) => {
             year: year
          },
          select: {
+            id: true,
             roadmap_items: {
                select: {
                   id: true,
@@ -27,14 +28,21 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
+      const projectCode = (code: string) => {
+         const length = code.length;
+         const result = Number(code.substring(1, length));
+         return result;
+      }
+
       const result:IRoadmapItem[] | undefined = data?.roadmap_items.map((item) => {
          return {
+            roadmap_id: data?.id,
             id: item.id,
             project_id: item.project.id,
             project_code: item.project.code,
             project_name: item.project.name
          }
-      })
+      }).sort(function(a, b) { return projectCode(a.project_code) - projectCode(b.project_code) })
       
       return await NextResponse.json({status: 'success', data: result});
    } catch (error: Error | unknown) {      

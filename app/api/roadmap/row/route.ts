@@ -17,22 +17,31 @@ const palette = [
    "#c6e6ff"
 ];
 
-const BASE_COLOR = "#c9f2e6;"
+const BASE_COLOR = "#e0e4ea;"
+
+function* getSegmentNextColor() {
+   let i = 0;
+   while (true) {
+      yield palette[i];
+      i = (i + 1) % palette.length;
+   }
+}
 
 export const POST = async (request: NextRequest) => {
    try {
-      const { year, roadmap_id, project_id } = await request.json();
+      const { roadmap_id, project_id } = await request.json();
 
       const records = await prisma.roadmap_item.findMany({
          where: {
             roadmap_id: roadmap_id,
             project_id: project_id
          },
-         select: {
+         select: {            
             id: true,
             comment: true,
             start_date: true,
-            end_date: true
+            end_date: true,
+            roadmap: true
          },
          orderBy: {
             start_date: 'asc'
@@ -43,6 +52,9 @@ export const POST = async (request: NextRequest) => {
          throw Error('Дорожная карта не содержит проектов!');
       }
 
+      const year = records[0]?.roadmap.year;
+
+      let colorIt = getSegmentNextColor();
       let data:IRoadmapItemSegment[] = records.map((item) => {
          return {
             id: item.id,
@@ -50,7 +62,8 @@ export const POST = async (request: NextRequest) => {
             start: DateHelper.dayNumber(item.start_date),
             end: DateHelper.dayNumber(item.end_date),
             type: 1,
-            percent: undefined
+            percent: undefined,
+            color: colorIt.next().value
          }
       }).sort(function(a, b) {
          //@ts-ignore
@@ -66,7 +79,8 @@ export const POST = async (request: NextRequest) => {
             start: 1,
             end: data[0].start - 1,
             type: 0,
-            percent: undefined
+            percent: undefined,
+            color: BASE_COLOR
          })
       }
       // после каждого сегмента добавляем пропуск      
@@ -80,7 +94,8 @@ export const POST = async (request: NextRequest) => {
                   start: item.end + 1,
                   end: data[index+1].start - 1,
                   type: 0,
-                  percent: undefined
+                  percent: undefined,
+                  color: BASE_COLOR
                })
                index++;
             }
@@ -96,7 +111,8 @@ export const POST = async (request: NextRequest) => {
             start: lastSegment.end + 1,
             end: dayCount,
             type: 0,
-            percent: undefined
+            percent: undefined,
+            color: BASE_COLOR
          })
       }
 
@@ -105,7 +121,7 @@ export const POST = async (request: NextRequest) => {
       const result = data.sort(function(a, b) {
          //@ts-ignore
          return a.start - b.start
-      })
+      });
 
       return await NextResponse.json({status: 'success', data: result});
    } catch (error: Error | unknown) {      

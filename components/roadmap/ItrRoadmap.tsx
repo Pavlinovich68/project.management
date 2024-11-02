@@ -33,7 +33,7 @@ const Roadmap = ({year}:{year: number}) => {
    return (
       <div className={classNames(styles.roadmapContainer)}>
          {
-            roadmapData?.map((item) => <ItrRoadmapRow id={item.id} project_id={item.project_id} project_code={item.project_code} project_name={item.project_name}/>)
+            roadmapData?.map((item) => <ItrRoadmapRow roadmap_id={item.roadmap_id} item_id={item.id} project_id={item.project_id} project_code={item.project_code} project_name={item.project_name}/>)
          }
       </div>
    );

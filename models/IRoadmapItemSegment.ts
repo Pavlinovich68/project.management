@@ -4,5 +4,6 @@ export interface IRoadmapItemSegment {
    start: number,
    end: number,
    type: number,
-   percent: number | undefined
+   percent: number | undefined,
+   color: string | void
 }
