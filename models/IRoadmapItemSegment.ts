@@ -3,7 +3,8 @@ export interface IRoadmapItemSegment {
    name: string | null,
    start: number,
    end: number,
+   value: number | undefined,
    type: number,
    percent: number | undefined,
-   color: string | void
+   color: string
 }

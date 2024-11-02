@@ -31,19 +31,17 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
       setIsLoaded(false);
    }
 
-   return (
-      <div className={classNames(styles.segmentBar)} style={{width:"100%", height:"60px"}}>
-         {
-            // data?.map((elem) => {
-            //    return (
-            //       <div className={classNames(styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`, backgroundColor: elem.color}}>
-            //          <span className={classNames(styles.segmentItemPercentage)}>{elem.percent??0 * 100}%</span>
-            //          <span className={classNames(styles.segmentItemValue)}>{elem.value.toLocaleString("en-US")}</span>
-            //          <span className={classNames(styles.segmentItemTitle)}>{elem.title}</span>
-            //          {elem.title} ({elem.value})
-            //       </div>
-            //    )
-            // })
+   return (      
+      <div className={classNames(styles.segmentBar)}>
+         {            
+            data?.map((elem) =>
+                  <div className={classNames(styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`, backgroundColor: elem.color}}>
+                     {/* <span className={classNames(styles.segmentItemPercentage)}>{elem.percent??0 * 100}%</span> */}
+                     {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
+                     <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней' : ''}</span>
+                     {/* <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> */}                     
+                  </div>
+            )
          }
       </div>
    );

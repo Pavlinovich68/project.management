@@ -17,7 +17,7 @@ const palette = [
    "#c6e6ff"
 ];
 
-const BASE_COLOR = "#e0e4ea;"
+const BASE_COLOR = "#e0e4ea"
 
 function* getSegmentNextColor() {
    let i = 0;
@@ -48,6 +48,8 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
+      //return await NextResponse.json({status: 'success', data: records});
+
       if (!records) {
          throw Error('Дорожная карта не содержит проектов!');
       }
@@ -61,9 +63,10 @@ export const POST = async (request: NextRequest) => {
             name: item.comment,
             start: DateHelper.dayNumber(item.start_date),
             end: DateHelper.dayNumber(item.end_date),
+            value: undefined,
             type: 1,
             percent: undefined,
-            color: colorIt.next().value
+            color: colorIt.next().value??''
          }
       }).sort(function(a, b) {
          //@ts-ignore
@@ -78,6 +81,7 @@ export const POST = async (request: NextRequest) => {
             name: '',
             start: 1,
             end: data[0].start - 1,
+            value: undefined,
             type: 0,
             percent: undefined,
             color: BASE_COLOR
@@ -93,6 +97,7 @@ export const POST = async (request: NextRequest) => {
                   name: '',
                   start: item.end + 1,
                   end: data[index+1].start - 1,
+                  value: undefined,
                   type: 0,
                   percent: undefined,
                   color: BASE_COLOR
@@ -110,6 +115,7 @@ export const POST = async (request: NextRequest) => {
             name: '',
             start: lastSegment.end + 1,
             end: dayCount,
+            value: undefined,
             type: 0,
             percent: undefined,
             color: BASE_COLOR
@@ -118,7 +124,11 @@ export const POST = async (request: NextRequest) => {
 
       data = data.concat(passArray);
 
-      const result = data.sort(function(a, b) {
+      const result = data.map((i) => { 
+         i.value = i.end - i.start + 1;
+         i.percent = i.value / dayCount * 100;
+         return i;
+      }).sort(function(a, b) {
          //@ts-ignore
          return a.start - b.start
       });

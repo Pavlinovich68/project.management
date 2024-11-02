@@ -1,41 +1,49 @@
 [
    {
       "project": "P1",
+      "comment": "Первый этап",
       "start_date": "2024-01-10",
       "end_date": "2024-11-30"
    },
    {
       "project": "P2",
+      "comment": "Первый этап",
       "start_date": "2024-03-01",
       "end_date": "2024-06-30"
    },
    {
       "project": "P3",
+      "comment": "Первый этап",
       "start_date": "2024-05-01",
       "end_date": "2024-12-10"
    },
    {
       "project": "P4",
+      "comment": "Первый этап",
       "start_date": "2024-03-01",
       "end_date": "2024-05-31"
    },
    {
       "project": "P5",
+      "comment": "Первый этап",
       "start_date": "2024-01-10",
       "end_date": "2024-12-25"
    },
    {
       "project": "P6",
+      "comment": "Первый этап",
       "start_date": "2024-01-20",
       "end_date": "2024-04-01"
    },
    {
       "project": "P6",
+      "comment": "Второй этап",
       "start_date": "2024-07-01",
       "end_date": "2024-12-25"
    },
    {
       "project": "P7",
+      "comment": "Первый этап",
       "start_date": "2024-04-01",
       "end_date": "2024-05-31"
    }
