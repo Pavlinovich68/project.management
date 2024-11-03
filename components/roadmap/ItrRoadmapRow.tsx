@@ -1,6 +1,6 @@
 'use client'
 import React, {useRef, useState, useEffect} from "react";
-import styles from "@/app/(main)/workplace/organization/roadmap/styles.module.scss"
+import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
 import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
 
@@ -33,11 +33,11 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
 
    return (      
       <React.Fragment>
-         <div className="text-center mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
+         <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
          <div className={classNames(styles.segmentBar)}>         
             {            
                data?.map((elem) =>
-                     <div className={classNames(styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`, backgroundColor: elem.color}}>
+                     <div className={classNames(elem.type === 1 ? styles.segmentItemPlan : styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`}}>
                         {/* <span className={classNames(styles.segmentItemPercentage)}>{elem.percent??0 * 100}%</span> */}
                         {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
                         <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней, ' + elem.hours + ' рабочих часов.' : ''}</span>

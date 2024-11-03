@@ -4,24 +4,6 @@ import DateHelper from "@/services/date.helpers";
 import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
 import { Extensions } from "@prisma/client/runtime/library";
 
-const palette = [
-   "#d63384",
-   "#de5a9b",
-   "#e681b3",
-   "#eda7ca",
-   "#f5cee1",
-];
-
-const BASE_COLOR = "#e0e4ea"
-
-function* getSegmentNextColor() {
-   let i = 0;
-   while (true) {
-      yield palette[i];
-      i = (i + 1) % palette.length;
-   }
-}
-
 export const POST = async (request: NextRequest) => {
    try {
       const { roadmap_id, project_id } = await request.json();
@@ -52,7 +34,6 @@ export const POST = async (request: NextRequest) => {
 
       const year = records[0]?.roadmap.year;
 
-      let colorIt = getSegmentNextColor();
       let data:IRoadmapItemSegment[] = records.map((item) => {
          return {
             id: item.id,
@@ -62,7 +43,6 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 1,
             percent: undefined,
-            color: colorIt.next().value??'',
             hours: item.hours
          }
       }).sort(function(a, b) {
@@ -81,7 +61,6 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 0,
             percent: undefined,
-            color: BASE_COLOR,
             hours: 0
          })
       }
@@ -98,7 +77,6 @@ export const POST = async (request: NextRequest) => {
                   value: undefined,
                   type: 0,
                   percent: undefined,
-                  color: BASE_COLOR,
                   hours: 0
                })
                index++;
@@ -117,7 +95,6 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 0,
             percent: undefined,
-            color: BASE_COLOR,
             hours: 0
          })
       }

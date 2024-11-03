@@ -1,7 +1,7 @@
 'use client'
 import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
-import styles from "./styles.module.scss"
+//import styles from "./styles.module.scss"
 import ItrYearSwitsh from "@/components/ItrYearSwitch";
 import ItrRoadmap from "@/components/roadmap/ItrRoadmap";
 import { Toolbar } from "primereact/toolbar";

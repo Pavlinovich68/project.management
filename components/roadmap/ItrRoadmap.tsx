@@ -3,7 +3,7 @@ import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 import ItrRoadmapRow from "./ItrRoadmapRow";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
-import styles from "@/app/(main)/workplace/organization/roadmap/styles.module.scss"
+import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 
 const Roadmap = ({year}:{year: number}) => {   
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
