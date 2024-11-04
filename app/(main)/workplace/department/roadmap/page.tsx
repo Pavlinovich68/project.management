@@ -32,11 +32,11 @@ const Roadmap = () => {
    return (
       <div className="grid">
          <div className="col-12">
-            <div className="card">
+            <div className="card" style={{position: "relative"}}>
                <h3>Дорожная карта по реализации проектов</h3>
                <ItrYearSwitsh year={year} onChange={changeYear}/>
                <Toolbar start={startContent} style={{marginTop: "1rem"}}/>
-               <ItrRoadmap year={year}/>
+               <ItrRoadmap year={year}/>               
             </div>
          </div>
       </div>

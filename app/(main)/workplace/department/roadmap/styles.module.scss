@@ -86,3 +86,18 @@
    font-size: 12px;
    font-weight: 500;
 }
+
+.scale {
+   position: absolute;
+   margin-top: 30px;
+   // background-color: #ff000011;
+   width: calc(100% - 40px);
+   z-index: 100;
+   height: calc(100% - 35px);
+   top: 0;
+   .scalePointer {
+      height: 100%; 
+      width: 20%;
+      border-right: solid 1px #ff5555; 
+   }
+}

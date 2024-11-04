@@ -45,7 +45,7 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                      </div>
                )
             }
-         </div>
+         </div>                  
       </React.Fragment>      
    );
 };
