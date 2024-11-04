@@ -1,0 +1,10 @@
+$cellSize: 4rem;
+.dayContainer {
+   display: grid;
+   grid-template-columns: repeat(7, $cellSize);
+   gap: 2px;
+   .cellItem {
+      height:  $cellSize;
+      width: $cellSize;
+   }
+}

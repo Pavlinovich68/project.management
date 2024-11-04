@@ -18,8 +18,8 @@ interface Exclusion {
    name: string
 }
 
-const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, dayType, dict, onEdit}: 
-   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number | undefined, dict: ICellDictionary, onEdit: any}) => {
+const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, dayType, onEdit}: 
+   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number | undefined, onEdit: any}) => {
    const toast = useRef<Toast>(null);
    const [calendarData, setCalendarData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -76,7 +76,7 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
                {
                   calendarData?.rows?.map((row, i) => {
                      const key = `calendar-row-${i}`
-                     return <ItrCalendarRow key={key} row={row} index={i} writeMode={writeMode} dayType={dayType} recalcFooter={recalcFooter} dict={dict} onEdit={onEdit}/> 
+                     return <ItrCalendarRow key={key} row={row} index={i} writeMode={writeMode} dayType={dayType} recalcFooter={recalcFooter} onEdit={onEdit}/> 
                   })
                }
                <ItrCalendarFooter footerData={calendarData?.footer} checker={checker}/>

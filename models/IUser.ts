@@ -5,10 +5,14 @@ export interface IUser {
    email?: string,
    division?: IDivision,
    division_id?: number,
-   name: string,
    contacts?: string,
-   begin_date: Date,
-   end_date?: Date | undefined | null,
    roles: any,
-   attachment_id?: number | undefined | null
+   attachment_id?: number | undefined | null,
+   employee?: {
+      id: number,
+      name: string,
+      email: string,
+      begin_date: Date,
+      end_date: Date | undefined | null
+   }
 }

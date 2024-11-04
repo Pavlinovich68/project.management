@@ -5,11 +5,27 @@ import divisions from "./data/divisions";
 import projects from "./data/projects.json";
 import employee from "./data/employee.json";
 import production_calendar from "./data/calendar.json";
+import roadmap_data from "./data/roadmap.json";
 import vacations from "./data/vacation.json";
 import DateHelper from "@/services/date.helpers";
+import { IBaseEntity } from "@/models/IBaseEntity";
 
 // TODO Seed
 async function main() {
+   interface IEmployee {
+      name: string,
+      email: string,
+      contacts: string,
+      begin_date: string,
+      end_date: string | null,
+      post: string,
+      role: {
+         name: string,
+         description: string
+      }
+      no: number
+   }
+
    const upsertDivision = async (model: any, parentId: number | null) => {
       const result = await prisma.division.upsert({
          where: {name: model.name},
@@ -36,99 +52,45 @@ async function main() {
          name: 'Отдел автоматизации процессов и веб-технологий'
       }
    });
-   
-   interface UserInterface {
-      name: string;
-      role: string;
-      prefix: string;
-   }
-   
-   const _users:UserInterface[] = [ 
-      {
-         name: "Администратор",
-         role: "admin",
-         prefix: "administrator"
-      },
-      {
-         name: "Руководитель",
-         role: "boss",
-         prefix: "boss"
-      },
-      {
-         name: "Начальник отдела",
-         role: "master",
-         prefix: "master"
-      },
-      {
-         name: "Разработчик",
-         role: "developer",
-         prefix: "developer"
-      },
-      {
-         name: "Аналитик",
-         role: "analyst",
-         prefix: "analyst"
-      },
-      {
-         name: "Тестировщик",
-         role: "tester",
-         prefix: "tester"
-      },
-      {
-         name: "Только чтение",
-         role: "read_only",
-         prefix: "read_only"
-      },
-   ];
-   
-   for (const _user of _users) {
-      const hashPassword = await bcrypt.hashSync(`${_user.prefix}1!`, 8);
-      const email = `${_user.prefix}@localhost`;
+
+   const createUser = async (emp: IEmployee, id: number) => {
+      const hashPassword = await bcrypt.hashSync(`localhost`, 8);
       const role: Record<string, string> = {};
-      role[_user.role] = _user.name;
-      if (division) {
-         const user = await prisma.users.upsert({
-            where: {email: email},
-            update: {
-               name: _user.name,
-               password: hashPassword,
-               roles: role,
-               begin_date: new Date(),
-               division_id: division.id,
-            },
-            create: {
-                  email: email,
-                  name: _user.name,
-                  password: hashPassword,
-                  begin_date: new Date(),
-                  roles: role,
-                  division_id: division.id
-            }
-         }).finally(() => console.log(`\x1b[32mUser \"${_user.name}\" created\x1b[0m`));
-      }
+      role[emp.role.name] = emp.role.description;
+      await prisma.users.upsert({
+         where: {employee_id: id},
+         update: {
+            password: hashPassword,
+            roles: role,
+         },
+         create: {
+            employee_id: id,
+            password: hashPassword,
+            roles: role
+         }
+      });
    }
 
    const seedProjects = async () => {
       try {
          await prisma.$queryRaw`delete from project`;
 
-         const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
-
-         if (!division) {
-            throw new Error('Не удалось найти подразделение');
-         }
-      
          const _count = projects.length;
          let _index = 0;
-         const _date = new Date(2024, 0, 1);
-         while (_index < _count) {
+         const parent: IBaseEntity = {};         
+         while (_index < _count) {            
             let _node = projects[_index];
+            if (!_node.parent) {
+               parent.id = null;
+            } else {
+               const _parent = await prisma.project.findFirst({where: {code: _node.parent}});
+               parent.id = _parent?.id
+            }
             await prisma.project.create({
                data: {
                   code: _node.code,
                   name: _node.name,
-                  begin_date: _date,
-                  division_id: _division ? _division.id : null
+                  parent_id: parent.id
                }
             });
             _index++;
@@ -137,6 +99,38 @@ async function main() {
       } catch (error) {
          throw error;
       }      
+   }
+
+   const seedRoadmap = async () => {
+      await prisma.$queryRaw`delete from roadmap_item`;
+      await prisma.$queryRaw`delete from roadmap`;
+
+      const roadmap = await prisma.roadmap.create({data: {year: 2024}});
+      const count = roadmap_data.length;
+      let index = 0;
+      while (index < count) {
+         const item = roadmap_data[index];
+         let project = undefined;
+         try {
+            project = await prisma.project.findFirst({where: {code: item.project}});
+            if (!project)
+               throw new Error(`Не удалось получить проект ${item.project}`)
+         } catch (error) {
+            throw new Error(`Не удалось получить проект ${item.project}`)
+         }
+
+         await prisma.roadmap_item.create({
+            data: {
+               start_date: new Date(item.start_date),
+               end_date: new Date(item.end_date),
+               hours: item.hours,
+               comment: item.comment,
+               project_id: project.id,
+               roadmap_id: roadmap.id
+            }
+         })
+         index++;
+      }
    }
 
    const seedCalendar = async () => {
@@ -260,11 +254,12 @@ async function main() {
          await prisma.$queryRaw`delete from staff`;
          await prisma.$queryRaw`delete from rate`;
          await prisma.$queryRaw`delete from post`;
-         const posts: string[] = ['Начальник отдела', 'Главный специалист', 'Ведущий техник-технолог'];
+         const posts = [{name: 'Начальник отдела', level: 1}, {name: 'Главный специалист', level: 0}, {name: 'Ведущий техник-технолог', level: 0}];
          for (const post of posts){
             await prisma.post.create({
                data: {
-                  name: post
+                  name: post.name,
+                  hierarchy_level: post.level
                }
             });
          }
@@ -327,7 +322,7 @@ async function main() {
       }
    }
 
-   const seedEmployees = async () => {
+   const seedEmployees = async () => {      
       try {
          await prisma.$queryRaw`delete from employee`;
 
@@ -336,42 +331,43 @@ async function main() {
          const _count = employee.length;
          let _index = 0;
          while (_index < _count) {
-            let _node = employee[_index];
+            let _node = employee[_index] as IEmployee;
             const emp = await prisma.employee.create({
                data: {
                   name: _node.name,
-                  surname: _node.surname,
-                  pathname: _node.pathname,
                   email: _node.email,
+                  contacts: _node.contacts,
                   begin_date: new Date(_node.begin_date),
                   end_date: null
                }
             });
+            await createUser(_node, emp.id);
             _index++;
-
-            const post = posts.find(p => p.name === _node.post);
-            if (!post)
-               throw new Error('Не удалось найти должность');
-            if (!division)
-               throw new Error('Не удалось найти подразделение');
-            const rate = await prisma.rate.findFirst({
-               where: {
-                  post_id: post.id,
-                  division_id: division.id,
-                  no: _node.no
-               }
-            });
-            if (!rate)
-               throw new Error(`Не удалось найти ставку ${_node.no}`);
-            if (!emp)
-               throw new Error('Не удалось найти сотрудника');
-            await prisma.staff.create({
-               data: {
-                  begin_date: new Date(2024, 0, 1),
-                  employee_id: emp.id,
-                  rate_id: rate.id
-               }
-            })
+            if (_node.post) {
+               const post = posts.find(p => p.name === _node.post);
+               if (!post)
+                  throw new Error('Не удалось найти должность');
+               if (!division)
+                  throw new Error('Не удалось найти подразделение');
+               const rate = await prisma.rate.findFirst({
+                  where: {
+                     post_id: post.id,
+                     division_id: division.id,
+                     no: _node.no
+                  }
+               });
+               if (!rate)
+                  throw new Error(`Не удалось найти ставку ${_node.no}`);
+               if (!emp)
+                  throw new Error('Не удалось найти сотрудника');
+               await prisma.staff.create({
+                  data: {
+                     begin_date: new Date(2024, 0, 1),
+                     employee_id: emp.id,
+                     rate_id: rate.id
+                  }
+               })
+            }
          }
          return _index;  
       } catch (error) {
@@ -440,12 +436,9 @@ async function main() {
          let _index = 0;         
          while (_index < _count) {
             const _node = vacations[_index];
-            const names = _node.name.split(' ');
             const employee = await prisma.employee.findFirst({
                where: {
-                  surname: names[0],
-                  name: names[1],
-                  pathname: names[2]
+                  name: _node.name
                }
             });
             const staff = await prisma.staff.findFirst({
@@ -470,6 +463,7 @@ async function main() {
    }  
    
    await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
+   await seedRoadmap().finally(() => console.log(`\x1b[32mRoadmap seeded\x1b[0m`));
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
    await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));

@@ -56,9 +56,9 @@ class AttachService {
             const link = document.createElement('a');
             link.href = data.data.body;
             link.download = data.data.filename;
-            document.body.appendChild(link);
+            document?.body?.appendChild(link);
             link.click();
-            document.body.removeChild(link);
+            document?.body?.removeChild(link);
          }
       }
    }

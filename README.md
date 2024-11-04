@@ -21,3 +21,7 @@ npx prisma migrate dev
 ```bash
 npx prisma db seed
 ```
+***Обновление версии призмы***
+```bash
+npm i --save-dev prisma@latest @prisma/client@latest
+```

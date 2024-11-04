@@ -1,6 +1,7 @@
 import { ICalendar, ICalendarCell, ICalendarFooter, ICalendarRow } from "@/models/ICalendar";
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import StringHelper from '@/services/string.helper';
 
 // 0  - holiday            Выходной или праздничный   0
 // 1  - reduced            Предпраздничный            7
@@ -75,7 +76,7 @@ export const POST = async (request: NextRequest) => {
          if (_staff) {
             const _employee = await prisma.employee.findFirst({ where: {id: _staff.employee_id } });
             if (_employee) {
-               _rowHeader = _employee.surname + ' ' + _employee.name?.charAt(0) + '.' + _employee.pathname?.charAt(0) + '.'
+               _rowHeader = StringHelper.fullNameTransform(_employee.name);
             } else {
                _rowHeader = 'Вакансия';
             }

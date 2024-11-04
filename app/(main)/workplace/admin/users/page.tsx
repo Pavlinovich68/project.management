@@ -1,5 +1,4 @@
 'use client'
-import {TreeNode} from "primereact/treenode";
 import ItrGrid from "@/components/ItrGrid";
 import React, {useRef, useState} from "react";
 import {ColumnGroup} from "primereact/columngroup";
@@ -15,22 +14,20 @@ import {ICardRef} from '@/models/ICardRef'
 import {FormikErrors, useFormik} from "formik";
 import RecordState from "@/models/enums/record-state";
 import { TabView, TabPanel } from 'primereact/tabview';
-import {InputText} from 'primereact/inputtext';
 import {classNames} from "primereact/utils";
-import {Calendar} from "primereact/calendar";
-import {TreeSelect} from "primereact/treeselect";
 import {appRoles} from "@/prisma/roles/index";;
 import { InputSwitch } from "primereact/inputswitch";
-import circleProgress from '@/services/circle.progress.js'
 import CrudHelper from "@/services/crud.helper.js"
 import CRUD from "@/models/enums/crud-type";
-import { FileUpload, FileUploadHeaderTemplateOptions, ItemTemplateOptions } from 'primereact/fileupload';
+import { FileUpload, ItemTemplateOptions } from 'primereact/fileupload';
 import AttachService from "@/services/attachment.service"
-
+import { Dropdown } from "primereact/dropdown";
+import { IBaseEntity } from "@/models/IBaseEntity";
+import { Avatar } from "primereact/avatar";
 
 const Users = () => {
    const controllerName = 'users';
-   const emptyUser: IUser = {name: '', begin_date: new Date, end_date: null, roles: [], attachment_id: null};
+   const emptyUser: IUser = {roles: [], attachment_id: null};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -38,7 +35,6 @@ const Users = () => {
    const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
    const [submitted, setSubmitted] = useState(false);
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const [divisions, setDivisions] = useState<TreeNode[]>([]);
    // При закрытии карточки через отмену восстанавливаем роли отсюда
    const [savedUserRoles, setSavedUserRoles] = useState<any>({});
    const [currentUserRoles, setCurrentUserRoles] = useState<any>({});
@@ -49,16 +45,25 @@ const Users = () => {
    const [attachChanged, setAttachChanged] = useState<boolean>(false);
    const [attachmentId, setAttachmentId] = useState<number | undefined | null>(null);
    const [imageSrc, setImageSrc] = useState('');
+   const [employees, setEmployees] = useState<IBaseEntity[]>();
 
-
+   const readEmployees = async () => {
+      const res = await fetch(`/api/staff/employee/list`, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+         }
+      });
+      const data = await res.json();
+      setEmployees(data.data);
+   }   
 //#region GRID
    const periodColumn = (
       <ColumnGroup>
          <Row>
             <Column header="" rowSpan={2}/>
-            <Column header="Фамилия Имя Отчество" rowSpan={2} sortable field="name"/>
-            <Column header="Подразделение" rowSpan={2} sortable field="division.name"/>
-            <Column header="Учетная запись" rowSpan={2} sortable field="email"/>
+            <Column header="Сотрудник" rowSpan={2} sortable field="division.name"/>
+            <Column header="Учетная запись" rowSpan={2} sortable field="employee.email"/>
             <Column header="Период действия" colSpan={2}/>
             <Column header="" rowSpan={2}/>
          </Row>
@@ -70,33 +75,27 @@ const Users = () => {
    );
 
    const beginDateTemplate = (rowData: IUser) => {
-      return DateHelper.formatDate(rowData.begin_date);
+      return DateHelper.formatDate(rowData.employee?.begin_date);
    };
 
    const endDateTemplate = (rowData: IUser) => {
-      return DateHelper.formatDate(rowData.end_date);
+      return DateHelper.formatDate(rowData.employee?.end_date);
    };
+
    const gridColumns = [
          <Column
-            key={0}
-            field="name"
-            sortable
-            header="Фамилия Имя Отчество"
-            style={{ width: '20%' }}>
-         </Column>,
-         <Column
             key={1}
-            field="division.name"
+            field="employee.name"
             sortable
-            header="Подразделение"
-            style={{ width: '45%' }}>
+            header="Сотрудник"
+            style={{ width: '40%' }}>
          </Column>,
          <Column
             key={2}
-            field="email"
+            field="employee.email"
             sortable
             header="Учетная запись"
-            style={{ width: '15%' }}>
+            style={{ width: '40%' }}>
          </Column>,
          <Column
             key={3}
@@ -112,48 +111,17 @@ const Users = () => {
             body={endDateTemplate}
             style={{ width: '10%' }}>
          </Column>
+         
       ];
 //#endregion
 
 //#region Card
-   const getDivisionsTree = () => {
-      const prepareData = (data: any) : TreeNode[] => {
-         const result: TreeNode[] = [];
-         //@ts-ignore
-         data?.map((item, index) => {
-            result.push({
-                  id: item.data.id?.toString(),
-                  key: item.data.id,
-                  label: item.data.name,
-                  icon: `pi pi-fw ${item.children?.length === 0 ? "pi-briefcase" : "pi-folder"}`,
-                  children: prepareData(item.children)
-            });
-         });
-         return result;
-      }
-      CrudHelper.crud('division', CRUD.read, {}).then((item) => {
-         if (item.status === 'success') {
-            let treeNodes = prepareData(item.data);
-            setDivisions(treeNodes);
-         }
-      });
-   }
-
    const user = useFormik<IUser>({
       initialValues: emptyUser,
       validate: (data) => {
          let errors: FormikErrors<IUser> = {};
-         if (!data.name){
-            errors.name = "Наименование подразделения должно быть заполнено!";
-         }
-         if (!data.email){
-            errors.email = "Адрес электронной почты должен быть заполнен!";
-         }
-         if (!data.contacts){
-            errors.contacts = "Контактная информация должна быть заполнена!";
-         }
-         if (!data.begin_date){
-            errors.begin_date = "Дата начала действия должна быть заполнена!";
+         if (!data.employee){
+            errors.employee = "Сотрудник должен быть указан!";
          }
          return errors;
       },
@@ -161,6 +129,10 @@ const Users = () => {
          user.resetForm();
       }
    });
+
+   const icon = (
+      <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="0 -960 960 960" width="100   px" fill="#e8eaed"><path d="M480-481q-66 0-108-42t-42-108q0-66 42-108t108-42q66 0 108 42t42 108q0 66-42 108t-108 42ZM160-160v-94q0-38 19-65t49-41q67-30 128.5-45T480-420q62 0 123 15.5t127.92 44.69q31.3 14.13 50.19 40.97Q800-292 800-254v94H160Zm60-60h520v-34q0-16-9.5-30.5T707-306q-64-31-117-42.5T480-360q-57 0-111 11.5T252-306q-14 7-23 21.5t-9 30.5v34Zm260-321q39 0 64.5-25.5T570-631q0-39-25.5-64.5T480-721q-39 0-64.5 25.5T390-631q0 39 25.5 64.5T480-541Zm0-90Zm0 411Z"/></svg>
+   )
 
    const checkBox = (entry: any) => {
       return (
@@ -181,19 +153,22 @@ const Users = () => {
       setCurrentUserRoles(_roles);
    }
 
-   const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
-      const { className, chooseButton, cancelButton } = options;
-
+   const emptyTemplate = () => {
       return (
-         <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
-            {chooseButton}
-            {cancelButton}
-         </div>
-      );
-   };
-
-   const onTemplateRemove = (file: File, callback: Function) => {
-      callback();
+            <div className="flex align-items-center flex-column">
+               {
+                  imageSrc ?
+                     <Avatar image={imageSrc} size="large" shape="circle" className='itr-card-avatar block-h-center'/>
+                  :
+                     <React.Fragment>
+                        <Avatar icon={icon} size="large" shape="circle" className='itr-card-avatar block-h-center'/>
+                        <span style={{ fontSize: '1em', color: 'var(--text-color-secondary)' }} className="my-5">
+                           Перетащите сюда изображение
+                        </span>
+                     </React.Fragment>
+               }
+            </div>
+         );
    };
 
    const itemTemplate = (inFile: object, props: ItemTemplateOptions) => {
@@ -201,31 +176,8 @@ const Users = () => {
       //@ts-ignore
       const objectURL = file.objectURL;
       return (
-         <div className="flex align-items-center flex-wrap">
-            <div className="flex align-items-center" style={{ width: '40%' }}>
-               <img alt={file.name} role="presentation" src={objectURL} width={100} />
-            </div>
-         </div>
-      );
-   };
-
-   const loadedTemplate = () => {
-      return (
-         <div className="flex align-items-center flex-wrap">
-            <div className="flex align-items-center" style={{ width: '40%' }}>
-               <img alt={"loadedFromDataBaseImage"} role="presentation" src={imageSrc} width={100} />
-            </div>
-         </div>
-      );
-   };
-
-   const emptyTemplate = () => {
-      return (
          <div className="flex align-items-center flex-column">
-            <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-            <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-               Перетащите сюда изображение
-            </span>
+            <Avatar image={objectURL} size="large" shape="circle" className='itr-card-avatar block-h-center'/>
          </div>
       );
    };
@@ -235,70 +187,42 @@ const Users = () => {
          <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
          <TabView>
             <TabPanel header="Основные данные">
-               <div className="p-fluid formgrid grid">
-                  <div className="field col-12">
-                     <label htmlFor="name">Фамилия, имя и отчество</label>
-                     <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                           <i className="pi pi-user"></i>
-                        </span>
-                        <InputText id="name"  placeholder="Фамилия, имя и отчество"
-                                          className={classNames({"p-invalid": submitted && !user.values.name})}
-                                          value={user.values.name}
-                                          onChange={(e) => user.setFieldValue('name', e.target.value)} required autoFocus type="text" tooltip="Фамилия, имя и отчество"/>
-                     </div>
-                  </div>
-                  <div className="field col-12">
-                     <label htmlFor="email">Адрес электронной почты</label>
-                     <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                           <i className="pi pi-envelope"></i>
-                        </span>
-                        <InputText id="name"  placeholder="Адрес электронной почты"
-                                          className={classNames({"p-invalid": submitted && !user.values.email})}
-                                          value={user.values.email}
-                                          onChange={(e) => user.setFieldValue('email', e.target.value)} required autoFocus type="email" tooltip="Адрес электронной почты"/>
-                     </div>
-                  </div>
-                  <div className="field col-12">
-                     <label htmlFor="contacts">Контактная информация</label>
-                     <div className="p-inputgroup">
-                        <span className="p-inputgroup-addon">
-                           <i className="pi pi-phone"></i>
-                        </span>
-                        <InputText id="contacts"  placeholder="Контактная информация"
-                                          className={classNames({"p-invalid": submitted && !user.values.contacts})}
-                                          value={user.values.contacts}
-                                          onChange={(e) => user.setFieldValue('contacts', e.target.value)} required autoFocus type="text" tooltip="Контактная информация"/>
-                     </div>
-                  </div>
-                  <div className="field col-12">
-                     <label htmlFor="contacts">Подразделение</label>
-                     <TreeSelect
-                           filter
-                           id="division" className={classNames({"p-invalid": submitted && !user.values.division_id})}
-                           required options={divisions} value={user.values.division_id?.toString()} onChange={(e) => user.setFieldValue('division_id', e.target.value)}/>
-                  </div>
-                  <div className="field col-12 md:col-6">
-                     <label htmlFor="begin_date">Дата начала действия</label>
-                     <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !user.values.begin_date})} value={new Date(user.values.begin_date)} onChange={(e) => user.setFieldValue('begin_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала действия"/>
-                  </div>
-                  <div className="field col-12 md:col-6">
-                     <label htmlFor="end_date">Дата окончания действия</label>
-                     <Calendar id="end_date" value={user.values.end_date !== null ? new Date(user.values.end_date as Date) : null} onChange={(e) => user.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата окончания действия"/>
+               <div className="field col-12">
+                  <label htmlFor="rate" className="mr-3">Сотрудник</label>
+                  <div>
+                     <Dropdown                        
+                        value={user.values.employee?.id}
+                        className={classNames({"p-invalid": submitted && !user.values.employee})} 
+                        required 
+                        optionLabel="name" 
+                        optionValue="id" 
+                        filter
+                        options={employees}
+                        onChange={(e) => {
+                           const item = employees?.find(item => item.id === e.value);
+                           if (item) {
+                              user.setFieldValue('employee', item)
+                           }
+                        }}
+                     />
                   </div>
                </div>
+               <FileUpload ref={fileUploadRef} accept="image/*" maxFileSize={1000000}
+                  headerTemplate={<></>} 
+                  itemTemplate={itemTemplate} 
+                  emptyTemplate={emptyTemplate}
+                  chooseOptions={chooseOptions} 
+                  uploadOptions={uploadOptions} 
+                  cancelOptions={cancelOptions} 
+                  onSelect={(e) => setAttachChanged(true)} 
+                  onRemove={(e) => setAttachChanged(true)}
+               />
             </TabPanel>
             <TabPanel header="Роли">
                {
                   //@ts-ignore
                   user.values?.roles?.map((entry) => checkBox(entry))
                }
-            </TabPanel>
-            <TabPanel header="Фото">
-            <FileUpload ref={fileUploadRef} accept="image/*" maxFileSize={1000000}
-               headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={imageSrc === '' ? emptyTemplate : loadedTemplate}
-               chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} onSelect={(e) => setAttachChanged(true) } onRemove={(e) => setAttachChanged(true) }/>
             </TabPanel>
          </TabView>
       </div>
@@ -322,8 +246,8 @@ const Users = () => {
             active: false
          }
       });
+      readEmployees();
       setCardHeader('Создание нового пользователя');
-      getDivisionsTree();
       user.setValues(emptyUser);
       setAttachmentId(null);
       setCurrentUserRoles(emptyUser.roles);
@@ -336,10 +260,11 @@ const Users = () => {
    }
 
    const updateUser = async (data: IUser) => {
+      readEmployees();
       setCardHeader('Редактирование пользователя');
-      getDivisionsTree();
       user.setValues(data);
-      const attach = await AttachService.read(data.attachment_id);
+      //@ts-ignore
+      const attach = await AttachService.read(data.avatar?.id);
       setImageSrc(attach);
       setCurrentUserRoles(data.roles);
       saveUserRoles(data.roles);
@@ -436,7 +361,7 @@ const Users = () => {
                   update={updateUser}
                   drop={deleteUser}
                   tableStyle={{ minWidth: '50rem' }}
-                  showClosed={true}
+                  showClosed={false}
                   headerColumnGroup={periodColumn}
                   columns={gridColumns}
                   sortMode="multiple"

@@ -17,7 +17,7 @@ export const GET = async (request: NextRequest) => {
          },
          orderBy: {
             employee: {
-               surname: 'asc'
+               name: 'asc'
             }
          }
       })
@@ -25,7 +25,7 @@ export const GET = async (request: NextRequest) => {
       if (!data)
          throw new Error('Не найдено ни одного сотрудника привязанного к ставке.')
 
-      const result = data.map((item) => {return {id: item.id, name: `${item.employee.surname} ${item.employee.name} ${item.employee.pathname}`}});
+      const result = data.map((item) => {return {id: item.id, name: item.employee.name}});
 
       return NextResponse.json({status: 'success', data: result});
    } catch (error) {

@@ -23,18 +23,70 @@ export const authOptions = {
                return null;
             }
 
-            const user = await prisma.users.findUnique({
+            const preUser = await prisma.users.findFirst({
                where: {
-                  email: credentials.email
+                  employee: {
+                     email: credentials.email
+                  } 
                },
-               include: {
-                  division: true
+               select: {
+                  id: true,
+                  password: true,
+                  employee_id: true,
+                  roles: true,
+                  attachment_id: true,
+                  employee: {
+                     select: {
+                        email: true,
+                        name: true
+                     }
+                  }
                }
             });
 
-            if (!user) {
+            if (!preUser) return null;
+
+            const currentDate = new Date();
+            const staff = await prisma.staff.findFirst({
+               where: {
+                  AND: [
+                     {
+                        employee_id: preUser.employee_id
+                     },
+                     {
+                        begin_date: {
+                           lte: currentDate
+                        }
+                     },
+                     {
+                        OR: [
+                           {
+                              end_date: null 
+                           },
+                           {
+                              end_date: {
+                                 gt: currentDate
+                              }
+                           }
+                        ]
+                     }
+                  ]
+                  
+               },
+               include: {                  
+                  rate: {
+                     include: {
+                        division: true
+                     }
+                  }
+               }
+            })
+
+            if (!staff) {
                return null;
             }
+
+            const user = {...preUser, division_id: staff.rate.division_id, division: {name: staff.rate.division.name}, name: preUser.employee.name, email: preUser.employee.email};
 
             const passwordsMatch = await bcrypt.compare(credentials.password, user.password);
 
@@ -44,12 +96,6 @@ export const authOptions = {
 
             const { password, ...userWithoutPass } = user;
             const accessToken = signJwtAccessToken(userWithoutPass);
-
-            const division = await prisma.division.findUnique({
-               where: {
-                  id: user.division.id
-               }
-            });
 
             user.avatar = user.avatar?.body;
 
@@ -73,6 +119,7 @@ export const authOptions = {
             token.roles = user.roles;
             token.avatar = user.attachment_id;
             token.user_id = user.id;
+            token.employee_id = user.employee_id;
          }
          return token;
       },
@@ -84,6 +131,7 @@ export const authOptions = {
             session.user.roles = token.roles;
             session.user.avatar = token.avatar;
             session.user.id = token.user_id;
+            session.user.employee_id = token.employee_id;
          }
          return session;
       }

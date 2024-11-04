@@ -35,6 +35,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
    const topbarmenubuttonRef = useRef(null);
    const [avatar, setAvatar] = useState(null);
 
+   if (session) {
+      const user = session?.user;
+      console.log(user);
+   }
    //@ts-ignore
    if (session?.user?.avatar && avatar === null) {
       //@ts-ignore
@@ -60,6 +64,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
    )
 
    return (
+      session ? 
       <div className="layout-topbar">
          <button  type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle} title='Menubar'>
             <i className="pi pi-bars" />
@@ -131,7 +136,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                <Button type="button" label="Выйти из системы" icon="pi pi-sign-out" outlined  onClick={() => {signOut({callbackUrl: "/login"})}}/>
             </div>
          </OverlayPanel>
-      </div>
+      </div> : <React.Fragment></React.Fragment>
    );
 });
 

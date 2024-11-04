@@ -1,162 +1,275 @@
 [
    {      
-      "surname": "Савельев",
-      "name": "Павел",
-      "pathname": "Отчество",
-      "email": null,
+      "name": "Савельев Павел Иванович",
+      "email": "p.savelev@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 2
    },
    {
-      "surname": "Гажа",
-      "name": "Константин",
-      "pathname": "Владимирович",
-      "email": null,
+      "name": "Гажа Константин Владимирович",
+      "email": "k.gazha@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 3
    },
    {
-      "surname": "Гореньков",
-      "name": "Аркадий",
-      "pathname": "Юрьевич",
-      "email": null,
+      "name": "Гореньков Аркадий Юрьевич",
+      "email": "a.gorenkov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 4
    },
    {
-      "surname": "Яхин",
-      "name": "Никита",
-      "pathname": "Артемович",
-      "email": null,
+      "name": "Яхин Никита Артемович",
+      "email": "n.yahin@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Ведущий техник-технолог",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 16
    },
    {
-      "surname": "Зелениченко",
-      "name": "Арсений",
-      "pathname": "Алексеевич",
-      "email": null,
+      "name": "Зелениченко Арсений Алексеевич",
+      "email": "a.zelenichenko@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 5
    },
    {
-      "surname": "Кащеев",
-      "name": "Станислав",
-      "pathname": "Евгеньевич",
-      "email": null,
+      "name": "Кащеев Станислав Евгеньевич",
+      "email": "s.kashcheev@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 6
    },
    {
-      "surname": "Максимова",
-      "name": "Мария",
-      "pathname": "Станиславовна",
-      "email": null,
+      "name": "Максимова Мария Станиславовна",
+      "email": "m.maksimova@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 7
    },
    {
-      "surname": "Малясов",
-      "name": "Александр",
-      "pathname": "Евгеньевич",
-      "email": null,
+      "name": "Малясов Александр Евгеньевич",
+      "email": "a.malyasov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 8
    },
    {
-      "surname": "Мезенцев",
-      "name": "Алексей",
-      "pathname": "Юрьевич",
-      "email": null,
+      "name": "Мезенцев Алексей Юрьевич",
+      "email": "a.mezencev@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 9
    },
    {
-      "surname": "Мезенцев",
-      "name": "Игорь",
-      "pathname": "Юрьевич",
-      "email": null,
+      "name": "Мезенцев Игорь Юрьевич",
+      "email": "i.mezencev@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 10
    },
    {
-      "surname": "Джанабаева",
-      "name": "Гульзат",
-      "pathname": "Рустамовна",
-      "email": null,
+      "name": "Джанабаева Гульзат Рустамовна",
+      "email": "g.dzhanabaeva@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 11
    },
    {
-      "surname": "Павлов",
-      "name": "Сергей",
-      "pathname": "Павлинович",
-      "email": "s.pavlov@mininform74.ru",
+      "name": "Павлов Сергей Павлинович",
+      "email": "s.pavlov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Начальник отдела",
+      "role": {
+         "name": "master",
+         "description": "Начальник отдела"
+      },
       "no": 1
    },
    {
-      "surname": "Потапов",
-      "name": "Дмитрий",
-      "pathname": "Иванович",
-      "email": null,
+      "name": "Потапов Дмитрий Иванович",
+      "email": "d.potapov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 12
    },
    {
-      "surname": "Прокопенко",
-      "name": "Данил",
-      "pathname": "Евгеньевич",
-      "email": null,
+      "name": "Прокопенко Данил Евгеньевич",
+      "email": "d.prokopenko@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 13
    },
    {
-      "surname": "Кирков",
-      "name": "Алексей",
-      "pathname": "Михайлович",
-      "email": null,
+      "name": "Кирков Алексей Михайлович",
+      "email": "a.kirkov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 14
    },
    {
-      "surname": "Окунев",
-      "name": "Александр",
-      "pathname": "Денисович",
-      "email": null,
+      "name": "Окунев Александр Денисович",
+      "email": "a.okunev@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
       "end_date": null,
       "post": "Главный специалист",
+      "role": {
+         "name": "developer",
+         "description": "Разработчик"
+      },
       "no": 15
+   },
+   {
+      "name": "Тамендарова Алиса Асхатовна",
+      "email": "a.tamendarova@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "analyst",
+         "description": "Аналитик"
+      },
+      "no": 0
+   },
+   {
+      "name": "Пичик Михаил Михайлович",
+      "email": "m.pichik@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "boss",
+         "description": "Руководитель"
+      },
+      "no": 0
+   },
+   {
+      "name": "Тептеев Александр Александрович",
+      "email": "a.tepteev@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "admin",
+         "description": "Администратор"
+      },
+      "no": 0
+   },
+   {
+      "name": "Иванов Иван Иванович",
+      "email": "i.ivanov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "tester",
+         "description": "Тестировщик"
+      },
+      "no": 0
+   },
+   {
+      "name": "Петров Петр Петрович",
+      "email": "p.petrov@localhost",
+      "contacts": "(351) 211-68-27 (вн. 355)",
+      "begin_date": "2024-01-01",
+      "end_date": null,
+      "post": null,
+      "role": {
+         "name": "reader",
+         "description": "Только чтение"
+      },
+      "no": 0
    }
 ]

@@ -19,9 +19,12 @@ export const POST = async (request) => {
 
    const create = async (model) => {
       const _exists = await prisma.users.findFirst({
+         include: {
+            employee: true
+         },
          where: {
-            email: {
-               equals: model.email.trim(),
+            employee: {
+               email: model.email.trim(),
                mode: 'insensitive'
             }
          }
@@ -41,17 +44,11 @@ export const POST = async (request) => {
       }
 
       //TODO Отправка пароля на почту
-      await mailService.newUser(model.email, password);
+      await mailService.newUser(password);
 
       const result = await prisma.users.create({
          data: {
-            name: model.name,
-            email: model.email.trim(),
-            contacts: model.contacts,
-            begin_date: new Date(model.begin_date),
-            end_date: model.end_date !== null ? new Date(model.end_date) : null,
             roles: roles,
-            division_id: model.division_id,
             password: hashedPassword,
             attachment_id: model.attachment_id
          }
@@ -64,13 +61,6 @@ export const POST = async (request) => {
       let filter = {};
       if (model.searchStr) {
          filter['OR'] = prismaHelper.OR(['name', 'email', 'division.name'], model.searchStr);
-         if (!model.showClosed) {
-            filter['AND'] = [{ OR: [{ end_date: null }, { end_date: { gt: new Date() } }]}];
-         }
-      } else {
-         if (!model.showClosed) {
-            filter['OR'] = [{end_date: null}, {end_date: { gt: new Date() }}];
-         }
       }
 
       const totalCount = await prisma.users.count({where: filter});
@@ -79,7 +69,26 @@ export const POST = async (request) => {
          take: model.pageSize,
          where: filter,
          orderBy: model.orderBy,
-         include: {division: true}
+         select: {
+            id: true,
+            roles: true,
+            avatar: {
+               select: {
+                  id: true,
+                  body: true
+               }
+            },
+            employee: {
+               select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  begin_date: true,
+                  end_date: true,
+                  email: true
+               }
+            }
+         }
       });
 
       for (const user of result) {
@@ -111,13 +120,7 @@ export const POST = async (request) => {
       const result = await prisma.users.update({
          where: {id: model.id},
          data: {
-            name: model.name,
-            email: model.email,
-            contacts: model.contacts,
-            begin_date: new Date(model.begin_date),
-            end_date: model.end_date !== null ? new Date(model.end_date) : null,
             roles: roles,
-            division_id: model.division_id,
             attachment_id: model.attachment_id
          }
       });
@@ -126,11 +129,8 @@ export const POST = async (request) => {
    }
 
    const drop = async (model) => {
-      const result = await prisma.users.update({
-         where: {id: model.id},
-         data: {
-            end_date: new Date()
-         }
+      const result = await prisma.users.delete({
+         where: {id: model.id.id}
       });
       return result;
    }

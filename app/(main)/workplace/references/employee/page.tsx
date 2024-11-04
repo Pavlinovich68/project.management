@@ -19,7 +19,7 @@ import React, {useRef, useState, useEffect} from "react";
 
 const Employees = () => {
    const controllerName = 'employee';
-   const model: IEmployee = {id: undefined, name: undefined, surname: undefined, pathname: undefined, email: undefined, begin_date: undefined, end_date: undefined};
+   const model: IEmployee = {id: undefined, name: undefined, email: undefined, begin_date: undefined, end_date: undefined, contacts: undefined};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -37,32 +37,18 @@ const dateTemplate2 = (rowData: IEmployee) => {
 };
 const gridColumns = [
    <Column
-      key="employeeGridColumn1"
-      field="surname"
-      header="Фамилия"
-      sortable
-      style={{ width: '20%' }}>
-   </Column>,
-   <Column
       key="employeeGridColumn0"
       field="name"
-      header="Имя"
+      header="Фамилия Имя Отчество"
       sortable
-      style={{ width: '20%' }}>
+      style={{ width: '45%' }}>
    </Column>,   
-   <Column
-      key="employeeGridColumn2"
-      field="pathname"
-      header="Отчество"
-      sortable
-      style={{ width: '20%' }}>
-   </Column>,
    <Column
       key="employeeGridColumn3"
       field="email"
       header="Электронная почта"
       sortable
-      style={{ width: '20%' }}>
+      style={{ width: '25%' }}>
    </Column>,
    <Column
       key="employeeGridColumn4"
@@ -70,7 +56,7 @@ const gridColumns = [
       field="begin_date"
       header="Дата начала"
       sortable
-      style={{ width: '10%' }}>
+      style={{ width: '15%' }}>
    </Column>,
    <Column
       key="employeeGridColumn5"
@@ -78,7 +64,7 @@ const gridColumns = [
       field="end_date"
       header="Дата окончания"
       sortable
-      style={{ width: '10%' }}>
+      style={{ width: '15%' }}>
    </Column>,
 ];
 //#endregion //!SECTION GRID
@@ -88,10 +74,10 @@ const employee = useFormik<IEmployee>({
    validate: (data) => {
       let errors: FormikErrors<IEmployee> = {};
       if (!data.name){
-         errors.name = "Имя должно быть заполнено!";
+         errors.name = "ФИО должно быть заполнено!";
       }
-      if (!data.surname){
-         errors.surname = "Фамилия должна быть заполнена!";
+      if (!data.email){
+         errors.email = "Адрес электронной почты должен быть указан!";
       }
       if (!data.begin_date){
          errors.begin_date = "Дата начала действия должна быть заполнена!";
@@ -108,32 +94,35 @@ const card = (
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
       <div className="p-fluid formgrid grid">
          <div className="field col-12">
-            <label htmlFor="surname">Фамилия</label>
-            <InputText id="surname"  placeholder="Фамилия"
-                                 className={classNames({"p-invalid": submitted && !employee.values.surname})}
-                                 value={employee.values.surname}
-                                 onChange={(e) => employee.setFieldValue('surname', e.target.value)} required autoFocus type="text"/>
-         </div>
-         <div className="field col-12">
-            <label htmlFor="name">Имя</label>
-            <InputText id="name"  placeholder="Имя"
+            <label htmlFor="name">Фамилия Имя Отчество</label>
+            <InputText id="name"  placeholder="Фамилия Имя Отчество"
                                  className={classNames({"p-invalid": submitted && !employee.values.name})}
                                  value={employee.values.name}
                                  onChange={(e) => employee.setFieldValue('name', e.target.value)} required autoFocus type="text"/>
          </div>
          <div className="field col-12">
-            <label htmlFor="pathname">Отчество</label>
-            <InputText id="pathname"  placeholder="Отчество"
-                                 className={classNames({"p-invalid": submitted && !employee.values.pathname})}
-                                 value={employee.values.pathname}
-                                 onChange={(e) => employee.setFieldValue('pathname', e.target.value)} required autoFocus type="text"/>
-         </div>
-         <div className="field col-12">
-            <label htmlFor="email">Электронная почта</label>
-            <InputText id="email"  placeholder="Электронная почта"
+            <label htmlFor="email">Адрес электронной почты</label>
+            <div className="p-inputgroup">
+               <span className="p-inputgroup-addon">
+                  <i className="pi pi-envelope"></i>
+               </span>
+               <InputText id="name"  placeholder="Адрес электронной почты"
                                  className={classNames({"p-invalid": submitted && !employee.values.email})}
                                  value={employee.values.email}
-                                 onChange={(e) => employee.setFieldValue('email', e.target.value)} required autoFocus type="text"/>
+                                 onChange={(e) => employee.setFieldValue('email', e.target.value)} required autoFocus type="email" tooltip="Адрес электронной почты"/>
+            </div>
+         </div>
+         <div className="field col-12">
+            <label htmlFor="contacts">Контактная информация</label>
+            <div className="p-inputgroup">
+               <span className="p-inputgroup-addon">
+                  <i className="pi pi-phone"></i>
+               </span>
+               <InputText id="contacts"  placeholder="Контактная информация"
+                                 className={classNames({"p-invalid": submitted && !employee.values.contacts})}
+                                 value={employee.values.contacts}
+                                 onChange={(e) => employee.setFieldValue('contacts', e.target.value)} required autoFocus type="text" tooltip="Контактная информация"/>
+            </div>
          </div>
          <div className="field col-12 md:col-6">
             <label htmlFor="begin_date">Дата начала</label>

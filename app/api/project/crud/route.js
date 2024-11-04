@@ -4,6 +4,39 @@ import {NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type.ts";
 
 export const POST = async (request) => {
+   const projectCode = (code) => {
+      const length = code.lenght;
+      const result = Number(code.substring(1, length));
+      return result;
+   }
+   const readNode = async (id) => {
+      const data = await prisma.project.findMany({
+         where : {parent_id: id},
+         orderBy: {
+            code: 'asc'
+         }
+      });
+
+      const result = data.map((item) => {
+         return {
+            key: `${id??0}-${item.id}`,
+            label: item.name,
+            data: {
+               id: item.id,
+               name: item.name,
+               code: item.code,
+               parent_id: id
+            }
+         }
+      }).sort(function(a, b) {return projectCode(a.data.code) - projectCode(b.data.code)});
+
+      for (const node of result) {
+         node.children = await readNode(node.data.id);
+      }
+
+      return result;
+   }
+
    const create = async (model) => {
       let _end_date = null;
       if (model.end_date)
@@ -22,35 +55,8 @@ export const POST = async (request) => {
    }
 
    const read = async (model) => {
-      let filter = {};
-      if (model.searchStr) {
-         filter['OR'] = prismaHelper.OR(['code', 'name', 'division.name'], model.searchStr);
-         if (!model.showClosed) {
-            filter['AND'] = [{ OR: [{ end_date: null }, { end_date: { gt: new Date() } }]}];
-         }
-      } else {
-         if (!model.showClosed) {
-            filter['OR'] = [{end_date: null}, {end_date: { gt: new Date() }}];
-         }
-      }
-
-      const totalCount = await prisma.project.count({where: filter});
-      const result = await prisma.project.findMany({
-         skip: model.pageSize * (model.pageNo -1),
-         take: model.pageSize,
-         where: filter,
-         orderBy: model.orderBy,
-         include: {division: true}
-      });
-
-      let data = {
-         recordCount: totalCount,
-         pageCount: Math.ceil(totalCount / model.pageSize),
-         pageNo: model.pageNo,
-         pageSize: model.pageSize,
-         result: result
-      };
-      return data;
+      const result = await readNode(null);
+      return result;
    }
 
    const update = async (model) => {

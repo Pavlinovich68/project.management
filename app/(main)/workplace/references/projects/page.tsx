@@ -1,88 +1,59 @@
 'use client'
 import ItrCard from "@/components/ItrCard";
-import ItrGrid from "@/components/ItrGrid";
 import CRUD from "@/models/enums/crud-type";
 import RecordState from "@/models/enums/record-state";
-import { IBaseEntity } from "@/models/IBaseEntity";
 import { ICardRef } from "@/models/ICardRef";
 import { IGridRef } from "@/models/IGridRef";
 import { IProject } from "@/models/IProject";
+import { IProjectNode } from "@/models/IProjectNode";
 import CrudHelper from "@/services/crud.helper";
 import { FormikErrors, useFormik } from "formik";
-import { Calendar } from "primereact/calendar";
+import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { Dropdown } from "primereact/dropdown";
+import { ConfirmPopup } from "primereact/confirmpopup";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
+import { TreeTable } from "primereact/treetable";
 import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 
 const Projects = () => {
    const controllerName = 'project';
-   const model: IProject = {code: "", name: "", division: undefined, begin_date: undefined};
-   const grid = useRef<IGridRef>(null);
+   const model: IProject = {code: "", name: "", parent_id: undefined, parent: undefined};
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
    const [cardHeader, setCardHeader] = useState('');
    const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
    const [submitted, setSubmitted] = useState(false);
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const [divisions, setDivisions] = useState<IBaseEntity>();
+   const [nodes, setNodes] = useState<IProjectNode[]>([]);
+   const [globalFilter, setGlobalFilter] = useState<string>('');
+   const [visibleConfirm, setVisibleConfirm] = useState<boolean>(false);
+   const [deletedProject, setDeletedProject] = useState<IProject>(model);;
 
-   const readDivisions = async () => {
-      const res = await fetch(`/api/division/list`, {
-         method: "GET",
-         headers: {
-            "Content-Type": "application/json",
-         }
+   useEffect(() => {
+      CrudHelper.crud(controllerName, CRUD.read, {}).then((result)=>{
+         setNodes(result.data);
       });
-      const data = await res.json();
-      setDivisions(data.data);
-   }
-
-//#region //SECTION - GRID
-   const gridColumns = [
-      <Column
-         key="projectGridColumn0"
-         field="division.name"
-         sortable
-         header="Ответственное подразделение"
-         style={{ width: '40%' }}>
-      </Column>,
-      <Column
-         key="projectGridColumn1"
-         field="code"
-         sortable
-         header="Код"
-         style={{ width: '10%' }}>
-      </Column>,
-      <Column
-         key="projectGridColumn2"
-         field="name"
-         sortable
-         header="Наименование проекта"
-         style={{ width: '50%' }}>
-      </Column>
-   ];
-//#endregion //!SECTION
+   }, []);
 
 //#region //SECTION Card
 const project = useFormik<IProject>({
    initialValues: model,
    validate: (data) => {
+      let regEx = undefined;
+      if (data.parent_id) {
+         regEx = /^[M]\d+/.test(data.code)
+      } else {
+         regEx = /^[P]\d+/.test(data.code);
+      }
       let errors: FormikErrors<IProject> = {};
-      if (!data.code){
-         errors.code = "Код проекта должен быть заполнен!";
+      if (!regEx){
+         errors.code = "Код проекта должен быть заполнен и должен соответствовать заданному шаблону!";
       }
       if (!data.name){
          errors.name = "Наименование проекта должно быть заполнено!";
-      }
-      if (!data.division){
-         errors.division = "Ответственное подразделение должно быть заполнено!";
-      }
-      if (!data.begin_date){
-         errors.begin_date = "Дата начала действия должна быть заполнена!";
       }
       return errors;
    },
@@ -94,29 +65,7 @@ const project = useFormik<IProject>({
 const card = (
    <div className="card p-fluid">
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
-      <div className="p-fluid formgrid grid">
-         <div className="field col-12">
-            <label htmlFor="is_priority" className="mr-3">Ответственное подразделение</label>
-            <div>
-               <Dropdown 
-                  value={project.values.division?.id} 
-                  className={classNames({"p-invalid": submitted && !project.values.division})} 
-                  required 
-                  optionLabel="name" 
-                  optionValue="id" 
-                  filter
-                  //@ts-ignore
-                  options={divisions}
-                  onChange={(e) => {
-                     //@ts-ignore
-                     const item = divisions?.find(item => item.id === e.value);
-                     if (item) {
-                        project.setFieldValue('division', item)
-                     }
-                  }}
-               />
-            </div>
-         </div>
+      <div className="p-fluid formgrid grid">         
          <div className="field col-12">
             <label htmlFor="code">Код проекта</label>
             <InputText id="code"  placeholder="Код проекта"
@@ -131,23 +80,15 @@ const card = (
                                  value={project.values.name}
                                  onChange={(e) => project.setFieldValue('name', e.target.value)} required autoFocus type="text"/>
          </div>
-         <div className="field col-12 md:col-6">
-            <label htmlFor="begin_date">Дата старта проекта</label>
-            <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !project.values.begin_date})} value={new Date(project.values.begin_date as Date)} onChange={(e) => project.setFieldValue('begin_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата старта"/>
-         </div>
-         <div className="field col-12 md:col-6">
-            <label htmlFor="end_date">Дата закрытия проекта</label>
-            <Calendar id="end_date" value={project.values.end_date !== null ? new Date(project.values.end_date as Date) : null} onChange={(e) => project.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата закрытия проекта"/>
-         </div>
       </div>
    </div>
 )
 //#endregion //!SECTION
 
 //#region //SECTION CRUD
-   const createMethod = () => {
+   const createMethod = (data: IProject | null) => {
       setCardHeader('Создание нового проекта');
-      readDivisions();
+      model.parent_id = data?.id;
       project.setValues(model);
       setRecordState(RecordState.new);
       setSubmitted(false);
@@ -158,7 +99,7 @@ const card = (
 
    const updateMethod = async (data: IProject) => {
       setCardHeader('Редактирование проекта');
-      readDivisions();
+      //readDivisions();
       project.setValues(data);
       setRecordState(RecordState.edit);
       setSubmitted(false);
@@ -167,8 +108,14 @@ const card = (
       }
    }
 
-   const deleteMethod = async (data: any) => {
-      return await CrudHelper.crud(controllerName, CRUD.delete, { id: data.id });
+   const deleteMethod = async () => {
+      if (deletedProject) {
+         CrudHelper.crud(controllerName, CRUD.delete, {id: deletedProject.id}).then((result) => {
+            CrudHelper.crud(controllerName, CRUD.read, {}).then((result)=>{
+               setNodes(result.data);
+            });
+         });
+      }
    }
 
    const saveMethod = async () => {
@@ -212,9 +159,9 @@ const card = (
             if (editor.current) {
                editor.current.visible(false);
             }
-            if (grid.current) {
-               grid.current.reload();
-            }
+            // if (grid.current) {
+            //    grid.current.reload();
+            // }
          }
       } catch (e: any) {
          toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
@@ -223,21 +170,58 @@ const card = (
    }
 //#endregion
 
+   const getHeader = () => {
+      return (
+         <div className="grid">
+            <div className="col-6">
+               <div className="flex justify-content-start">
+                  <Button type="button" icon="pi pi-plus" severity="success" rounded tooltip="Добавить новый" tooltipOptions={{position: "bottom"}} onClick={() => createMethod(null)}></Button>
+               </div>
+            </div>
+            <div className="col-6">
+               <div className="flex justify-content-end">
+                  <div className="p-input-icon-left">
+                     <i className="pi pi-search"></i>
+                     <InputText type="search" onInput={(e) => setGlobalFilter((e.target as HTMLInputElement).value)} placeholder="Поиск" />
+                  </div>
+               </div>
+            </div>
+         </div>
+      );
+   };
+
+   const actionTemplate = (item: any) => {
+      const addVisible = item.data.code.substring(0,1) === 'P';
+      console.log(item.data.code, item.data.code.substring(0,1), addVisible);
+      return (
+         <div className="flex flex-wrap gap-2">
+            <Button type="button" icon="pi pi-pencil" severity="info" rounded tooltip="Редактировать" tooltipOptions={{position: "bottom"}} onClick={() => updateMethod(item?.data)}></Button>
+            <Button type="button" icon="pi pi-plus" visible={addVisible} severity="success" rounded tooltip="Добавить новое" tooltipOptions={{position: "bottom"}} onClick={() => createMethod(item?.data)}></Button>
+            <Button type="button" icon="pi pi-trash" severity="danger" rounded tooltip="Удалить" tooltipOptions={{position: "bottom"}} onClick={() => {setVisibleConfirm(true); setDeletedProject(item?.data)}}></Button>
+            <ConfirmPopup
+               visible={visibleConfirm}
+               onHide={() => setVisibleConfirm(false)}
+               message="Вы действительно хотите удалить текущую запись?"
+               icon="pi pi-exclamation-triangle"
+               acceptLabel="Да"
+               rejectLabel="Нет"
+               accept={() => deleteMethod()}/>
+         </div>
+      );
+   };
+
+   let header = getHeader();
+
    return (
       <div className="grid">
          <div className="col-12">
             <div className="card">
                <h3>Проекты</h3>
-               <ItrGrid
-                  controller={controllerName}
-                  create={createMethod}
-                  update={updateMethod}
-                  drop={deleteMethod}
-                  tableStyle={{ minWidth: '50rem' }}
-                  showClosed={true}
-                  columns={gridColumns}
-                  sortMode="multiple"
-                  ref={grid}/>
+               <TreeTable value={nodes} tableStyle={{ minWidth: '50rem' }} globalFilter={globalFilter} showGridlines header={header} filterMode="strict">
+                  <Column field="name" header="Наименование проекта" expander></Column>
+                  <Column field="code" header="Код" style={{width: "70px"}}></Column>
+                  <Column body={actionTemplate} style={{width: "170px"}}/>
+               </TreeTable>
                <ItrCard
                   header={cardHeader}
                   width={'35vw'}

@@ -38,28 +38,21 @@ model division {
    parent_id      Int?
    parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    childrens      division[]  @relation("divisionTodivision")
-   users          users[]
-   projects       project[]
    rate           rate[]
    dept_calendar  dept_calendar[]
 }
 //NOTE - Пользователи системы
 model users {
    id             Int         @id @default(autoincrement())
-   email          String      @unique(map: "users_email_u_ind") @db.VarChar(50)
-   name           String?     @db.VarChar(100)
-   begin_date     DateTime    @db.Timestamp(6)
-   end_date       DateTime?   @db.Timestamp(6)
    password       String?     @db.VarChar(255)
-   division_id    Int
+   employee_id    Int         @unique(map: "user_employee_u_ind")
    roles          Json?       @db.Json
    attachment_id  Int?
    emailVerified  DateTime?
-   contacts       String?     @db.VarChar(50)
    accounts       Account[]
    sessions       Session[]
    avatar         attachment? @relation(fields: [attachment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    restoreGuid    String?     @db.VarChar(32)
    restoreTime    DateTime?
 }
@@ -80,20 +73,10 @@ model project {
    id                Int       @id @default(autoincrement())
    code              String    @unique @db.VarChar(3)
    name              String    @db.VarChar(250)
-   division_id       Int?
-   division          division? @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   begin_date        DateTime  @default(now()) @db.Timestamp(6)
-   end_date          DateTime? @db.Timestamp(6)
-   modules           module[]
+   parent_id      Int?
+   parent         project?   @relation("projectToProject", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   childrens      project[]  @relation("projectToProject")   
    roadmap_items     roadmap_item[]
-}
-//NOTE - Модули
-model module {
-   id             Int            @id @default(autoincrement())
-   name           String         @db.VarChar(250)
-   project_id     Int
-   project        project        @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-   roadmap_items  roadmap_item[]
 }
 //NOTE - Рабочий календарь
 model production_calendar {
@@ -127,13 +110,13 @@ model exclusion {
 //!SECTION
 model employee {
    id          Int         @id @default(autoincrement())
-   name        String?     @db.VarChar(25)
-   surname     String?     @db.VarChar(25)
-   pathname    String?     @db.VarChar(25)
-   email       String?     @db.VarChar(50)
+   name        String      @db.VarChar(75)
+   email       String      @unique(map: "employee_email_u_ind") @db.VarChar(50)
+   contacts    String?     @db.VarChar(50)
    begin_date  DateTime    @default(now()) @db.Timestamp(6)
    end_date    DateTime?   @db.Timestamp(6)
-   staff staff[]
+   staff       staff[]
+   users       users[]
 }
 //NOTE - График отпусков
 model vacation {
@@ -153,17 +136,17 @@ model roadmap {
 //NOTE - Элемент дорожной карты
 model roadmap_item {
    id                Int            @id @default(autoincrement())
+   comment           String?        @db.VarChar(250)
    roadmap_id        Int
    roadmap           roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   project_id        Int?
-   project           project?       @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   module_id         Int?
-   module            module?        @relation(fields: [module_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   project_id        Int
+   project           project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    start_date        DateTime       @db.Timestamp(6)
    end_date          DateTime       @db.Timestamp(6)
-   labour_intensity  Int?
+   hours             Int
    documents         attachment[]
    control_points    control_point[]
+   project_divisions project_division[]
 }
 //NOTE - Контрольная точка
 model control_point {
@@ -190,9 +173,10 @@ model days_off {
 }
 //NOTE Должности
 model post {
-   id          Int      @id @default(autoincrement())
-   name        String   @db.VarChar(250)
-   rate rate[]
+   id                Int      @id @default(autoincrement())
+   name              String   @db.VarChar(250)
+   hierarchy_level   Int      @default(0)
+   rate              rate[]
 }
 //NOTE - Ставки
 model rate {
@@ -208,17 +192,17 @@ model rate {
 }
 //NOTE - Штатные идиницы
 model staff {
-   id          Int         @id @default(autoincrement())
-   rate_id     Int
-   rate        rate        @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   employee_id Int
-   employee    employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   begin_date  DateTime    @db.Timestamp(6)
-   end_date    DateTime?   @db.Timestamp(6)   
-   vacations   vacation[]
+   id                Int         @id @default(autoincrement())
+   rate_id           Int
+   rate              rate        @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   employee_id       Int
+   employee          employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   begin_date        DateTime    @db.Timestamp(6)
+   end_date          DateTime?   @db.Timestamp(6)   
+   vacations         vacation[]
    @@unique([id])
 }
-//NOTE - Рабочий кале   ндарь подразделения
+//NOTE - Рабочий календарь подразделения
 model dept_calendar {
    id          Int                  @id @default(autoincrement())
    year        Int
@@ -261,4 +245,11 @@ model dept_calendar_cell {
    row_id   Int
    row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    @@unique([month, day, row_id])
+}
+//NOTE - Элементы дорожной карты в работе у подразделения
+model project_division {
+   id                Int            @id @default(autoincrement())
+   labour_intensity  Int?
+   roadmap_item_id   Int
+   roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

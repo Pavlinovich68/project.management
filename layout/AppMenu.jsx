@@ -5,10 +5,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import AppMenuitem from './AppMenuitem';
 import {useSession} from "next-auth/react";
 import { MenuProvider } from './context/menucontext';
-import { IconAdjustmentsHorizontal, IconCalendarBolt, IconCalendarUser } from '@tabler/icons-react';
-import { IconBooks, IconUsers, IconCube } from '@tabler/icons-react';
+import { IconAdjustmentsHorizontal, IconAlignLeft2, IconCalendarBolt, IconCalendarUser } from '@tabler/icons-react';
+import { IconBooks, IconUsers } from '@tabler/icons-react';
 import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup,
-   IconStar, IconListDetails, IconStars } from '@tabler/icons-react';
+   IconStar, IconStars, IconStackMiddle, IconShare, IconAlignLeft, IconTower, IconChartArrows } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -73,10 +73,16 @@ const AppMenu = () => {
                      to: '/workplace/department/calendar',               
                   },
                   {
+                     label: 'Планирование работ',
+                     tabler: <IconChartArrows className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['master']),
+                     to: '/workplace/department/roadmap',               
+                  },
+                  {
                      label: 'Проекты в работе',
                      tabler: <IconCalendarBolt className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/department/project.calendar',               
+                     to: '/workplace/department/projectcalendar',               
                   },
                ]
             },
@@ -98,9 +104,15 @@ const AppMenu = () => {
                   },
                   {
                      label: 'Проекты',
-                     tabler: <IconListDetails className='mr-1' stroke={1.5}/>,
+                     tabler: <IconShare className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
                      to: '/workplace/references/projects'
+                  },
+                  {
+                     label: 'Модули проектов',
+                     tabler: <IconStackMiddle className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['developer', 'master']),
+                     to: '/workplace/references/modules'
                   },
                   {
                      label: 'Производственный календарь',
