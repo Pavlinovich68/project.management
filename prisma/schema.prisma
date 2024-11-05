@@ -40,6 +40,7 @@ model division {
    childrens      division[]  @relation("divisionTodivision")
    rate           rate[]
    dept_calendar  dept_calendar[]
+   roadmaps       roadmap[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -131,6 +132,8 @@ model vacation {
 model roadmap {
    id             Int      @id @default(autoincrement())
    year           Int
+   division_id    Int         
+   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    roadmap_items  roadmap_item[]
 }
 //NOTE - Элемент дорожной карты
@@ -144,9 +147,9 @@ model roadmap_item {
    start_date        DateTime       @db.Timestamp(6)
    end_date          DateTime       @db.Timestamp(6)
    hours             Int
+   developer_qnty    Int
    documents         attachment[]
    control_points    control_point[]
-   project_divisions project_division[]
 }
 //NOTE - Контрольная точка
 model control_point {
@@ -245,11 +248,4 @@ model dept_calendar_cell {
    row_id   Int
    row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    @@unique([month, day, row_id])
-}
-//NOTE - Элементы дорожной карты в работе у подразделения
-model project_division {
-   id                Int            @id @default(autoincrement())
-   labour_intensity  Int?
-   roadmap_item_id   Int
-   roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

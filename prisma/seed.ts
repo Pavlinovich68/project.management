@@ -105,7 +105,7 @@ async function main() {
       await prisma.$queryRaw`delete from roadmap_item`;
       await prisma.$queryRaw`delete from roadmap`;
 
-      const roadmap = await prisma.roadmap.create({data: {year: 2024}});
+      const roadmap = await prisma.roadmap.create({data: {year: 2024, division_id: division?.id??0}});
       const count = roadmap_data.length;
       let index = 0;
       while (index < count) {
@@ -125,6 +125,7 @@ async function main() {
                end_date: new Date(item.end_date),
                hours: item.hours,
                comment: item.comment,
+               developer_qnty: item.developer_qnty,
                project_id: project.id,
                roadmap_id: roadmap.id
             }
