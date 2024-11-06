@@ -119,7 +119,7 @@ async function main() {
             throw new Error(`Не удалось получить проект ${item.project}`)
          }
 
-         await prisma.roadmap_item.create({
+         const rmi = await prisma.roadmap_item.create({
             data: {
                start_date: new Date(item.start_date),
                end_date: new Date(item.end_date),
@@ -130,6 +130,22 @@ async function main() {
                roadmap_id: roadmap.id
             }
          })
+
+         const employee = await prisma.employee.findFirst({
+            where: {
+               name: item.employee
+            }
+         });
+
+         if (employee) {
+            await prisma.roadmap_fact_item.create({
+               data: {
+                  roadmap_item_id: rmi.id,
+                  hours: item.hours,
+                  employee_id: employee.id
+               }
+            })
+         }
          index++;
       }
    }

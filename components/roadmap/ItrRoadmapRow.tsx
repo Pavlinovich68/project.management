@@ -40,26 +40,29 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
          <div className={classNames(styles.segmentBar)}>         
             {            
                data?.map((elem) =>
-                     <div className={classNames(elem.type === 1 ? styles.segmentItemPlan : styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`}}>
-                        {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
-                        <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней, ' + elem.hours + ' рабочих часов.' : ''}</span>
-                        {elem.type === 1 ?                            
-                           <div className={classNames("flex justify-content-end flex-wrap", styles.buttonBar)}>
-                              <i className={classNames("custom-target-icon pi pi-eye flex align-items-center justify-content-center", styles.button)}
-                                 data-pr-tooltip="Просмотреть атрибуты элемента"
-                                 style={{cursor:"pointer"}}
-                              ></i>
-                              <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}
-                                 data-pr-tooltip="Редактировать атрибуты элемента"
-                                 style={{cursor:"pointer"}}
-                              ></i>
-                              <i className={classNames("custom-target-icon pi pi-trash flex align-items-center justify-content-center", styles.button)}
-                                 data-pr-tooltip="Удалить элемент"
-                                 style={{cursor:"pointer"}}
-                              ></i>
-                           </div> 
-                        : ''}
-                     </div>
+                     <React.Fragment>
+                        <div className={classNames(elem.type === 1 ? styles.segmentItemPlan : styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`}}>
+                           {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
+                           <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней, ' + elem.hours + ' рабочих часов.' : ''}</span>
+                           {elem.type === 1 ?                            
+                              <div className={classNames("flex justify-content-end flex-wrap", styles.buttonBar)}>
+                                 <i className={classNames("custom-target-icon pi pi-eye flex align-items-center justify-content-center", styles.button)}
+                                    data-pr-tooltip="Просмотреть атрибуты элемента"
+                                    style={{cursor:"pointer"}}
+                                 ></i>
+                                 <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}
+                                    data-pr-tooltip="Редактировать атрибуты элемента"
+                                    style={{cursor:"pointer"}}
+                                 ></i>
+                                 <i className={classNames("custom-target-icon pi pi-trash flex align-items-center justify-content-center", styles.button)}
+                                    data-pr-tooltip="Удалить элемент"
+                                    style={{cursor:"pointer"}}
+                                 ></i>
+                              </div> 
+                           : ''}
+                        </div>
+                        {elem.type === 1 ? <div className={classNames(styles.segmentItemFact)}></div> : ''}
+                     </React.Fragment>
                )
             }
          </div>                  

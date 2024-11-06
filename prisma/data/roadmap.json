@@ -5,7 +5,9 @@
       "start_date": "2024-01-10",
       "end_date": "2024-11-30",
       "developer_qnty": 2,
-      "hours": 800
+      "hours": 800,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500
    },
    {
       "project": "P2",
@@ -13,7 +15,9 @@
       "start_date": "2024-03-01",
       "end_date": "2024-06-30",
       "developer_qnty": 2,
-      "hours": 1000
+      "hours": 1000,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500
    },
    {
       "project": "P3",
@@ -21,7 +25,9 @@
       "start_date": "2024-05-01",
       "end_date": "2024-12-10",
       "developer_qnty": 2,
-      "hours": 1200
+      "hours": 1200,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500
    },
    {
       "project": "P4",
@@ -29,7 +35,9 @@
       "start_date": "2024-03-01",
       "end_date": "2024-05-31",
       "developer_qnty": 2,
-      "hours": 800      
+      "hours": 800,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500      
    },
    {
       "project": "P5",
@@ -37,7 +45,9 @@
       "start_date": "2024-01-10",
       "end_date": "2024-12-25",
       "developer_qnty": 2,
-      "hours": 800
+      "hours": 800,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500
    },
    {
       "project": "P6",
@@ -45,7 +55,9 @@
       "start_date": "2024-01-20",
       "end_date": "2024-04-01",
       "developer_qnty": 2,
-      "hours": 1000
+      "hours": 1000,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500
    },
    {
       "project": "P6",
@@ -53,7 +65,9 @@
       "start_date": "2024-07-01",
       "end_date": "2024-12-25",
       "developer_qnty": 2,
-      "hours": 1200
+      "hours": 1200,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500
    },
    {
       "project": "P7",
@@ -61,6 +75,8 @@
       "start_date": "2024-04-01",
       "end_date": "2024-05-31",
       "developer_qnty": 2,
-      "hours": 1000
+      "hours": 1000,
+      "employee": "Малясов Александр Евгеньевич",
+      "fact": 500
    }
 ]
