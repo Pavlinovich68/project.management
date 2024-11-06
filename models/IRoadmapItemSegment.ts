@@ -6,5 +6,11 @@ export interface IRoadmapItemSegment {
    value: number | undefined,
    type: number,
    percent: number | undefined,
+   hours: number | undefined,
+   fact: IRoadmapFactItemSegment | undefined
+}
+
+export interface IRoadmapFactItemSegment {
+   percent: number | undefined,
    hours: number | undefined
 }

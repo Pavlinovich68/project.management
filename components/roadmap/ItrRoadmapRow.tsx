@@ -60,8 +60,8 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                                  ></i>
                               </div> 
                            : ''}
+                           {elem.type === 1 ? <div className={classNames(styles.segmentItemFact)} style={{width: `${elem.fact?.percent}%`}}></div> : ''}
                         </div>
-                        {elem.type === 1 ? <div className={classNames(styles.segmentItemFact)}></div> : ''}
                      </React.Fragment>
                )
             }

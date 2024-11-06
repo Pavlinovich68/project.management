@@ -73,7 +73,9 @@ async function main() {
 
    const seedProjects = async () => {
       try {
-         await prisma.$queryRaw`delete from project`;
+         await prisma.$queryRaw`delete from roadmap_fact_item`;
+         await prisma.$queryRaw`delete from roadmap_item`;
+         await prisma.$queryRaw`delete from project`;         
 
          const _count = projects.length;
          let _index = 0;
@@ -102,6 +104,7 @@ async function main() {
    }
 
    const seedRoadmap = async () => {
+      await prisma.$queryRaw`delete from roadmap_fact_item`;
       await prisma.$queryRaw`delete from roadmap_item`;
       await prisma.$queryRaw`delete from roadmap`;
 
@@ -119,6 +122,12 @@ async function main() {
             throw new Error(`Не удалось получить проект ${item.project}`)
          }
 
+         const employee = await prisma.employee.findFirst({
+            where: {
+               name: item.employee
+            }
+         });
+         
          const rmi = await prisma.roadmap_item.create({
             data: {
                start_date: new Date(item.start_date),
@@ -129,19 +138,13 @@ async function main() {
                project_id: project.id,
                roadmap_id: roadmap.id
             }
-         })
-
-         const employee = await prisma.employee.findFirst({
-            where: {
-               name: item.employee
-            }
-         });
+         })         
 
          if (employee) {
             await prisma.roadmap_fact_item.create({
                data: {
                   roadmap_item_id: rmi.id,
-                  hours: item.hours,
+                  hours: item.fact,
                   employee_id: employee.id
                }
             })
@@ -341,6 +344,8 @@ async function main() {
 
    const seedEmployees = async () => {      
       try {
+         await prisma.$queryRaw`delete from roadmap_fact_item`;
+         await prisma.$queryRaw`delete from roadmap_item`;
          await prisma.$queryRaw`delete from employee`;
 
          const posts = await prisma.post.findMany();
@@ -479,11 +484,11 @@ async function main() {
       }
    }  
    
-   await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
-   await seedRoadmap().finally(() => console.log(`\x1b[32mRoadmap seeded\x1b[0m`));
+   await seedProjects().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));   
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
    await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
+   await seedRoadmap().finally(() => console.log(`\x1b[32mRoadmap seeded\x1b[0m`));
    await seedProdCalendar().finally(() => console.log(`\x1b[32mWorked calendar seeded\x1b[0m`));
    await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));

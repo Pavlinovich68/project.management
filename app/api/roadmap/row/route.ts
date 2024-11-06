@@ -1,10 +1,10 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import DateHelper from "@/services/date.helpers";
-import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
+import { IRoadmapItemSegment, IRoadmapFactItemSegment } from "@/models/IRoadmapItemSegment";
 import { Extensions } from "@prisma/client/runtime/library";
 
-export const POST = async (request: NextRequest) => {
+export const POST = async (request: NextRequest) => {   
    try {
       const { roadmap_id, project_id } = await request.json();
 
@@ -43,14 +43,14 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 1,
             percent: undefined,
-            hours: item.hours
+            hours: item.hours,
+            fact: undefined
          }
       }).sort(function(a, b) {
-         //@ts-ignore
-         return a.start_date - b.start_date
+         return a.start - b.start
       })
 
-      const passArray = [];
+      const passArray:IRoadmapItemSegment[] = [];
       // добавляем пропуск перед сегментом
       if (data[0].start > 1) {
          passArray.push({
@@ -61,7 +61,8 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 0,
             percent: undefined,
-            hours: 0
+            hours: 0,
+            fact: undefined
          })
       }
       // после каждого сегмента добавляем пропуск      
@@ -77,7 +78,8 @@ export const POST = async (request: NextRequest) => {
                   value: undefined,
                   type: 0,
                   percent: undefined,
-                  hours: 0
+                  hours: 0,
+                  fact: undefined                  
                })
                index++;
             }
@@ -95,7 +97,8 @@ export const POST = async (request: NextRequest) => {
             value: undefined,
             type: 0,
             percent: undefined,
-            hours: 0
+            hours: 0,
+            fact: undefined            
          })
       }
 
@@ -106,9 +109,26 @@ export const POST = async (request: NextRequest) => {
          i.percent = i.value / dayCount * 100;
          return i;
       }).sort(function(a, b) {
-         //@ts-ignore
          return a.start - b.start
       });
+
+      for (const item of result) {
+         if (item.type === 1) {
+            const fact = await prisma.roadmap_fact_item.aggregate({
+               where: {
+                  roadmap_item_id: item.id
+               },
+               _sum: {
+                  hours: true
+               }
+            });
+            const factSum = fact._sum.hours??undefined;
+            item.fact = {
+               hours: factSum,
+               percent: (factSum && item.hours) ? factSum / item.hours * 100 : undefined
+            }
+         }         
+      }
 
       return await NextResponse.json({status: 'success', data: result});
    } catch (error: Error | unknown) {      
