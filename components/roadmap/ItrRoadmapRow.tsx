@@ -37,13 +37,14 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
       <React.Fragment>
          <Tooltip target=".custom-target-icon" position="bottom"/>
          <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
-         <div className={classNames(styles.segmentBar)}>         
+         <div className={classNames(styles.segmentBar)}>
             {            
-               data?.map((elem) =>
+               data?.map((elem) => 
                      <React.Fragment>
                         <div className={classNames(elem.type === 1 ? styles.segmentItemPlan : styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`}}>
                            {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
                            <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней, ' + elem.hours + ' рабочих часов.' : ''}</span>
+                           {elem.type === 1 ? <div className={classNames(styles.segmentItemFact)} style={{width: `${elem.fact?.percent}%`}}></div> : ''}
                            {elem.type === 1 ?                            
                               <div className={classNames("flex justify-content-end flex-wrap", styles.buttonBar)}>
                                  <i className={classNames("custom-target-icon pi pi-eye flex align-items-center justify-content-center", styles.button)}
@@ -60,11 +61,13 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                                  ></i>
                               </div> 
                            : ''}
-                           {elem.type === 1 ? <div className={classNames(styles.segmentItemFact)} style={{width: `${elem.fact?.percent}%`}}></div> : ''}
                         </div>
                      </React.Fragment>
                )
             }
+            {<div className={classNames(styles.point1)}></div>}
+            {<div className={classNames(styles.point2)}></div>}
+            {<div className={classNames(styles.point3)}></div>}
          </div>                  
       </React.Fragment>      
    );

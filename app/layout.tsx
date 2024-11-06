@@ -18,7 +18,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                <link id="theme-css" href={`/themes/bootstrap4-dark-blue/theme.css`} rel="stylesheet"></link>
                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
             </head>
-            <body>
+            <body disable-favicon-badge>
                <PrimeReactProvider>
                   <LayoutProvider>{children}</LayoutProvider>
                </PrimeReactProvider>
