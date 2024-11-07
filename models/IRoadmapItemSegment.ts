@@ -8,9 +8,16 @@ export interface IRoadmapItemSegment {
    percent: number | undefined,
    hours: number | undefined,
    fact: IRoadmapFactItemSegment | undefined
+   points: IControlPoint[] | undefined
 }
 
 export interface IRoadmapFactItemSegment {
    percent: number | undefined,
    hours: number | undefined
+}
+
+export interface IControlPoint {
+   name: string | undefined | null,
+   date: Date | undefined | null,
+   value: number | undefined | null
 }

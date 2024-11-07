@@ -19,7 +19,8 @@ export const POST = async (request: NextRequest) => {
             start_date: true,
             end_date: true,
             hours: true,
-            roadmap: true
+            roadmap: true,
+            control_points: true
          },
          orderBy: {
             start_date: 'asc'
@@ -34,7 +35,16 @@ export const POST = async (request: NextRequest) => {
 
       const year = records[0]?.roadmap.year;
 
+      const daysOfYear = new Date(year, 2, 0).getDate() === 29 ? 366 : 265;
+
       let data:IRoadmapItemSegment[] = records.map((item) => {
+         const points = item.control_points.map((i) => {
+            return {
+               name: i.name,
+               date: i.date,
+               value: DateHelper.dayNumber(i.date) / daysOfYear * 100
+            }
+         });
          return {
             id: item.id,
             name: item.comment,
@@ -44,11 +54,12 @@ export const POST = async (request: NextRequest) => {
             type: 1,
             percent: undefined,
             hours: item.hours,
-            fact: undefined
+            fact: undefined,
+            points: points
          }
       }).sort(function(a, b) {
          return a.start - b.start
-      })
+      })     
 
       const passArray:IRoadmapItemSegment[] = [];
       // добавляем пропуск перед сегментом
@@ -62,7 +73,8 @@ export const POST = async (request: NextRequest) => {
             type: 0,
             percent: undefined,
             hours: 0,
-            fact: undefined
+            fact: undefined,
+            points: undefined
          })
       }
       // после каждого сегмента добавляем пропуск      
@@ -79,7 +91,8 @@ export const POST = async (request: NextRequest) => {
                   type: 0,
                   percent: undefined,
                   hours: 0,
-                  fact: undefined                  
+                  fact: undefined,
+                  points: undefined
                })
                index++;
             }
@@ -98,7 +111,8 @@ export const POST = async (request: NextRequest) => {
             type: 0,
             percent: undefined,
             hours: 0,
-            fact: undefined            
+            fact: undefined,
+            points: undefined
          })
       }
 
