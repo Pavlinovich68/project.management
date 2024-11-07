@@ -26,6 +26,21 @@ async function main() {
       no: number
    }
 
+   await prisma.$queryRaw`delete from users`;
+   await prisma.$queryRaw`delete from staff`;
+   await prisma.$queryRaw`delete from roadmap_fact_item`;
+   await prisma.$queryRaw`delete from control_point`;
+   await prisma.$queryRaw`delete from roadmap_item`;
+   await prisma.$queryRaw`delete from project`;
+   await prisma.$queryRaw`delete from employee`;
+   await prisma.$queryRaw`delete from dept_calendar_cell`;
+   await prisma.$queryRaw`delete from dept_calendar_row`;
+   await prisma.$queryRaw`delete from dept_calendar`;
+   await prisma.$queryRaw`delete from vacation`;
+   await prisma.$queryRaw`delete from staff`;
+   await prisma.$queryRaw`delete from rate`;
+   await prisma.$queryRaw`delete from post`;
+
    const upsertDivision = async (model: any, parentId: number | null) => {
       const result = await prisma.division.upsert({
          where: {name: model.name},
@@ -73,10 +88,6 @@ async function main() {
 
    const seedProjects = async () => {
       try {
-         await prisma.$queryRaw`delete from roadmap_fact_item`;
-         await prisma.$queryRaw`delete from roadmap_item`;
-         await prisma.$queryRaw`delete from project`;         
-
          const _count = projects.length;
          let _index = 0;
          const parent: IBaseEntity = {};         
@@ -104,10 +115,6 @@ async function main() {
    }
 
    const seedRoadmap = async () => {
-      await prisma.$queryRaw`delete from roadmap_fact_item`;
-      await prisma.$queryRaw`delete from roadmap_item`;
-      await prisma.$queryRaw`delete from roadmap`;
-
       const roadmap = await prisma.roadmap.create({data: {year: 2024, division_id: division?.id??0}});
       const count = roadmap_data.length;
       let index = 0;
@@ -149,6 +156,17 @@ async function main() {
                }
             })
          }
+
+         for (const point of item.control_points) {
+            await prisma.control_point.create({
+               data: {
+                  roadmap_item_id: rmi.id,
+                  name: point.name,
+                  date: new Date(point.date)
+               }
+            })
+         }
+
          index++;
       }
    }
@@ -267,13 +285,6 @@ async function main() {
 
    const seedPosts = async () => {
       try {
-         await prisma.$queryRaw`delete from dept_calendar_cell`;
-         await prisma.$queryRaw`delete from dept_calendar_row`;
-         await prisma.$queryRaw`delete from dept_calendar`;
-         await prisma.$queryRaw`delete from vacation`;
-         await prisma.$queryRaw`delete from staff`;
-         await prisma.$queryRaw`delete from rate`;
-         await prisma.$queryRaw`delete from post`;
          const posts = [{name: 'Начальник отдела', level: 1}, {name: 'Главный специалист', level: 0}, {name: 'Ведущий техник-технолог', level: 0}];
          for (const post of posts){
             await prisma.post.create({
@@ -289,11 +300,7 @@ async function main() {
    }
 
    const seedRate = async () => {
-      try {
-         await prisma.$queryRaw`delete from dept_calendar_cell`;
-         await prisma.$queryRaw`delete from dept_calendar_row`;
-         await prisma.$queryRaw`delete from dept_calendar`;
-         await prisma.$queryRaw`delete from rate`;
+      try {         
          const division = await prisma.division.findUnique({
             where: {
                name: 'Отдел автоматизации процессов и веб-технологий'
@@ -344,10 +351,6 @@ async function main() {
 
    const seedEmployees = async () => {      
       try {
-         await prisma.$queryRaw`delete from roadmap_fact_item`;
-         await prisma.$queryRaw`delete from roadmap_item`;
-         await prisma.$queryRaw`delete from employee`;
-
          const posts = await prisma.post.findMany();
          
          const _count = employee.length;
