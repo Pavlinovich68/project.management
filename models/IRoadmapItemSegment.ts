@@ -1,4 +1,9 @@
-export interface IRoadmapItemSegment {
+export interface IRoadmapRowSegmentData {
+   segments: IRoadmapItemSegment[],
+   points: IControlPoint[]
+}
+
+export interface  IRoadmapItemSegment {
    id: number,
    name: string | null,
    start: number,
@@ -8,7 +13,6 @@ export interface IRoadmapItemSegment {
    percent: number | undefined,
    hours: number | undefined,
    fact: IRoadmapFactItemSegment | undefined
-   points: IControlPoint[] | undefined
 }
 
 export interface IRoadmapFactItemSegment {
@@ -20,4 +24,5 @@ export interface IControlPoint {
    name: string | undefined | null,
    date: Date | undefined | null,
    value: number | undefined | null
+   color: string | undefined | null | void
 }

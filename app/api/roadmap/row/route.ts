@@ -1,10 +1,30 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import DateHelper from "@/services/date.helpers";
-import { IRoadmapItemSegment, IRoadmapFactItemSegment } from "@/models/IRoadmapItemSegment";
+import { IRoadmapItemSegment, IRoadmapFactItemSegment, IControlPoint } from "@/models/IRoadmapItemSegment";
 import { Extensions } from "@prisma/client/runtime/library";
 
-export const POST = async (request: NextRequest) => {   
+const palette = [
+   "#ffea00",
+   "#ffdd00",
+   "#ffd000",
+   "#ffc300",
+   "#ffb700",
+   "#ffaa00",
+   "#ffa200",
+   "#ff9500",
+   "#ff8800",
+   "#ff7b00"   
+];
+export const POST = async (request: NextRequest) => {
+   function* getSegmentNextColor(): Generator<string> {
+      let i = 0;
+      while (true) {
+         yield palette[i];
+         i = (i + 1) % palette.length;
+      }
+   }
+   
    try {
       const { roadmap_id, project_id } = await request.json();
 
@@ -36,15 +56,18 @@ export const POST = async (request: NextRequest) => {
       const year = records[0]?.roadmap.year;
 
       const daysOfYear = new Date(year, 2, 0).getDate() === 29 ? 366 : 265;
-
+      
+      const points:IControlPoint[] = [];
       let data:IRoadmapItemSegment[] = records.map((item) => {
-         const points = item.control_points.map((i) => {
-            return {
+         let colorIt = getSegmentNextColor();
+         item.control_points.map((i) => {
+            points.push({
                name: i.name,
                date: i.date,
-               value: DateHelper.dayNumber(i.date) / daysOfYear * 100
-            }
-         });
+               value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
+               color: colorIt.next().value
+            })
+         });         
          return {
             id: item.id,
             name: item.comment,
@@ -55,12 +78,13 @@ export const POST = async (request: NextRequest) => {
             percent: undefined,
             hours: item.hours,
             fact: undefined,
-            points: points
+            points: undefined
          }
       }).sort(function(a, b) {
          return a.start - b.start
       })     
 
+      let collorPalete = getSegmentNextColor();
       const passArray:IRoadmapItemSegment[] = [];
       // добавляем пропуск перед сегментом
       if (data[0].start > 1) {
@@ -73,8 +97,7 @@ export const POST = async (request: NextRequest) => {
             type: 0,
             percent: undefined,
             hours: 0,
-            fact: undefined,
-            points: undefined
+            fact: undefined
          })
       }
       // после каждого сегмента добавляем пропуск      
@@ -91,8 +114,7 @@ export const POST = async (request: NextRequest) => {
                   type: 0,
                   percent: undefined,
                   hours: 0,
-                  fact: undefined,
-                  points: undefined
+                  fact: undefined
                })
                index++;
             }
@@ -111,8 +133,7 @@ export const POST = async (request: NextRequest) => {
             type: 0,
             percent: undefined,
             hours: 0,
-            fact: undefined,
-            points: undefined
+            fact: undefined
          })
       }
 
@@ -126,6 +147,7 @@ export const POST = async (request: NextRequest) => {
          return a.start - b.start
       });
 
+      
       for (const item of result) {
          if (item.type === 1) {
             const fact = await prisma.roadmap_fact_item.aggregate({
@@ -144,7 +166,10 @@ export const POST = async (request: NextRequest) => {
          }         
       }
 
-      return await NextResponse.json({status: 'success', data: result});
+      return await NextResponse.json({status: 'success', data: {
+         segments: result,
+         points: points
+      }});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }

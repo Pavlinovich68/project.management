@@ -2,13 +2,13 @@
 import React, {useRef, useState, useEffect} from "react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
-import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
+import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
 import { Button } from "primereact/button";
 import { Tooltip } from "primereact/tooltip";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
 const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name}:{roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string}) => {
-   const [data, setData] = useState<IRoadmapItemSegment[]>();
+   const [data, setData] = useState<IRoadmapRowSegmentData>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
    useEffect(() => {
@@ -39,7 +39,7 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
          <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
          <div className={classNames(styles.segmentBar)}>
             {            
-               data?.map((elem) => 
+               data?.segments?.map((elem) => 
                      <React.Fragment>
                         <div className={classNames(elem.type === 1 ? styles.segmentItemPlan : styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`}}>
                            {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
@@ -65,9 +65,7 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                      </React.Fragment>
                )
             }
-            {<div className={classNames(styles.point1)}></div>}
-            {<div className={classNames(styles.point2)}></div>}
-            {<div className={classNames(styles.point3)}></div>}
+            {data?.points.map((item) => <div className={classNames(styles.point)} style={{width:`calc(${item.value}% - 40px)`, borderRightColor: `${item.color}`}}></div>)}
          </div>                  
       </React.Fragment>      
    );

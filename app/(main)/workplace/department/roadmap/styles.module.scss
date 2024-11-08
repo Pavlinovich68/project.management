@@ -20,85 +20,14 @@
    width: 100%;
    height: 30px;
    margin-bottom: 5px;   
-   .point1 {
+   .point {
       position: absolute;
       left: 20px;
       height: 30px;
       z-index: 52;
-      border-right: solid yellow 2px;
+      pointer-events: none;
+      border-right: solid 2px;
       width: calc(10% - 40px);
-   }
-   .point2 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid yellow 2px;
-      margin-left: 200px;
-   }
-   .point3 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid yellow 2px;
-      margin-left: 300px;
-   }
-   .point4 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid blue 2px;
-      margin-left: 100px;
-   }
-   .point5 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid blue 2px;
-      margin-left: 100px;
-   }
-   .point6 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid blue 2px;
-      margin-left: 100px;
-   }
-   .point7 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid blue 2px;
-      margin-left: 100px;
-   }
-   .point8 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid blue 2px;
-      margin-left: 100px;
-   }
-   .point9 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid blue 2px;
-      margin-left: 100px;
-   }
-   .point10 {
-      position: absolute;
-      height: 30px;
-      width: 2px;
-      z-index: 52;
-      border-right: solid blue 2px;
-      margin-left: 100px;
    }
 }
 
