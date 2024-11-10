@@ -38,9 +38,7 @@ const Roadmap = () => {
 
    const startContent = (
          <React.Fragment>
-            <Button icon="pi pi-plus" className="mr-2" />   
-            <Button icon="pi pi-print" className="mr-2" />
-            <Button icon="pi pi-upload" />
+            <Button icon="pi pi-plus" className="mr-2" />
          </React.Fragment>
    );
 
