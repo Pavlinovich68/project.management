@@ -6,12 +6,16 @@ import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
 import { Button } from "primereact/button";
 import { Tooltip } from "primereact/tooltip";
 import { Dialog } from "primereact/dialog";
+import ItrCard from "../ItrCard";
+import { ICardRef } from "@/models/ICardRef";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
-const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name}:{roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string}) => {
+const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card, cardHeader}:
+   {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, card: React.JSX.Element, cardHeader: string}) => {
    const [data, setData] = useState<IRoadmapRowSegmentData>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const [visible, setVisible] = useState<boolean>(false);
+   const editor = useRef<ICardRef>(null);
    const footerContent = (
       <div>
          <Button label="No" icon="pi pi-times" onClick={() => setVisible(false)} className="p-button-text" />
@@ -80,14 +84,14 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
             }
             {data?.points.map((item) => <div className={classNames(styles.point)} style={{width:`calc(${item.value}% - 40px)`, borderRightColor: `${item.color}`}}></div>)}
          </div>
-         <Dialog header="Header" visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)} footer={footerContent} draggable={false} resizable={false}>
-               <p className="m-0">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-               </p>
-         </Dialog>
+         <ItrCard
+            header={cardHeader}
+            width={'35vw'}
+            save={undefined}
+            hiddenSave={false}
+            body={card}
+            ref={editor}
+         />
       </React.Fragment>      
    );
 };

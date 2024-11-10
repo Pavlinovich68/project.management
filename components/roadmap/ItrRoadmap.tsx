@@ -6,7 +6,7 @@ import { IRoadmapItem } from "@/models/IRoadmapItem";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import DateHelper from "@/services/date.helpers";
 
-const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {   
+const Roadmap = ({year, division_id, card, cardHeader}:{year: number, division_id: number, card: React.JSX.Element, cardHeader: string}) => {   
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
    const [scalePoint, setScalePoint] = useState<number>(0);
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -47,7 +47,15 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
             isLoaded ? <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center mt-4" style={{ fontSize: '10rem', color: '#326fd1'}}/> :
             <div className={classNames(styles.roadmapContainer)} style={{zIndex:"1", position:"relative"}}>
                {
-                  roadmapData?.map((item) => <ItrRoadmapRow roadmap_id={item.roadmap_id} item_id={item.id} project_id={item.project_id} project_code={item.project_code} project_name={item.project_name}/>)
+                  roadmapData?.map((item) => <ItrRoadmapRow 
+                     roadmap_id={item.roadmap_id} 
+                     item_id={item.id} 
+                     project_id={item.project_id} 
+                     project_code={item.project_code} 
+                     project_name={item.project_name}
+                     card={card}
+                     cardHeader={cardHeader}
+                  />)
                }
                <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>
                   <div className={classNames(styles.scalePointer)} style={{width: `${scalePoint}%`}}/>

@@ -42,6 +42,15 @@ const Roadmap = () => {
          </React.Fragment>
    );
 
+   const card = (
+      <div className="card p-fluid">
+         <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
+         <div className="p-fluid formgrid grid">
+            <h1>!!!</h1>
+         </div>
+      </div>
+   )
+
    
 
    return (
@@ -51,7 +60,7 @@ const Roadmap = () => {
                <h3>Дорожная карта по реализации проектов</h3>
                <ItrYearSwitsh year={year} onChange={changeYear}/>
                <Toolbar start={startContent} style={{marginTop: "1rem"}}/>
-               <ItrRoadmap year={year} division_id={session.user.division_id}/>               
+               <ItrRoadmap year={year} division_id={session.user.division_id} card={card} cardHeader={cardHeader}/>               
             </div>
          </div>
       </div>
