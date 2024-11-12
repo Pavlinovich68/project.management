@@ -42,16 +42,37 @@ const Roadmap = () => {
          </React.Fragment>
    );
 
-   const card = (
-      <div className="card p-fluid">
-         <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
-         <div className="p-fluid formgrid grid">
-            <h1>!!!</h1>
-         </div>
-      </div>
-   )
+   //#region //SECTION CARD
+const employee = useFormik<IEmployee>({
+   initialValues: model,
+   validate: (data) => {
+      let errors: FormikErrors<IEmployee> = {};
+      if (!data.name){
+         errors.name = "ФИО должно быть заполнено!";
+      }
+      if (!data.email){
+         errors.email = "Адрес электронной почты должен быть указан!";
+      }
+      if (!data.begin_date){
+         errors.begin_date = "Дата начала действия должна быть заполнена!";
+      }
+      return errors;
+   },
+   onSubmit: () => {
+      employee.resetForm();
+   }
+});
 
-   
+const card = (
+   <div className="card p-fluid">
+      <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
+      <div className="p-fluid formgrid grid">         
+      </div>
+   </div>
+)
+//#endregion //!SECTION CARD
+
+//#region //SECTION CRUD   
 
    return (
       <div className="grid">
@@ -60,7 +81,7 @@ const Roadmap = () => {
                <h3>Дорожная карта по реализации проектов</h3>
                <ItrYearSwitsh year={year} onChange={changeYear}/>
                <Toolbar start={startContent} style={{marginTop: "1rem"}}/>
-               <ItrRoadmap year={year} division_id={session.user.division_id} card={card} cardHeader={cardHeader}/>               
+               <ItrRoadmap year={year} division_id={session.user.division_id} card={card} cardHeader={cardHeader} editor={editor}/>               
             </div>
          </div>
       </div>

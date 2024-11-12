@@ -1,5 +1,5 @@
 'use client'
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect, Ref} from "react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
 import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
@@ -10,23 +10,12 @@ import ItrCard from "../ItrCard";
 import { ICardRef } from "@/models/ICardRef";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
-const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card, cardHeader}:
-   {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, card: React.JSX.Element, cardHeader: string}) => {
+const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card, cardHeader, editor}:
+   {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, card: React.JSX.Element, cardHeader: string, editor: Ref<ICardRef>}) => {
    const [data, setData] = useState<IRoadmapRowSegmentData>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
-   const [visible, setVisible] = useState<boolean>(false);
-   const editor = useRef<ICardRef>(null);
-   const footerContent = (
-      <div>
-         <Button label="No" icon="pi pi-times" onClick={() => setVisible(false)} className="p-button-text" />
-         <Button label="Yes" icon="pi pi-check" onClick={() => setVisible(false)} autoFocus />
-      </div>
-   );
-
-   const show = () => {
-      setVisible(true);
-   };
-
+   //const editor = useRef<ICardRef>(null);
+   
    useEffect(() => {
       getSegments();
    }, [roadmap_id, project_id])
@@ -66,7 +55,7 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                                  <i className={classNames("custom-target-icon pi pi-eye flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Просмотреть атрибуты элемента"
                                     style={{cursor:"pointer"}}
-                                    onClick={() => show()}
+                                    //onClick={() => show()}
                                  ></i>
                                  <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Редактировать атрибуты элемента"

@@ -1,12 +1,13 @@
 'use client'
 import { classNames } from "primereact/utils";
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect, Ref} from "react";
 import ItrRoadmapRow from "./ItrRoadmapRow";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import DateHelper from "@/services/date.helpers";
+import { ICardRef } from "@/models/ICardRef";
 
-const Roadmap = ({year, division_id, card, cardHeader}:{year: number, division_id: number, card: React.JSX.Element, cardHeader: string}) => {   
+const Roadmap = ({year, division_id, card, cardHeader, editor}:{year: number, division_id: number, card: React.JSX.Element, cardHeader: string, editor: Ref<ICardRef>}) => {   
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
    const [scalePoint, setScalePoint] = useState<number>(0);
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -55,6 +56,7 @@ const Roadmap = ({year, division_id, card, cardHeader}:{year: number, division_i
                      project_name={item.project_name}
                      card={card}
                      cardHeader={cardHeader}
+                     editor={editor}
                   />)
                }
                <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>
