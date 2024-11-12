@@ -7,7 +7,7 @@ import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss
 import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
 
-const Roadmap = ({year, division_id, card, cardHeader, editor}:{year: number, division_id: number, card: React.JSX.Element, cardHeader: string, editor: Ref<ICardRef>}) => {   
+const Roadmap = ({year, division_id, card}:{year: number, division_id: number, card: React.JSX.Element}) => {   
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
    const [scalePoint, setScalePoint] = useState<number>(0);
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -55,8 +55,6 @@ const Roadmap = ({year, division_id, card, cardHeader, editor}:{year: number, di
                      project_code={item.project_code} 
                      project_name={item.project_name}
                      card={card}
-                     cardHeader={cardHeader}
-                     editor={editor}
                   />)
                }
                <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>

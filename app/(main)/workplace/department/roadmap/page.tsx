@@ -47,31 +47,31 @@ const Roadmap = () => {
    );
 
 //#region //SECTION CARD
-const roadmapItem = useFormik<IRoadmapItemCRUD>({
-   initialValues: model,
-   validate: (data) => {
-      let errors: FormikErrors<IRoadmapItemCRUD> = {};
-      if (!data.project_id){
-         errors.project_id = "Проект должен быть указан!";
-      }
-      if (!data.start_date){
-         errors.start_date = "Ориентировочная дата начала работ по проекту должна быть заполнена!";
-      }
-      if (!data.end_date){
-         errors.end_date = "Ориентировочная дата окончания работ по проекту должна быть заполнена!";
-      }
-      if (!data.hours){
-         errors.hours = "Ориентировочная трудоемкость должна быть указана!";
-      }
-      if (!data.developer_qnty){
-         errors.developer_qnty = "Плановая численность разработчиков должна быть указана!";
-      }
-      return errors;
-   },
-   onSubmit: () => {
-      roadmapItem.resetForm();
-   }
-});
+// const roadmapItem = useFormik<IRoadmapItemCRUD>({
+//    initialValues: model,
+//    validate: (data) => {
+//       let errors: FormikErrors<IRoadmapItemCRUD> = {};
+//       if (!data.project_id){
+//          errors.project_id = "Проект должен быть указан!";
+//       }
+//       if (!data.start_date){
+//          errors.start_date = "Ориентировочная дата начала работ по проекту должна быть заполнена!";
+//       }
+//       if (!data.end_date){
+//          errors.end_date = "Ориентировочная дата окончания работ по проекту должна быть заполнена!";
+//       }
+//       if (!data.hours){
+//          errors.hours = "Ориентировочная трудоемкость должна быть указана!";
+//       }
+//       if (!data.developer_qnty){
+//          errors.developer_qnty = "Плановая численность разработчиков должна быть указана!";
+//       }
+//       return errors;
+//    },
+//    onSubmit: () => {
+//       roadmapItem.resetForm();
+//    }
+// });
 
 const card = (
    <div className="card p-fluid">
@@ -85,7 +85,7 @@ const card = (
 //#region //SECTION CRUD
 const createMethod = () => {
    setCardHeader('Создание нового элемента плана');
-   roadmapItem.setValues(model);
+//   roadmapItem.setValues(model);
    setRecordState(RecordState.new);
    setSubmitted(false);
    if (editor.current) {
@@ -95,53 +95,53 @@ const createMethod = () => {
 
 const saveMethod = async () => {
    setSubmitted(true);
-   if (!roadmapItem.isValid) {
-      const errors = Object.values(roadmapItem.errors);
-      //@ts-ignore
-      toast.current.show({
-         severity:'error',
-         summary: 'Ошибка сохранения',
-         content: (<div className="flex flex-column">
-                     <div className="text-center mb-2">
-                        <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
-                        <h3 className="text-red-500">Ошибка сохранения</h3>
-                     </div>
-               {errors.map((item, i) => {
-                  return (
-                     // eslint-disable-next-line react/jsx-key
-                     <p className="flex align-items-left m-0">
-                        {/* @ts-ignore */}
-                        {item}
-                     </p>)
-               })
-            }
-         </div>),
-         life: 5000
-      });
-      return;
-   }
-   try {
-      setIsLoading(true);
-      const res = 
-         await crudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, roadmapItem.values);
+   // if (!roadmapItem.isValid) {
+   //    const errors = Object.values(roadmapItem.errors);
+   //    //@ts-ignore
+   //    toast.current.show({
+   //       severity:'error',
+   //       summary: 'Ошибка сохранения',
+   //       content: (<div className="flex flex-column">
+   //                   <div className="text-center mb-2">
+   //                      <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
+   //                      <h3 className="text-red-500">Ошибка сохранения</h3>
+   //                   </div>
+   //             {errors.map((item, i) => {
+   //                return (
+   //                   // eslint-disable-next-line react/jsx-key
+   //                   <p className="flex align-items-left m-0">
+   //                      {/* @ts-ignore */}
+   //                      {item}
+   //                   </p>)
+   //             })
+   //          }
+   //       </div>),
+   //       life: 5000
+   //    });
+   //    return;
+   // }
+   // try {
+   //    setIsLoading(true);
+   //    const res = 
+   //       await crudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, roadmapItem.values);
 
-      setIsLoading(false);
+   //    setIsLoading(false);
 
-      if (res.status === 'error'){
-         toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
-      } else {
-         if (editor.current) {
-            editor.current.visible(false);
-         }
-         //FIXME - Добавить обновление доски
-         // if (grid.current) {
-         //    grid.current.reload();
-         // }
-      }
-   } catch (e: any) {
-      toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
-      setIsLoading(false);
-   }
+   //    if (res.status === 'error'){
+   //       toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
+   //    } else {
+   //       if (editor.current) {
+   //          editor.current.visible(false);
+   //       }
+   //       //FIXME - Добавить обновление доски
+   //       // if (grid.current) {
+   //       //    grid.current.reload();
+   //       // }
+   //    }
+   // } catch (e: any) {
+   //    toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
+   //    setIsLoading(false);
+   // }
 }
 //#endregion //!SECTION CRUD
 
@@ -152,7 +152,7 @@ const saveMethod = async () => {
                <h3>Дорожная карта по реализации проектов</h3>
                <ItrYearSwitsh year={year} onChange={changeYear}/>
                <Toolbar start={startContent} style={{marginTop: "1rem"}}/>
-               <ItrRoadmap year={year} division_id={session.user.division_id} card={card} cardHeader={cardHeader} editor={editor}/>               
+               <ItrRoadmap year={year} division_id={session.user.division_id} card={card}/>
             </div>
          </div>
          <ItrCard
