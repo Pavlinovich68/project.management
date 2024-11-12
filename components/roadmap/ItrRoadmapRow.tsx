@@ -8,21 +8,32 @@ import { Tooltip } from "primereact/tooltip";
 import { Dialog } from "primereact/dialog";
 import ItrCard from "../ItrCard";
 import { ICardRef } from "@/models/ICardRef";
+import { FormikErrors, useFormik } from "formik";
+import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
+import crudHelper from "@/services/crud.helper";
+import CRUD from "@/models/enums/crud-type";
+import { Toast } from "primereact/toast";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
 const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card}:
    {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, card: React.JSX.Element}) => {
+   
+   const controllerName = 'roadmap';
+   const model: IRoadmapItemCRUD = {id: undefined, comment: undefined, roadmap_id: undefined, project_id: undefined,
+      project_name: undefined, start_date: undefined, end_date: undefined, hours: undefined, developer_qnty: undefined
+   };
+   const toast = useRef<Toast>(null);
    const [data, setData] = useState<IRoadmapRowSegmentData>();
-   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+   const [isLoading, setIsLoading] = useState<boolean>(false);
    const editor = useRef<ICardRef>(null);
-   const [cardHeader, setCardHeader] = useState('');
    
    useEffect(() => {
       getSegments();
    }, [roadmap_id, project_id])
 
    const getSegments = async () => {
-      setIsLoaded(true);
+      setIsLoading(true);
       const res = await fetch(`/api/roadmap/row`, {
          method: "POST",
          headers: {
@@ -36,8 +47,108 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
       });
       const response = await res.json();
       setData(response.data);
-      setIsLoaded(false);
+      setIsLoading(false);
    }
+
+   const roadmapItem = useFormik<IRoadmapItemCRUD>({
+      initialValues: model,
+      validate: (data) => {
+         let errors: FormikErrors<IRoadmapItemCRUD> = {};
+         if (!data.project_id){
+            errors.project_id = "Проект должен быть указан!";
+         }
+         if (!data.start_date){
+            errors.start_date = "Ориентировочная дата начала работ по проекту должна быть заполнена!";
+         }
+         if (!data.end_date){
+            errors.end_date = "Ориентировочная дата окончания работ по проекту должна быть заполнена!";
+         }
+         if (!data.hours){
+            errors.hours = "Ориентировочная трудоемкость должна быть указана!";
+         }
+         if (!data.developer_qnty){
+            errors.developer_qnty = "Плановая численность разработчиков должна быть указана!";
+         }
+         return errors;
+      },
+      onSubmit: () => {
+      }
+   });
+
+   //#region //SECTION CRUD
+const updateMethod = () => {
+   //FIXME - Получить модель по id с сервера 
+   roadmapItem.setValues(model);
+   if (editor.current) {
+      editor.current.visible(true);
+   }
+}
+//FIXME - Поправить диалог
+const deleteMethod = async () => {
+   //return await crudHelper.crud(controllerName, CRUD.delete, { id: data.id });
+}
+
+const confirmDelete = () => {
+   confirmDialog({
+      message: `Вы уверены что хотите удалить элемент?`,
+      header: 'Удаление элемента',
+      icon: 'pi pi-exclamation-triangle text-red-500',
+      acceptLabel: 'Да',
+      rejectLabel: 'Нет',
+      showHeader: true,
+      accept: () => deleteMethod()
+   });
+};
+
+const saveMethod = async () => {
+   if (!roadmapItem.isValid) {
+      const errors = Object.values(roadmapItem.errors);
+      //@ts-ignore
+      toast.current.show({
+         severity:'error',
+         summary: 'Ошибка сохранения',
+         content: (<div className="flex flex-column">
+                     <div className="text-center mb-2">
+                        <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
+                        <h3 className="text-red-500">Ошибка сохранения</h3>
+                     </div>
+               {errors.map((item, i) => {
+                  return (
+                     // eslint-disable-next-line react/jsx-key
+                     <p className="flex align-items-left m-0">
+                        {item}
+                     </p>)
+               })
+            }
+         </div>),
+         life: 5000
+      });
+      return;
+   }
+   try {
+      setIsLoading(true);
+      const res = 
+         await crudHelper.crud(controllerName, CRUD.create, roadmapItem.values);
+
+      setIsLoading(false);
+
+      if (res.status === 'error'){
+         toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
+      } else {
+         if (editor.current) {
+            editor.current.visible(false);
+         }
+         //FIXME - Добавить обновление доски
+         // if (grid.current) {
+         //    grid.current.reload();
+         // }
+      }
+   } catch (e: any) {
+      toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
+      setIsLoading(false);
+   }
+}
+//#endregion //!SECTION CRUD
 
    return (      
       <React.Fragment>
@@ -56,15 +167,16 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                                  <i className={classNames("custom-target-icon pi pi-eye flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Просмотреть атрибуты элемента"
                                     style={{cursor:"pointer"}}
-                                    onClick={() => editor.current?.visible(true)}
                                  ></i>
                                  <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Редактировать атрибуты элемента"
                                     style={{cursor:"pointer"}}
+                                    onClick={() => updateMethod()}
                                  ></i>
                                  <i className={classNames("custom-target-icon pi pi-trash flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Удалить элемент"
                                     style={{cursor:"pointer"}}
+                                    onClick={() => confirmDelete()}
                                  ></i>
                               </div> 
                            : ''}
@@ -75,13 +187,15 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
             {data?.points.map((item) => <div className={classNames(styles.point)} style={{width:`calc(${item.value}% - 40px)`, borderRightColor: `${item.color}`}}></div>)}
          </div>
          <ItrCard
-            header={cardHeader}
+            header={'Внесение изменений в элемент плана'}
             width={'35vw'}
-            save={undefined}
+            save={saveMethod}
             hiddenSave={false}
             body={card}
             ref={editor}
-         />
+         />         
+         <Toast ref={toast} />
+         <ConfirmDialog/>
       </React.Fragment>      
    );
 };
