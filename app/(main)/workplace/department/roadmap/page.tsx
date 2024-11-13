@@ -156,6 +156,7 @@ const Roadmap = () => {
             ref={editor}
          />         
          <Toast ref={toast} />
+         <ConfirmDialog/>
       </div>
    );
 };

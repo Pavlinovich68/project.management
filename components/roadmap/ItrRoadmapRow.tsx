@@ -13,7 +13,7 @@ import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 import crudHelper from "@/services/crud.helper";
 import CRUD from "@/models/enums/crud-type";
 import { Toast } from "primereact/toast";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { confirmDialog } from "primereact/confirmdialog";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
 const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card}:
@@ -76,7 +76,8 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
    });
 
    //#region //SECTION CRUD
-const updateMethod = () => {
+const updateMethod = (id: number) => {
+   console.log(`update ${id}`)
    //FIXME - Получить модель по id с сервера 
    roadmapItem.setValues(model);
    if (editor.current) {
@@ -84,11 +85,15 @@ const updateMethod = () => {
    }
 }
 //FIXME - Поправить диалог
-const deleteMethod = async () => {
+const deleteMethod = async (id: number) => {
+   console.log(`delete ${id}`)
    //return await crudHelper.crud(controllerName, CRUD.delete, { id: data.id });
 }
+const viewMethod = (id: number) => {
+   console.log(`view ${id}`)
+}
 
-const confirmDelete = () => {
+const confirmDelete = (id: number) => {   
    confirmDialog({
       message: `Вы уверены что хотите удалить элемент?`,
       header: 'Удаление элемента',
@@ -96,7 +101,7 @@ const confirmDelete = () => {
       acceptLabel: 'Да',
       rejectLabel: 'Нет',
       showHeader: true,
-      accept: () => deleteMethod()
+      accept: () => deleteMethod(id)
    });
 };
 
@@ -166,17 +171,21 @@ const saveMethod = async () => {
                               <div className={classNames("flex justify-content-end flex-wrap", styles.buttonBar)}>
                                  <i className={classNames("custom-target-icon pi pi-eye flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Просмотреть атрибуты элемента"
+                                    data-pr-position="top"
                                     style={{cursor:"pointer"}}
+                                    onClick={() => viewMethod(elem.id)}                                    
                                  ></i>
                                  <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Редактировать атрибуты элемента"
+                                    data-pr-position="top"
                                     style={{cursor:"pointer"}}
-                                    onClick={() => updateMethod()}
+                                    onClick={() => updateMethod(elem.id)}
                                  ></i>
                                  <i className={classNames("custom-target-icon pi pi-trash flex align-items-center justify-content-center", styles.button)}
                                     data-pr-tooltip="Удалить элемент"
+                                    data-pr-position="top"
                                     style={{cursor:"pointer"}}
-                                    onClick={() => confirmDelete()}
+                                    onClick={() => confirmDelete(elem.id)}
                                  ></i>
                               </div> 
                            : ''}
@@ -194,8 +203,7 @@ const saveMethod = async () => {
             body={card}
             ref={editor}
          />         
-         <Toast ref={toast} />
-         <ConfirmDialog/>
+         {/* <Toast ref={toast} /> */}
       </React.Fragment>      
    );
 };
