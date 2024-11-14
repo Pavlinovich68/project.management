@@ -16,6 +16,7 @@ import crudHelper from "@/services/crud.helper";
 import CRUD from "@/models/enums/crud-type";
 import ItrCard from "@/components/ItrCard";
 import { ConfirmDialog } from "primereact/confirmdialog";
+import { InputText } from "primereact/inputtext";
 
 const Roadmap = () => {
    const controllerName = 'roadmap';
@@ -27,6 +28,7 @@ const Roadmap = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const [year, setYear] = useState<number>(new Date().getFullYear());
    const {data: session} = useSession();
+   const [submitted, setSubmitted] = useState(false);
 
    useEffect(() => {
       changeYear(year);      
@@ -73,7 +75,14 @@ const Roadmap = () => {
    const card = (
       <div className="card p-fluid">
          <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
-         <div className="p-fluid formgrid grid">         
+         <div className="p-fluid formgrid grid">
+         <div className="field col-12">
+            <label htmlFor="name">Наименование этапа</label>
+               <InputText id="name"  placeholder="Наименование этапа"
+                                    className={classNames({"p-invalid": submitted && !roadmapItem.values.comment})}
+                                    value={roadmapItem.values.comment}
+                                    onChange={(e) => roadmapItem.setFieldValue('comment', e.target.value)} required autoFocus type="text"/>
+            </div>
          </div>
       </div>
    )
@@ -144,7 +153,7 @@ const Roadmap = () => {
                <h3>Дорожная карта по реализации проектов</h3>
                <ItrYearSwitsh year={year} onChange={changeYear}/>
                <Toolbar start={startContent} style={{marginTop: "1rem"}}/>
-               <ItrRoadmap year={year} division_id={session.user.division_id} card={card}/>
+               <ItrRoadmap year={year} division_id={session.user.division_id} card={card} instance={editor.current}/>
             </div>
          </div>
          <ItrCard

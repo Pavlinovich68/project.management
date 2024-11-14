@@ -1,6 +1,9 @@
+import { IRoadmapItemCRUD } from "./IRoadmapItem"
+
 export interface IRoadmapRowSegmentData {
    segments: IRoadmapItemSegment[],
-   points: IControlPoint[]
+   points: IControlPoint[],
+   items: IRoadmapItemCRUD[]
 }
 
 export interface  IRoadmapItemSegment {

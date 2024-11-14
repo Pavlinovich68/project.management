@@ -16,8 +16,8 @@ import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
-const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card}:
-   {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, card: React.JSX.Element}) => {
+const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card, instance}:
+   {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, card: React.JSX.Element, instance: ICardRef | null | undefined}) => {
    
    const controllerName = 'roadmap';
    const model: IRoadmapItemCRUD = {id: undefined, comment: undefined, roadmap_id: undefined, project_id: undefined,
@@ -26,10 +26,13 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
    const toast = useRef<Toast>(null);
    const [data, setData] = useState<IRoadmapRowSegmentData>();
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const editor = useRef<ICardRef>(null);
+   let editor = useRef<ICardRef>(null);
+   //const editor = useRef<ICardRef>(null);
    
    useEffect(() => {
       getSegments();
+      if (instance)
+         editor = useRef<ICardRef>(instance);
    }, [roadmap_id, project_id])
 
    const getSegments = async () => {
@@ -77,11 +80,11 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
 
    //#region //SECTION CRUD
 const updateMethod = (id: number) => {
-   console.log(`update ${id}`)
-   //FIXME - Получить модель по id с сервера 
+   const model = data?.items.find(i => i.id === id);
+   if (!model) return;
    roadmapItem.setValues(model);
-   if (editor.current) {
-      editor.current.visible(true);
+   if (instance) {
+      instance.visible(true);
    }
 }
 //FIXME - Поправить диалог
@@ -90,7 +93,9 @@ const deleteMethod = async (id: number) => {
    //return await crudHelper.crud(controllerName, CRUD.delete, { id: data.id });
 }
 const viewMethod = (id: number) => {
-   console.log(`view ${id}`)
+   const model = data?.items.find(i => i.id === id);
+   if (model)
+      console.log(JSON.stringify(model))
 }
 
 const confirmDelete = (id: number) => {   
@@ -106,6 +111,7 @@ const confirmDelete = (id: number) => {
 };
 
 const saveMethod = async () => {
+   if (!instance) return;
    if (!roadmapItem.isValid) {
       const errors = Object.values(roadmapItem.errors);
       //@ts-ignore
@@ -140,8 +146,8 @@ const saveMethod = async () => {
       if (res.status === 'error'){
          toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
       } else {
-         if (editor.current) {
-            editor.current.visible(false);
+         if (instance) {
+            instance.visible(false);
          }
          //FIXME - Добавить обновление доски
          // if (grid.current) {
@@ -157,7 +163,7 @@ const saveMethod = async () => {
 
    return (      
       <React.Fragment>
-         <Tooltip target=".custom-target-icon" position="bottom"/>
+         <Tooltip target=".custom-target-icon"/>
          <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
          <div className={classNames(styles.segmentBar)}>
             {            

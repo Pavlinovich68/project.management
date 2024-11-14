@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import DateHelper from "@/services/date.helpers";
 import { IRoadmapItemSegment, IRoadmapFactItemSegment, IControlPoint } from "@/models/IRoadmapItemSegment";
 import { Extensions } from "@prisma/client/runtime/library";
+import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 
 const palette = [
    "#ffea00",
@@ -40,7 +41,11 @@ export const POST = async (request: NextRequest) => {
             end_date: true,
             hours: true,
             roadmap: true,
-            control_points: true
+            control_points: true,
+            developer_qnty: true,
+            roadmap_id: true,
+            project_id: true,
+            project: true
          },
          orderBy: {
             start_date: 'asc'
@@ -58,6 +63,7 @@ export const POST = async (request: NextRequest) => {
       const daysOfYear = new Date(year, 2, 0).getDate() === 29 ? 366 : 265;
       
       const points:IControlPoint[] = [];
+      const baseItems: IRoadmapItemCRUD[] = [];
       let data:IRoadmapItemSegment[] = records.map((item) => {
          let colorIt = getSegmentNextColor();
          item.control_points.map((i) => {
@@ -67,7 +73,20 @@ export const POST = async (request: NextRequest) => {
                value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
                color: colorIt.next().value
             })
-         });         
+         }); 
+
+         baseItems.push({
+            id: item.id,
+            comment: item.comment,
+            project_id: item.project_id,
+            project_name: item.project.name,
+            roadmap_id: item.roadmap_id,
+            start_date: item.start_date,
+            end_date:   item.end_date,
+            hours: item.hours,
+            developer_qnty: item.developer_qnty
+         })
+         
          return {
             id: item.id,
             name: item.comment,
@@ -168,7 +187,8 @@ export const POST = async (request: NextRequest) => {
 
       return await NextResponse.json({status: 'success', data: {
          segments: result,
-         points: points
+         points: points,
+         items: baseItems
       }});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
