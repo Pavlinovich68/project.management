@@ -1,11 +1,7 @@
 'use client'
-import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
-//import styles from "./styles.module.scss"
 import ItrYearSwitsh from "@/components/ItrYearSwitch";
 import ItrRoadmap from "@/components/roadmap/ItrRoadmap";
-import { Toolbar } from "primereact/toolbar";
-import { Button } from "primereact/button";
 import { useSession } from "next-auth/react";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 import { Toast } from "primereact/toast";
@@ -28,23 +24,16 @@ const Roadmap = () => {
       setYear(val);
    }
 
-   const button = (<Button icon="pi pi-plus" className="mr-2"/>);
-
    if (!session) return;   
 
    return (
-      <div className="grid">
-         <div className="col-12">
-            <div className="card" style={{position: "relative"}}>
-               <h3>Дорожная карта по реализации проектов</h3>
-               <ItrYearSwitsh year={year} onChange={changeYear}/>
-               <Toolbar start={button} style={{marginTop: "1rem"}}/>
-               <ItrRoadmap year={year} division_id={session.user.division_id}/>
-            </div>
-         </div>     
+      <React.Fragment>
+         <h3>Дорожная карта по реализации проектов</h3>
+         <ItrYearSwitsh year={year} onChange={changeYear}/>
+         <ItrRoadmap year={year} division_id={session.user.division_id}/>            
          <Toast ref={toast} />
          <ConfirmDialog/>
-      </div>
+      </React.Fragment>
    );
 };
 

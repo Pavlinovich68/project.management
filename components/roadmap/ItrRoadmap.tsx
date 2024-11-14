@@ -1,12 +1,13 @@
 'use client'
 import { classNames } from "primereact/utils";
-import React, {useRef, useState, useEffect, Ref} from "react";
+import React, {useRef, useState, useEffect, Ref, forwardRef, useImperativeHandle} from "react";
 import ItrRoadmapRow from "./ItrRoadmapRow";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
 import { Button } from "primereact/button";
+import { Toolbar } from "primereact/toolbar";
 
 const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {   
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
@@ -16,7 +17,7 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    useEffect(() => {
       getRoadmapData(year, division_id);
       getPointer(year);
-   }, [year])
+   }, [year])   
    
    const getPointer = (year: number) => {
       const length = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
@@ -43,8 +44,15 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       setIsLoaded(false);
    }
 
+   const createMethod = () => {
+      console.log('OK');
+   }
+
+   const button = (<Button icon="pi pi-plus" className="mr-2" onClick={() => createMethod()}/>);
+
    return (
-      <React.Fragment>
+      <div className="card" style={{position: "relative"}}>
+         <Toolbar start={button} style={{marginTop: "1rem"}}/>
          {
             isLoaded ? <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center mt-4" style={{ fontSize: '10rem', color: '#326fd1'}}/> :
             <div className={classNames(styles.roadmapContainer)} style={{zIndex:"1", position:"relative"}}>
@@ -62,7 +70,7 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
                </div>
             </div>
          }
-      </React.Fragment>
+      </div>
    );
 };
 
