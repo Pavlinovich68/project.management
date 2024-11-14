@@ -6,8 +6,9 @@ import { IRoadmapItem } from "@/models/IRoadmapItem";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
+import { Button } from "primereact/button";
 
-const Roadmap = ({year, division_id, card, instance}:{year: number, division_id: number, card: React.JSX.Element, instance: ICardRef | null | undefined}) => {   
+const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {   
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
    const [scalePoint, setScalePoint] = useState<number>(0);
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -16,7 +17,7 @@ const Roadmap = ({year, division_id, card, instance}:{year: number, division_id:
       getRoadmapData(year, division_id);
       getPointer(year);
    }, [year])
-
+   
    const getPointer = (year: number) => {
       const length = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
       const day = DateHelper.dayNumber(new Date());
@@ -54,8 +55,6 @@ const Roadmap = ({year, division_id, card, instance}:{year: number, division_id:
                      project_id={item.project_id} 
                      project_code={item.project_code} 
                      project_name={item.project_name}
-                     card={card}
-                     instance={instance}
                   />)
                }
                <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>

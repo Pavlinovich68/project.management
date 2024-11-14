@@ -1,5 +1,5 @@
 'use client'
-import React, {useRef, useState, useEffect, Ref} from "react";
+import React, {useRef, useState, useEffect, Ref, forwardRef} from "react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
 import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
@@ -16,8 +16,8 @@ import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
-const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, card, instance}:
-   {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, card: React.JSX.Element, instance: ICardRef | null | undefined}) => {
+const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name}:
+   {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string}) => {
    
    const controllerName = 'roadmap';
    const model: IRoadmapItemCRUD = {id: undefined, comment: undefined, roadmap_id: undefined, project_id: undefined,
@@ -26,13 +26,9 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
    const toast = useRef<Toast>(null);
    const [data, setData] = useState<IRoadmapRowSegmentData>();
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   let editor = useRef<ICardRef>(null);
-   //const editor = useRef<ICardRef>(null);
    
    useEffect(() => {
       getSegments();
-      if (instance)
-         editor = useRef<ICardRef>(instance);
    }, [roadmap_id, project_id])
 
    const getSegments = async () => {
@@ -83,9 +79,9 @@ const updateMethod = (id: number) => {
    const model = data?.items.find(i => i.id === id);
    if (!model) return;
    roadmapItem.setValues(model);
-   if (instance) {
-      instance.visible(true);
-   }
+   // if (instance) {
+   //    instance.visible(true);
+   // }
 }
 //FIXME - Поправить диалог
 const deleteMethod = async (id: number) => {
@@ -111,7 +107,6 @@ const confirmDelete = (id: number) => {
 };
 
 const saveMethod = async () => {
-   if (!instance) return;
    if (!roadmapItem.isValid) {
       const errors = Object.values(roadmapItem.errors);
       //@ts-ignore
@@ -146,9 +141,9 @@ const saveMethod = async () => {
       if (res.status === 'error'){
          toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
       } else {
-         if (instance) {
-            instance.visible(false);
-         }
+         // if (instance) {
+         //    instance.visible(false);
+         // }
          //FIXME - Добавить обновление доски
          // if (grid.current) {
          //    grid.current.reload();
@@ -201,15 +196,6 @@ const saveMethod = async () => {
             }
             {data?.points.map((item) => <div className={classNames(styles.point)} style={{width:`calc(${item.value}% - 40px)`, borderRightColor: `${item.color}`}}></div>)}
          </div>
-         <ItrCard
-            header={'Внесение изменений в элемент плана'}
-            width={'35vw'}
-            save={saveMethod}
-            hiddenSave={false}
-            body={card}
-            ref={editor}
-         />         
-         {/* <Toast ref={toast} /> */}
       </React.Fragment>      
    );
 };
