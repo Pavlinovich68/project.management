@@ -8,11 +8,34 @@ import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
+import ItrCard from "../ItrCard";
+import { FormikErrors, useFormik } from "formik";
+import crudHelper from "@/services/crud.helper";
+import RecordState from "@/models/enums/record-state";
+import CRUD from "@/models/enums/crud-type";
+import { Toast } from "primereact/toast";
 
-const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {   
+const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
+   const model: IRoadmapItemCRUD = {
+      id: undefined,
+      comment: undefined,
+      roadmap_id: undefined,
+      project_id: undefined,
+      project_name: undefined,  
+      start_date: undefined,
+      end_date: undefined,
+      hours: undefined,
+      developer_qnty: undefined
+   }
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
    const [scalePoint, setScalePoint] = useState<number>(0);
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+   const [cardHeader, setCardHeader] = useState<string>('');
+   const [submitted, setSubmitted] = useState<boolean>(false);
+   const [isLoading, setIsLoading] = useState<boolean>(false);
+   const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
+   const toast = useRef<Toast>(null);
+   const editor = useRef<ICardRef>(null);
 
    useEffect(() => {
       getRoadmapData(year, division_id);
@@ -44,8 +67,45 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       setIsLoaded(false);
    }
 
+//#region //SECTION CARD
+const row = useFormik<IRoadmapItemCRUD>({
+   initialValues: model,
+   validate: (data) => {
+      let errors: FormikErrors<IRoadmapItemCRUD> = {};
+      if (!data.comment){
+         errors.comment = "ФИО должно быть заполнено!";
+      }
+      // if (!data.email){
+      //    errors.email = "Адрес электронной почты должен быть указан!";
+      // }
+      // if (!data.begin_date){
+      //    errors.begin_date = "Дата начала действия должна быть заполнена!";
+      // }
+      return errors;
+   },
+   onSubmit: () => {
+      row.resetForm();
+   }
+});
+
+const card = (
+   <div className="card p-fluid">
+      <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
+      <div className="p-fluid formgrid grid">         
+      </div>
+   </div>
+)
+//#endregion //!SECTION CARD
+//#region //!SECTION CRUD
    const createMethod = () => {
       console.log('OK');
+      setCardHeader('Создание нового элемента плана');
+      row.setValues(model);
+      setRecordState(RecordState.new);
+      setSubmitted(false);
+      if (editor.current) {
+         editor.current.visible(true);
+      }
    }
 
    const updateMethod = (item: IRoadmapItemCRUD) => {
@@ -59,6 +119,57 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const viewMethod = (item: IRoadmapItemCRUD) => {
       console.log('View: ', item);
    }
+
+   const saveMethod = async () => {
+      setSubmitted(true);
+      if (!row.isValid) {
+         const errors = Object.values(row.errors);
+         //@ts-ignore
+         toast.current.show({
+            severity:'error',
+            summary: 'Ошибка сохранения',
+            content: (<div className="flex flex-column">
+                        <div className="text-center mb-2">
+                           <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
+                           <h3 className="text-red-500">Ошибка сохранения</h3>
+                        </div>
+                  {errors.map((item, i) => {
+                     return (
+                        // eslint-disable-next-line react/jsx-key
+                        <p className="flex align-items-left m-0">
+                           {/* @ts-ignore */}
+                           {item}
+                        </p>)
+                  })
+               }
+            </div>),
+            life: 5000
+         });
+         return;
+      }
+      try {
+         setIsLoading(true);
+         const res = 
+            await crudHelper.crud('roadmap', recordState === RecordState.new ? CRUD.create : CRUD.update, row.values);
+   
+         setIsLoading(false);
+   
+         if (res.status === 'error'){
+            toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
+         } else {
+            if (editor.current) {
+               editor.current.visible(false);
+            }
+            // if (grid.current) {
+            //    grid.current.reload();
+            // }
+         }
+      } catch (e: any) {
+         toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
+         setIsLoading(false);
+      }
+   }
+//#endregion //!SECTION CRUD
 
    const button = (<Button icon="pi pi-plus" className="mr-2" onClick={() => createMethod()}/>);
 
@@ -85,6 +196,15 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
                </div>
             </div>
          }
+         <ItrCard
+            header={cardHeader}
+            width={'35vw'}
+            save={saveMethod}
+            hiddenSave={false}
+            body={card}
+            ref={editor}
+         />         
+         <Toast ref={toast} />
       </div>
    );
 };
