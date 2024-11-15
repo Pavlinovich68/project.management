@@ -2,7 +2,7 @@
 import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect, Ref, forwardRef, useImperativeHandle} from "react";
 import ItrRoadmapRow from "./ItrRoadmapRow";
-import { IRoadmapItem } from "@/models/IRoadmapItem";
+import { IRoadmapItem, IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
@@ -48,6 +48,18 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       console.log('OK');
    }
 
+   const updateMethod = (item: IRoadmapItemCRUD) => {
+      console.log('Update: ', item);
+   }
+
+   const deleteMethod = (item: IRoadmapItemCRUD) => {
+      console.log('Drop: ', item);
+   }
+
+   const viewMethod = (item: IRoadmapItemCRUD) => {
+      console.log('View: ', item);
+   }
+
    const button = (<Button icon="pi pi-plus" className="mr-2" onClick={() => createMethod()}/>);
 
    return (
@@ -63,6 +75,9 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
                      project_id={item.project_id} 
                      project_code={item.project_code} 
                      project_name={item.project_name}
+                     update={updateMethod}
+                     drop={deleteMethod}
+                     view={viewMethod}
                   />)
                }
                <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>
