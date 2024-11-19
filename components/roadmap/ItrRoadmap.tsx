@@ -110,7 +110,30 @@ const card = (
       <div className="p-fluid formgrid grid">
          {recordState === RecordState.ready ? 
             <React.Fragment>
-               <h5>Просмотр</h5>
+               <div className="field col-12">
+                  <label htmlFor="name">Проект</label>
+                  
+               </div>
+               <div className="field col-12">
+                  <label htmlFor="name">Наименование работ</label>
+                  
+               </div>               
+               <div className="field col-12 md:col-6">
+                  <label htmlFor="begin_date">Дата начала</label>
+                  
+               </div>
+               <div className="field col-12 md:col-6">
+                  <label htmlFor="end_date">Дата окончания</label>
+                  
+               </div>
+               <div className="field col-6">
+                  <label htmlFor="hours">Плановое количество часов</label>
+                  
+               </div>
+               <div className="field col-6">
+                  <label htmlFor="developer_qnty">Плановая численность</label>
+                  
+               </div>
             </React.Fragment> : 
             <React.Fragment>
                <div className="field col-12">
@@ -118,6 +141,7 @@ const card = (
                   <TreeSelect 
                      value={selectedNodeKey}
                      options={nodes}
+                     filter
                      onChange={(e : TreeSelectChangeEvent) => {
                         //@ts-ignore
                         setSelectedNodeKey(e.value)
@@ -187,6 +211,18 @@ const card = (
       }
    }
 
+   const viewMethod = async (item: IRoadmapItemCRUD) => {
+      setCardHeader('Просмотр элемента плана');
+      await getProjectTree();
+      row.setValues(item);
+      setSelectedNodeKey(item.project_id?.toString()??null);
+      setRecordState(RecordState.ready);
+      setSubmitted(false);
+      if (editor.current) {
+         editor.current.visible(true);
+      }
+   }
+
    const deleteMethod = (item: IRoadmapItemCRUD) => {      
       confirmDialog({
          message: `Вы уверены что хотите удалить запись?`,
@@ -199,17 +235,6 @@ const card = (
             console.log('Drop: ', item);
          }
       });
-   }
-
-   const viewMethod = (item: IRoadmapItemCRUD) => {
-      console.log('View: ', item);
-      setCardHeader('Просмотр элемента плана');
-      row.setValues(item);
-      setRecordState(RecordState.ready);
-      setSubmitted(false);
-      if (editor.current) {
-         editor.current.visible(true);
-      }
    }
 
    const saveMethod = async () => {
