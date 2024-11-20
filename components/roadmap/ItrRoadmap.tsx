@@ -112,27 +112,27 @@ const card = (
             <React.Fragment>
                <div className="field col-12">
                   <label htmlFor="name">Проект</label>
-                  
+                  <div className={classNames(styles.fieldValue)}>{row.values.project_name}</div>
                </div>
                <div className="field col-12">
                   <label htmlFor="name">Наименование работ</label>
-                  
+                  <div className={classNames(styles.fieldValue)}>{row.values.comment}</div>
                </div>               
                <div className="field col-12 md:col-6">
                   <label htmlFor="begin_date">Дата начала</label>
-                  
+                  <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.start_date)}</div>
                </div>
                <div className="field col-12 md:col-6">
                   <label htmlFor="end_date">Дата окончания</label>
-                  
+                  <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.end_date)}</div>
                </div>
                <div className="field col-6">
                   <label htmlFor="hours">Плановое количество часов</label>
-                  
+                  <div className={classNames(styles.fieldValue)}>{row.values.hours}</div>
                </div>
                <div className="field col-6">
                   <label htmlFor="developer_qnty">Плановая численность</label>
-                  
+                  <div className={classNames(styles.fieldValue)}>{row.values.developer_qnty}</div>
                </div>
             </React.Fragment> : 
             <React.Fragment>
@@ -317,9 +317,9 @@ const card = (
             header={cardHeader}
             width={'35vw'}
             save={saveMethod}
-            hiddenSave={false}
+            hiddenSave={recordState === RecordState.ready}
             body={card}
-            ref={editor}
+            ref={editor}            
          />         
          <Toast ref={toast} />
       </div>
