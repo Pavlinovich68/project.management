@@ -46,7 +46,6 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const editor = useRef<ICardRef>(null);
    const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
    const [nodes, setNodes] = useState<IProjectNode[]>([]);
-   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
 
    useEffect(() => {
       getRoadmapData(year, division_id);
@@ -67,19 +66,8 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
 
    const getRoadmapData = async (val: number, id: number) => {
       setIsLoaded(true);
-      const res = await fetch(`/api/roadmap/projects`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-            year: val,
-            division_id: id
-         }),
-         cache: 'force-cache'
-      });
-      const response = await res.json();
-      setRoadmapData(response.data);
+      const res = await crudHelper.crud('roadmap/projects', CRUD.read, {}, {year: val, division_id: id});
+      setRoadmapData(res.data);
       setIsLoaded(false);
    }
 

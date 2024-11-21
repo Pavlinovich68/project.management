@@ -1,5 +1,3 @@
-import { AggregateField } from "@/models/AggregateField";
-
 export interface IDataSourceResult {
    recordCount: number;
    pageCount: number;
