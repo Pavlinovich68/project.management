@@ -14,7 +14,7 @@ import crudHelper from "@/services/crud.helper";
 import RecordState from "@/models/enums/record-state";
 import CRUD from "@/models/enums/crud-type";
 import { Toast } from "primereact/toast";
-import {confirmDialog} from "primereact/confirmdialog";
+import {confirmDialog, ConfirmDialog} from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
 import { TreeSelect, TreeSelectChangeEvent } from "primereact/treeselect";
 import { TreeNode } from "primereact/treenode";
@@ -24,6 +24,7 @@ import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 
 const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
+   const controllerName: string = 'roadmap/projects';
    const model: IRoadmapItemCRUD = {
       id: undefined,
       comment: undefined,
@@ -66,7 +67,7 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
 
    const getRoadmapData = async (val: number, id: number) => {
       setIsLoaded(true);
-      const res = await crudHelper.crud('roadmap/projects', CRUD.read, {}, {year: val, division_id: id});
+      const res = await crudHelper.crud(controllerName, CRUD.read, {}, {year: val, division_id: id});
       setRoadmapData(res.data);
       setIsLoaded(false);
    }
@@ -255,7 +256,7 @@ const card = (
       try {
          setIsLoading(true);
          const res = 
-            await crudHelper.crud('roadmap', recordState === RecordState.new ? CRUD.create : CRUD.update, row.values);
+            await crudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, row.values);
    
          setIsLoading(false);
    
@@ -308,7 +309,8 @@ const card = (
             hiddenSave={recordState === RecordState.ready}
             body={card}
             ref={editor}            
-         />         
+         />
+         <ConfirmDialog />
          <Toast ref={toast} />
       </div>
    );

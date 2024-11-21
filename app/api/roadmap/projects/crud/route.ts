@@ -1,16 +1,12 @@
-import prismaHelper from "@/services/prisma.helpers";
 import prisma from "@/prisma/client";
 import {NextRequest, NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type";
-import { IDataSourceRequest } from "@/types/IDataSourceRequest";
-import { IDataSourceResult } from "@/types/IDataSourceResult";
 import { IRoadmapItem, IRoadmapItemCRUD } from "@/models/IRoadmapItem";
-import DateHelper from "@/services/date.helpers";
-import { IControlPoint, IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
 
 export const POST = async (request: NextRequest) => {
-   // const create = async (model, params) => {
-   // }
+   const create = async (model: IRoadmapItemCRUD) => {
+      console.log(model);
+   }
 
    const read = async (year: number, division_id: number): Promise<IRoadmapItem[] | undefined> => {
             const data = await prisma.roadmap.findFirst({
@@ -79,7 +75,7 @@ export const POST = async (request: NextRequest) => {
             result = await read(year, division_id);
             break;
          case CRUD.create:
-            //result = await create(model, params);
+            result = await create(model);
             break;
          case CRUD.update:
             //result = await update(model);
