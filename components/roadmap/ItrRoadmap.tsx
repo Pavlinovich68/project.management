@@ -26,17 +26,18 @@ import { InputNumber } from "primereact/inputnumber";
 const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const controllerName: string = 'roadmap/projects';
    const model: IRoadmapItemCRUD = {
-      id: undefined,
-      comment: undefined,
-      roadmap_id: undefined,
-      project_id: undefined,
+      id: 0,
+      comment: '',
+      roadmap_id: 0,
+      project_id: 0,
       project_name: undefined,  
-      start_date: undefined,
-      end_date: undefined,
-      hours: undefined,
-      developer_qnty: undefined
+      start_date: new Date,
+      end_date: new Date,
+      hours: 0,
+      developer_qnty: 0
    }
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
+   const [roadmapId, setRoadmapId] = useState<number>(0);
    const [scalePoint, setScalePoint] = useState<number>(0);
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const [cardHeader, setCardHeader] = useState<string>('');
@@ -68,7 +69,8 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const getRoadmapData = async (val: number, id: number) => {
       setIsLoaded(true);
       const res = await crudHelper.crud(controllerName, CRUD.read, {}, {year: val, division_id: id});
-      setRoadmapData(res.data);
+      setRoadmapData(res.data.items);
+      setRoadmapId(res.data.roadmap_id);
       setIsLoaded(false);
    }
 
@@ -254,6 +256,7 @@ const card = (
          return;
       }
       try {
+         row.values.roadmap_id = roadmapId;
          setIsLoading(true);
          const res = 
             await crudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, row.values);

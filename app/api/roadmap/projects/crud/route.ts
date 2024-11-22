@@ -1,14 +1,25 @@
 import prisma from "@/prisma/client";
 import {NextRequest, NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type";
-import { IRoadmapItem, IRoadmapItemCRUD } from "@/models/IRoadmapItem";
+import { IRoadmapItem, IRoadmapItemCRUD, IRoadmapItemsCollection } from "@/models/IRoadmapItem";
 
 export const POST = async (request: NextRequest) => {
    const create = async (model: IRoadmapItemCRUD) => {
-      console.log(model);
+      const result = await prisma.roadmap_item.create({
+         data: {
+            roadmap_id: model.roadmap_id,
+            project_id: model.project_id,
+            start_date: model.start_date,
+            end_date: model.end_date,
+            developer_qnty: model.developer_qnty,
+            hours: model.hours,
+            comment: model.comment
+         }
+      });
+      return result;
    }
 
-   const read = async (year: number, division_id: number): Promise<IRoadmapItem[] | undefined> => {
+   const read = async (year: number, division_id: number): Promise<IRoadmapItemsCollection | undefined> => {
             const data = await prisma.roadmap.findFirst({
          where: {
             year: year,
@@ -38,7 +49,7 @@ export const POST = async (request: NextRequest) => {
          return result;
       }
 
-      const result:IRoadmapItem[] | undefined = data?.roadmap_items.map((item) => {
+      const items:IRoadmapItem[] | undefined = data?.roadmap_items.map((item) => {
          return {
             roadmap_id: data?.id,
             id: item.id,
@@ -47,8 +58,8 @@ export const POST = async (request: NextRequest) => {
             project_name: item.project.name
          }
       }).sort(function(a, b) { return projectCode(a.project_code) - projectCode(b.project_code) })
-      
-      return result;
+
+      return items ? {roadmap_id: items[0].roadmap_id, items: items} : undefined;
    }
 
    // const update = async (model) => {

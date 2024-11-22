@@ -77,7 +77,7 @@ export const POST = async (request: NextRequest) => {
 
          baseItems.push({
             id: item.id,
-            comment: item.comment,
+            comment: item.comment??'',
             project_id: item.project_id,
             project_name: item.project.name,
             roadmap_id: item.roadmap_id,

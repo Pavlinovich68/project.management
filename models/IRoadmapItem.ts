@@ -7,13 +7,18 @@ export interface IRoadmapItem {
 }
 
 export interface IRoadmapItemCRUD {
-   id: number | undefined | null,            
-   comment: string | undefined | null | null,
-   roadmap_id: number | undefined | null,    
-   project_id: number | undefined | null,    
+   id: number,
+   comment: string,
+   roadmap_id: number,
+   project_id: number,
    project_name: string | undefined | null,  
-   start_date: Date | undefined | null,
-   end_date: Date | undefined | null,
-   hours: number | undefined | null,
-   developer_qnty: number | undefined | null
+   start_date: Date,
+   end_date: Date,
+   hours: number,
+   developer_qnty: number
+}
+
+export interface IRoadmapItemsCollection {
+   roadmap_id: number;
+   items: IRoadmapItem[];
 }
