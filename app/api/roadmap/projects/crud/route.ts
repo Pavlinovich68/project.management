@@ -20,7 +20,7 @@ export const POST = async (request: NextRequest) => {
    }
 
    const read = async (year: number, division_id: number): Promise<IRoadmapItemsCollection | undefined> => {
-            const data = await prisma.roadmap.findFirst({
+      const data = await prisma.roadmap.findFirst({
          where: {
             year: year,
             division_id: division_id
@@ -59,29 +59,43 @@ export const POST = async (request: NextRequest) => {
          }
       }).sort(function(a, b) { return projectCode(a.project_code) - projectCode(b.project_code) })
 
-      return items ? {roadmap_id: items[0].roadmap_id, items: items} : undefined;
+      return items ? {roadmap_id: items[0].roadmap_id, items: items} : {roadmap_id: 0, items: []};
    }
 
-   // const update = async (model) => {
-      
-   // }
+   const update = async (model: IRoadmapItemCRUD) => {
+      const result = await prisma.roadmap_item.update({
+         where: {
+            id: model.id
+         },
+         data: {
+            roadmap_id: model.roadmap_id,
+            project_id: model.project_id,
+            start_date: model.start_date,
+            end_date: model.end_date,
+            developer_qnty: model.developer_qnty,
+            hours: model.hours,
+            comment: model.comment
+         }         
+      })
+      return result;
+   }
 
-   // const drop = async (model) => {
-   //    const result = await prisma..delete({
-   //       where: {
-   //          id: model.id
-   //       }
-   //    });
+   const drop = async (id: number) => {
+      const result = await prisma.roadmap_item.delete({
+         where: {
+            id: id
+         }
+      });
 
-   //    return result;
-   // }
+      return result;
+   }
 
    const { operation, model, params } = await request.json();
    try {      
       let result = null;
       switch (operation) {
          case CRUD.read:
-            const year: number = params.roadmap_id;
+            const year: number = params.year;
             const division_id: number = params.division_id;
             result = await read(year, division_id);
             break;
@@ -89,10 +103,10 @@ export const POST = async (request: NextRequest) => {
             result = await create(model);
             break;
          case CRUD.update:
-            //result = await update(model);
+            result = await update(model);
             break;
          case CRUD.delete:
-            //result = await drop(model);
+            result = await drop(model.id);
             break;
       }
       return await NextResponse.json({status: 'success', data: result});

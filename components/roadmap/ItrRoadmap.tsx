@@ -17,9 +17,7 @@ import { Toast } from "primereact/toast";
 import {confirmDialog, ConfirmDialog} from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
 import { TreeSelect, TreeSelectChangeEvent } from "primereact/treeselect";
-import { TreeNode } from "primereact/treenode";
 import { IProjectNode } from "@/models/IProjectNode";
-import { IBaseEntity } from "@/models/IBaseEntity";
 import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 
@@ -51,7 +49,6 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
 
    useEffect(() => {
       getRoadmapData(year, division_id);
-      getPointer(year);
    }, [year])   
 
    const getProjectTree = async () => {
@@ -72,6 +69,7 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       setRoadmapData(res.data.items);
       setRoadmapId(res.data.roadmap_id);
       setIsLoaded(false);
+      getPointer(year);
    }
 
 //#region //SECTION CARD
@@ -223,7 +221,7 @@ const card = (
          rejectLabel: 'Нет',
          showHeader: true,
          accept: () => {
-            console.log('Drop: ', item);
+            crudHelper.crud(controllerName, CRUD.delete, item).then((i) => getRoadmapData(year, division_id));
          }
       });
    }
@@ -269,9 +267,7 @@ const card = (
             if (editor.current) {
                editor.current.visible(false);
             }
-            // if (grid.current) {
-            //    grid.current.reload();
-            // }
+            await getRoadmapData(year, division_id);
          }
       } catch (e: any) {
          toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
@@ -280,11 +276,12 @@ const card = (
    }
 //#endregion //!SECTION CRUD
 
-   const button = (<Button icon="pi pi-plus" className="mr-2" onClick={() => createMethod()}/>);
+   const addButton = (<Button icon="pi pi-plus" className="mr-2" onClick={() => createMethod()}/>);
+   const refreshButton = (<Button icon="pi pi-refresh" className="mr-2" onClick={() => getRoadmapData(year, division_id)}/>);
    
    return (
-      <div className="card" style={{position: "relative"}}>
-         <Toolbar start={button} style={{marginTop: "1rem"}}/>
+      <div className={classNames("card", styles.roadmap)} style={{position: "relative"}}>
+         <Toolbar start={addButton} end={refreshButton} style={{marginTop: "1rem"}}/>
          {
             isLoaded ? <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center mt-4" style={{ fontSize: '10rem', color: '#326fd1'}}/> :
             <div className={classNames(styles.roadmapContainer)} style={{zIndex:"1", position:"relative"}}>

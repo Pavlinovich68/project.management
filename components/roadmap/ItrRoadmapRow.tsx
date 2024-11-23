@@ -1,22 +1,16 @@
 'use client'
-import React, {useRef, useState, useEffect, Ref, forwardRef} from "react";
+import React, { useState, useEffect } from "react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
-import { IRoadmapItemSegment, IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
+import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
 import { Tooltip } from "primereact/tooltip";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
-import { Toast } from "primereact/toast";
 import { itemSeignature } from "./roadmap.types";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
 const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, update, drop, view}:
    {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, update: any, drop: any, view: any}) => {
    
-   const controllerName = 'roadmap';
-   const model: IRoadmapItemCRUD = {id: undefined, comment: undefined, roadmap_id: undefined, project_id: undefined,
-      project_name: undefined, start_date: undefined, end_date: undefined, hours: undefined, developer_qnty: undefined
-   };
-   const toast = useRef<Toast>(null);
    const [data, setData] = useState<IRoadmapRowSegmentData>();
    const [isLoading, setIsLoading] = useState<boolean>(false);
    

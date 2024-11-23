@@ -1,11 +1,15 @@
-.roadmapContainer {
-   margin-top: 5px;
-   display: block;
-   background: #2a323d;
-   border: 1px solid #3f4b5b;
-   padding: 1rem 1.25rem;
-   border-radius: 10px;
-   gap: 0.5rem;   
+.roadmap {
+   padding: 0.5rem;
+   margin-top: 0.5rem;
+   .roadmapContainer {
+      margin-top: 5px;
+      display: block;
+      background: #2a323d;
+      border: 1px solid #3f4b5b;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      gap: 0.5rem;   
+   }
 }
 
 .segmentBar * {
