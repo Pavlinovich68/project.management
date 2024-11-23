@@ -20,6 +20,7 @@ import { TreeSelect, TreeSelectChangeEvent } from "primereact/treeselect";
 import { IProjectNode } from "@/models/IProjectNode";
 import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
+import { TabPanel, TabView } from "primereact/tabview";
 
 const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const controllerName: string = 'roadmap/projects';
@@ -93,83 +94,105 @@ const row = useFormik<IRoadmapItemCRUD>({
    }
 });
 
+const viewCard = (
+   <TabView>
+      <TabPanel header="Основные данные">
+         <div className="p-fluid formgrid grid">
+            <div className="field col-12">
+               <label htmlFor="name">Проект</label>
+               <div className={classNames(styles.fieldValue)}>{row.values.project_name}</div>
+            </div>
+            <div className="field col-12">
+               <label htmlFor="name">Наименование работ</label>
+               <div className={classNames(styles.fieldValue)}>{row.values.comment}</div>
+            </div>               
+            <div className="field col-12 md:col-6">
+               <label htmlFor="begin_date">Дата начала</label>
+               <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.start_date)}</div>
+            </div>
+            <div className="field col-12 md:col-6">
+               <label htmlFor="end_date">Дата окончания</label>
+               <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.end_date)}</div>
+            </div>
+            <div className="field col-6">
+               <label htmlFor="hours">Плановое количество часов</label>
+               <div className={classNames(styles.fieldValue)}>{row.values.hours}</div>
+            </div>
+            <div className="field col-6">
+               <label htmlFor="developer_qnty">Плановая численность</label>
+               <div className={classNames(styles.fieldValue)}>{row.values.developer_qnty}</div>
+            </div>
+         </div>
+      </TabPanel>
+      <TabPanel header="Контрольные точки">
+      </TabPanel>
+      <TabPanel header="Документы">
+      </TabPanel>
+   </TabView>         
+)
+
+const editCard = (
+   <TabView>
+      <TabPanel header="Основные данные">
+         <div className="p-fluid formgrid grid">
+            <div className="field col-12">
+               <label htmlFor="name">Проект</label>
+               <TreeSelect 
+                  value={selectedNodeKey}
+                  options={nodes}
+                  filter
+                  onChange={(e : TreeSelectChangeEvent) => {
+                     //@ts-ignore
+                     setSelectedNodeKey(e.value)
+                     //@ts-ignore
+                     row.setFieldValue('project_id', parseInt(e.value));
+                  }}
+               />
+            </div>
+            <div className="field col-12">
+               <label htmlFor="name">Наименование работ</label>
+               <InputText id="name"  placeholder="Наименование работ"
+                                    className={classNames({"p-invalid": submitted && !row.values.comment})}
+                                    value={row.values.comment}
+                                    onChange={(e) => row.setFieldValue('comment', e.target.value)} required autoFocus type="text"/>
+            </div>               
+            <div className="field col-12 md:col-6">
+               <label htmlFor="begin_date">Дата начала</label>
+               <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !row.values.start_date})} value={new Date(row.values.start_date as Date)} onChange={(e) => row.setFieldValue('start_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала"/>
+            </div>
+            <div className="field col-12 md:col-6">
+               <label htmlFor="end_date">Дата окончания</label>
+               <Calendar id="end_date" value={row.values.end_date !== null ? new Date(row.values.end_date as Date) : null} onChange={(e) => row.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата окончания"/>
+            </div>
+            <div className="field col-6">
+               <label htmlFor="hours">Плановое количество часов</label>
+               <InputNumber id="hours"  placeholder="Плановое количество часов"
+                                    className={classNames({"p-invalid": submitted && !row.values.hours})}
+                                    value={row.values.hours}
+                                    onValueChange={(e) => row.setFieldValue('hours', e.value)} required autoFocus/>
+            </div>
+            <div className="field col-6">
+               <label htmlFor="developer_qnty">Плановая численность</label>
+               <InputNumber id="developer_qnty"  placeholder="Плановая численность привлеченных разработчиков"
+                                    className={classNames({"p-invalid": submitted && !row.values.developer_qnty})}
+                                    value={row.values.developer_qnty}
+                                    onValueChange={(e) => row.setFieldValue('developer_qnty', e.value)} required autoFocus/>
+            </div>
+         </div>
+         </TabPanel>
+         <TabPanel header="Контрольные точки">
+            //NOTE - Делаем чипами Chip
+         </TabPanel>
+         <TabPanel header="Документы">
+            //NOTE - Делаем чипами Chip
+         </TabPanel>
+   </TabView>
+)
+
 const card = (
    <div className={classNames("card p-fluid", styles.card)}>
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
-      <div className="p-fluid formgrid grid">
-         {recordState === RecordState.ready ? 
-            <React.Fragment>
-               <div className="field col-12">
-                  <label htmlFor="name">Проект</label>
-                  <div className={classNames(styles.fieldValue)}>{row.values.project_name}</div>
-               </div>
-               <div className="field col-12">
-                  <label htmlFor="name">Наименование работ</label>
-                  <div className={classNames(styles.fieldValue)}>{row.values.comment}</div>
-               </div>               
-               <div className="field col-12 md:col-6">
-                  <label htmlFor="begin_date">Дата начала</label>
-                  <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.start_date)}</div>
-               </div>
-               <div className="field col-12 md:col-6">
-                  <label htmlFor="end_date">Дата окончания</label>
-                  <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.end_date)}</div>
-               </div>
-               <div className="field col-6">
-                  <label htmlFor="hours">Плановое количество часов</label>
-                  <div className={classNames(styles.fieldValue)}>{row.values.hours}</div>
-               </div>
-               <div className="field col-6">
-                  <label htmlFor="developer_qnty">Плановая численность</label>
-                  <div className={classNames(styles.fieldValue)}>{row.values.developer_qnty}</div>
-               </div>
-            </React.Fragment> : 
-            <React.Fragment>
-               <div className="field col-12">
-                  <label htmlFor="name">Проект</label>
-                  <TreeSelect 
-                     value={selectedNodeKey}
-                     options={nodes}
-                     filter
-                     onChange={(e : TreeSelectChangeEvent) => {
-                        //@ts-ignore
-                        setSelectedNodeKey(e.value)
-                        //@ts-ignore
-                        row.setFieldValue('project_id', parseInt(e.value));
-                     }}
-                  />
-               </div>
-               <div className="field col-12">
-                  <label htmlFor="name">Наименование работ</label>
-                  <InputText id="name"  placeholder="Наименование работ"
-                                       className={classNames({"p-invalid": submitted && !row.values.comment})}
-                                       value={row.values.comment}
-                                       onChange={(e) => row.setFieldValue('comment', e.target.value)} required autoFocus type="text"/>
-               </div>               
-               <div className="field col-12 md:col-6">
-                  <label htmlFor="begin_date">Дата начала</label>
-                  <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !row.values.start_date})} value={new Date(row.values.start_date as Date)} onChange={(e) => row.setFieldValue('start_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала"/>
-               </div>
-               <div className="field col-12 md:col-6">
-                  <label htmlFor="end_date">Дата окончания</label>
-                  <Calendar id="end_date" value={row.values.end_date !== null ? new Date(row.values.end_date as Date) : null} onChange={(e) => row.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата окончания"/>
-               </div>
-               <div className="field col-6">
-                  <label htmlFor="hours">Плановое количество часов</label>
-                  <InputNumber id="hours"  placeholder="Плановое количество часов"
-                                       className={classNames({"p-invalid": submitted && !row.values.hours})}
-                                       value={row.values.hours}
-                                       onValueChange={(e) => row.setFieldValue('hours', e.value)} required autoFocus/>
-               </div>
-               <div className="field col-6">
-                  <label htmlFor="developer_qnty">Плановая численность</label>
-                  <InputNumber id="developer_qnty"  placeholder="Плановая численность привлеченных разработчиков"
-                                       className={classNames({"p-invalid": submitted && !row.values.developer_qnty})}
-                                       value={row.values.developer_qnty}
-                                       onValueChange={(e) => row.setFieldValue('developer_qnty', e.value)} required autoFocus/>
-               </div>
-            </React.Fragment>}
-      </div>
+      {recordState === RecordState.ready ? viewCard : editCard }
    </div>
 )
 //#endregion //!SECTION CARD
