@@ -5,27 +5,7 @@ import { IRoadmapItemSegment, IRoadmapFactItemSegment, IControlPoint } from "@/m
 import { Extensions } from "@prisma/client/runtime/library";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 
-const palette = [
-   "#ffea00",
-   "#ffdd00",
-   "#ffd000",
-   "#ffc300",
-   "#ffb700",
-   "#ffaa00",
-   "#ffa200",
-   "#ff9500",
-   "#ff8800",
-   "#ff7b00"   
-];
 export const POST = async (request: NextRequest) => {
-   function* getSegmentNextColor(): Generator<string> {
-      let i = 0;
-      while (true) {
-         yield palette[i];
-         i = (i + 1) % palette.length;
-      }
-   }
-   
    try {
       const { roadmap_id, project_id } = await request.json();
 
@@ -65,13 +45,12 @@ export const POST = async (request: NextRequest) => {
       const points:IControlPoint[] = [];
       const baseItems: IRoadmapItemCRUD[] = [];
       let data:IRoadmapItemSegment[] = records.map((item) => {
-         let colorIt = getSegmentNextColor();
          item.control_points.map((i) => {
             points.push({
                name: i.name,
                date: i.date,
                value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
-               color: colorIt.next().value
+               type: i.type
             })
          }); 
 
@@ -103,7 +82,6 @@ export const POST = async (request: NextRequest) => {
          return a.start - b.start
       })     
 
-      let collorPalete = getSegmentNextColor();
       const passArray:IRoadmapItemSegment[] = [];
       // добавляем пропуск перед сегментом
       if (data[0].start > 1) {
