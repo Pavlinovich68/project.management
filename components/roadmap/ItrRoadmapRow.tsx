@@ -6,6 +6,7 @@ import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
 import { Tooltip } from "primereact/tooltip";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 import { itemSeignature } from "./roadmap.types";
+import { Badge } from "primereact/badge";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
 const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, update, drop, view}:
@@ -48,7 +49,12 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
    return (      
       <React.Fragment>
          <Tooltip target=".custom-target-icon"/>
-         <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
+         <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>         
+         <div className={classNames(styles.controlPointsLayear)}>
+            <div className={classNames(styles.controlPoint)}>
+               <Badge value="2" className={classNames(styles.badge)}></Badge>
+            </div>
+         </div>
          <div className={classNames(styles.segmentBar)}>
             {            
                data?.segments?.map((elem) => 
@@ -82,8 +88,8 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                         </div>
                      </React.Fragment>
                )
-            }
-            {data?.points.map((item) => <div className={classNames(styles.point)} style={{width:`calc(${item.value}% - 40px)`, borderRightColor: `${item.color}`}}></div>)}
+            }            
+            {/* {data?.points.map((item) => <div className={classNames(styles.point)} style={{width:`calc(${item.value}% - 40px)`, borderRightColor: `${item.color}`}}></div>)} */}
          </div>
       </React.Fragment>      
    );

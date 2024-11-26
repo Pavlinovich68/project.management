@@ -23,7 +23,9 @@
    // gap: 2px;   
    width: 100%;
    height: 30px;
-   margin-bottom: 5px;   
+   margin-bottom: 25px;
+   position: relative;   
+   z-index: 100;
    .point {
       position: absolute;
       left: 20px;
@@ -138,5 +140,31 @@
    .fieldValue {
       color: var(--surface-500);
       font-style: italic;
+   }
+}
+
+.controlPointsLayear {
+   position: absolute;
+   z-index: 101;
+   height: 50px;
+   width: 100%;
+   padding-right: 40px;
+   pointer-events: none;
+   .controlPoint {      
+      width: 1px; 
+      height: 100%; 
+      border-left: solid 1px;
+      position: relative;
+      left: 50%;
+      border-left-color:  #ffff00;
+      background-color:  #ffff00;
+      .badge {
+         min-width: 1.2rem;
+         height: 1.2rem;
+         line-height: 1.2rem;
+         margin-top: 34px;
+         margin-left: -10px;
+         background-color: inherit;
+      }
    }
 }
