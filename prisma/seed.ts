@@ -162,7 +162,8 @@ async function main() {
                data: {
                   roadmap_item_id: rmi.id,
                   name: point.name,
-                  date: new Date(point.date)
+                  date: new Date(point.date),
+                  type: point.type
                }
             })
          }

@@ -163,10 +163,19 @@ model roadmap_fact_item {
    roadmap_item   roadmap_item @relation(fields: [roadmap_item_id], references: [id])
 }
 //NOTE - Контрольная точка
+// 1 - Предоставление требований
+// 2 - Подготовка ТЗ
+// 3 - Согласование ТЗ
+// 4 - Предварительные испытания
+// 5 - Опытная эксплуатация
+// 6 - Приемочные испытания
+// 7 - Ввод в эксплуатацию
+// 8 - Прочее
 model control_point {
    id                Int            @id @default(autoincrement())
    date              DateTime       @db.Timestamp(6)
    name              String         @db.VarChar(250)
+   type              Int            @default(8)
    roadmap_item_id   Int
    roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

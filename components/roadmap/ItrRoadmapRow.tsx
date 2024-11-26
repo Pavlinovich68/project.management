@@ -51,9 +51,11 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
          <Tooltip target=".custom-target-icon"/>
          <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>         
          <div className={classNames(styles.controlPointsLayear)}>
-            <div className={classNames(styles.controlPoint)}>
-               <Badge value="2" className={classNames(styles.badge)}></Badge>
-            </div>
+            {data?.points.map((point) => 
+               <div className={classNames(styles.controlPoint)} data-color={point.type} style={{left: `${point.value}%`}}>
+                  <Badge className={classNames(styles.badge)}/>
+               </div>
+            )}
          </div>
          <div className={classNames(styles.segmentBar)}>
             {            
@@ -88,8 +90,7 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                         </div>
                      </React.Fragment>
                )
-            }            
-            {/* {data?.points.map((item) => <div className={classNames(styles.point)} style={{width:`calc(${item.value}% - 40px)`, borderRightColor: `${item.color}`}}></div>)} */}
+            }
          </div>
       </React.Fragment>      
    );

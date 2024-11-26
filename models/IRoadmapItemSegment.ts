@@ -27,5 +27,5 @@ export interface IControlPoint {
    name: string | undefined | null,
    date: Date | undefined | null,
    value: number | undefined | null
-   color: string | undefined | null | void
+   type: number | undefined | null
 }
