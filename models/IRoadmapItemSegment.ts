@@ -24,8 +24,10 @@ export interface IRoadmapFactItemSegment {
 }
 
 export interface IControlPoint {
+   id: number | undefined | null,
+   item_id: number | undefined | null,
    name: string | undefined | null,
    date: Date | undefined | null,
-   value: number | undefined | null
+   value: number | undefined | null,
    type: number | undefined | null
 }

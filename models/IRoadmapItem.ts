@@ -1,3 +1,5 @@
+import { IControlPoint } from "./IRoadmapItemSegment";
+
 export interface IRoadmapItem {
    roadmap_id: number,
    id: number,
@@ -15,7 +17,8 @@ export interface IRoadmapItemCRUD {
    start_date: Date,
    end_date: Date,
    hours: number,
-   developer_qnty: number
+   developer_qnty: number,
+   control_points: IControlPoint[]
 }
 
 export interface IRoadmapItemsCollection {

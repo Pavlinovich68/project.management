@@ -45,8 +45,22 @@ export const POST = async (request: NextRequest) => {
       const points:IControlPoint[] = [];
       const baseItems: IRoadmapItemCRUD[] = [];
       let data:IRoadmapItemSegment[] = records.map((item) => {
+         const item_points = item.control_points.map((i) => {
+            return {
+               id: i.id,
+               item_id: i.roadmap_item_id,
+               name: i.name,
+               date: i.date,
+               value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
+               type: i.type
+            }
+         }).sort(function(a, b) {
+            return a.type - b.type
+         }); 
          item.control_points.map((i) => {
             points.push({
+               id: i.id,
+               item_id: i.roadmap_item_id,
                name: i.name,
                date: i.date,
                value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
@@ -63,7 +77,8 @@ export const POST = async (request: NextRequest) => {
             start_date: item.start_date,
             end_date:   item.end_date,
             hours: item.hours,
-            developer_qnty: item.developer_qnty
+            developer_qnty: item.developer_qnty,
+            control_points: item_points
          })
          
          return {
