@@ -108,8 +108,9 @@ const row = useFormik<IRoadmapItemCRUD>({
 
 const chipContent = (cp: IControlPoint) => {
    return <>
-      <span className="ml-2 font-medium">{cp.name}</span>
-      <Button icon="pi pi-check" rounded outlined aria-label="Filter" size="small" />
+      <div className={classNames(styles.chipName)}>{cp.name}</div>
+      <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}/>
+      <i className={classNames("custom-target-icon pi pi-trash flex align-items-center justify-content-center", styles.button)}/>
    </>
 };
 

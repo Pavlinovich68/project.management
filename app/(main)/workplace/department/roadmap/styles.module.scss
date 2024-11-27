@@ -199,6 +199,14 @@ $color-8: #7c8ea7;
 .chip{
    margin-right: 5px;
    margin-bottom: 5px;
+   .chipName {
+      margin-right: 5px;
+   }
+   i {
+      cursor: pointer;
+      font-size: 13px;
+      margin: 2px 0 2px 5px;
+   }
 }
 .chip[data-color="1"] {
    background-color: $color-1;
