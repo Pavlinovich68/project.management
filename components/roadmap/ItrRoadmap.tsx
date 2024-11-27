@@ -23,6 +23,9 @@ import { InputNumber } from "primereact/inputnumber";
 import { TabPanel, TabView } from "primereact/tabview";
 import { Chip } from "primereact/chip";
 import { IControlPoint } from "@/models/IRoadmapItemSegment";
+import { DataView } from "primereact/dataview";
+import { Badge } from "primereact/badge";
+import { Tag } from "primereact/tag";
 
 const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const controllerName: string = 'roadmap/projects';
@@ -50,6 +53,7 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const editor = useRef<ICardRef>(null);
    const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
    const [nodes, setNodes] = useState<IProjectNode[]>([]);
+   const [readOnly, setReadOnly] = useState<boolean>(false);
 
    useEffect(() => {
       getRoadmapData(year, division_id);
@@ -106,13 +110,48 @@ const row = useFormik<IRoadmapItemCRUD>({
    }
 });
 
-const chipContent = (cp: IControlPoint) => {
-   return <>
-      <div className={classNames(styles.chipName)}>{cp.name}</div>
-      <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}/>
-      <i className={classNames("custom-target-icon pi pi-trash flex align-items-center justify-content-center", styles.button)}/>
-   </>
+interface ITypeDictionary {
+   [key: number]: string
+}
+const pointTypes: ITypeDictionary = {
+   1: 'Предоставление требований',
+   2: 'Подготовка ТЗ',
+   3: 'Согласование ТЗ',
+   4: 'Предварительные испытания',
+   5: 'Опытная эксплуатация',
+   6: 'Приемочные испытания',
+   7: 'Ввод в эксплуатацию',
+   8: 'Прочее'
+}
+
+const pointItemTemplate = (cp: IControlPoint, index: number) => {
+   return <div className="col-6">
+            <div className={classNames("card m-1", styles.itemCard)}>
+               <div className="flex justify-content-between mb-1">
+                  <Tag value={pointTypes[cp.type??8]} className={classNames(styles.typeTag)} data-color={cp.type}/>                  
+                  <div className="flex align-items-center justify-content-center">
+                     {readOnly ? <></> : <>
+                        <i className="pi pi-pencil text-blue-200 text-xs mr-1" />
+                        <i className="pi pi-trash text-blue-200 text-xs" />
+                     </>
+                     }
+                  </div>
+               </div>
+               <span className="text-500 flex">{cp.name}</span>
+               <span className="text-500 flex">{DateHelper.formatDate(cp.date)}</span>
+            </div>
+         </div>
 };
+
+const pointListTemplate = (items: IControlPoint[]) => {
+   if (!items || items.length === 0) return null;
+
+   let list = items.map((product, index) => {
+      return pointItemTemplate(product, index);
+   });
+
+   return <div className={classNames("grid grid-nogutter", styles.controlPointItem)}>{list}</div>;
+}
 
 const viewCard = (
    <TabView>
@@ -145,7 +184,8 @@ const viewCard = (
          </div>
       </TabPanel>
       <TabPanel header="Контрольные точки">
-         {row.values.control_points.map((item) => <Chip className={classNames(styles.chip)} data-color={item.type} template={chipContent(item)}/>)}
+         <Toolbar start={<div></div>} style={{marginLeft:"0.25rem", marginRight:"0.25rem"}}/>
+         <DataView value={row.values.control_points} listTemplate={pointListTemplate}/>
       </TabPanel>
       <TabPanel header="Документы">
       </TabPanel>
@@ -202,7 +242,7 @@ const editCard = (
          </div>
          </TabPanel>
          <TabPanel header="Контрольные точки">
-            //NOTE - Делаем чипами Chip
+            <DataView value={row.values.control_points} listTemplate={pointListTemplate}/>
          </TabPanel>
          <TabPanel header="Документы">
             //NOTE - Делаем чипами Chip
@@ -219,7 +259,7 @@ const card = (
 //#endregion //!SECTION CARD
 //#region //!SECTION CRUD
    const createMethod = async () => {
-      console.log('Create');
+      setReadOnly(false);
       setCardHeader('Создание нового элемента плана');
       await getProjectTree();
       setSelectedNodeKey(null);
@@ -232,7 +272,7 @@ const card = (
    }
 
    const updateMethod = async (item: IRoadmapItemCRUD) => {
-      console.log('Update: ', item);
+      setReadOnly(false);
       setCardHeader('Редактирование элемента плана');
       await getProjectTree();
       row.setValues(item);
@@ -245,6 +285,7 @@ const card = (
    }
 
    const viewMethod = async (item: IRoadmapItemCRUD) => {
+      setReadOnly(true);
       setCardHeader('Просмотр элемента плана');
       await getProjectTree();
       row.setValues(item);

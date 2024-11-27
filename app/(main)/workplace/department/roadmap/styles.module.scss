@@ -196,39 +196,44 @@ $color-8: #7c8ea7;
    }
 }
 
-.chip{
-   margin-right: 5px;
-   margin-bottom: 5px;
-   .chipName {
-      margin-right: 5px;
-   }
-   i {
-      cursor: pointer;
-      font-size: 13px;
-      margin: 2px 0 2px 5px;
+.controlPointItem {
+   .itemCard {
+      padding: 1rem;
+      .typeTag {
+         padding-top: 2px;
+         padding-bottom: 2px;
+         span[data-pc-section="value"] {
+            font-size: 10px;
+         }
+      }
+      i {
+         cursor: pointer;
+      }
    }
 }
-.chip[data-color="1"] {
+.typeTag[data-color="1"] {
    background-color: $color-1;
 }
-.chip[data-color="2"] {
+.typeTag[data-color="2"] {
    background-color: $color-2;
 }
-.chip[data-color="3"] {
+.typeTag[data-color="3"] {
    background-color: $color-3;
+   color: $color-1;
 }
-.chip[data-color="4"] {
+.typeTag[data-color="4"] {
    background-color: $color-4;
+   color: $color-6;
 }
-.chip[data-color="5"] {
+.typeTag[data-color="5"] {
    background-color: $color-5;
 }
-.chip[data-color="6"] {
+.typeTag[data-color="6"] {
    background-color: $color-6;
 }
-.chip[data-color="7"] {
+.typeTag[data-color="7"] {
    background-color: $color-7;
 }
-.chip[data-color="8"] {
+.typeTag[data-color="8"] {
    background-color: $color-8;
 }
