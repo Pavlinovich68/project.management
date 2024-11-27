@@ -21,6 +21,8 @@ import { IProjectNode } from "@/models/IProjectNode";
 import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 import { TabPanel, TabView } from "primereact/tabview";
+import { Chip } from "primereact/chip";
+import { IControlPoint } from "@/models/IRoadmapItemSegment";
 
 const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const controllerName: string = 'roadmap/projects';
@@ -33,7 +35,8 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       start_date: new Date,
       end_date: new Date,
       hours: 0,
-      developer_qnty: 0
+      developer_qnty: 0,
+      control_points: []
    }
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
    const [roadmapId, setRoadmapId] = useState<number>(0);
@@ -78,21 +81,37 @@ const row = useFormik<IRoadmapItemCRUD>({
    initialValues: model,
    validate: (data) => {
       let errors: FormikErrors<IRoadmapItemCRUD> = {};
-      if (!data.comment){
-         errors.comment = "ФИО должно быть заполнено!";
+      if (!data.project_id){
+         errors.project_id = "Укажите проект  работ!";
       }
-      // if (!data.email){
-      //    errors.email = "Адрес электронной почты должен быть указан!";
-      // }
-      // if (!data.begin_date){
-      //    errors.begin_date = "Дата начала действия должна быть заполнена!";
-      // }
+      if (!data.comment){
+         errors.comment = "Укажите наименование работ!";
+      }
+      if (!data.start_date){
+         errors.start_date = "Укажите дату начала выполнения работ!";
+      }
+      if (!data.end_date){
+         errors.end_date = "Укажите дату окончания выполнения работ!";
+      }
+      if (!data.hours){
+         errors.hours = "Укажите плановую трудоемкость!";
+      }
+      if (!data.developer_qnty){
+         errors.developer_qnty = "Укажите плановую численность задействованных разработчиков!";
+      }
       return errors;
    },
    onSubmit: () => {
       row.resetForm();
    }
 });
+
+const chipContent = (cp: IControlPoint) => {
+   return <>
+      <span className="ml-2 font-medium">{cp.name}</span>
+      <Button icon="pi pi-check" rounded outlined aria-label="Filter" size="small" />
+   </>
+};
 
 const viewCard = (
    <TabView>
@@ -125,6 +144,7 @@ const viewCard = (
          </div>
       </TabPanel>
       <TabPanel header="Контрольные точки">
+         {row.values.control_points.map((item) => <Chip className={classNames(styles.chip)} data-color={item.type} template={chipContent(item)}/>)}
       </TabPanel>
       <TabPanel header="Документы">
       </TabPanel>
