@@ -184,7 +184,6 @@ const viewCard = (
          </div>
       </TabPanel>
       <TabPanel header="Контрольные точки">
-         <Toolbar start={<div></div>} style={{marginLeft:"0.25rem", marginRight:"0.25rem"}}/>
          <DataView value={row.values.control_points} listTemplate={pointListTemplate}/>
       </TabPanel>
       <TabPanel header="Документы">
@@ -242,6 +241,7 @@ const editCard = (
          </div>
          </TabPanel>
          <TabPanel header="Контрольные точки">
+            <Toolbar start={<Button icon="pi pi-plus" className="mr-2"/>} style={{marginLeft:"0.25rem", marginRight:"0.25rem"}}/>
             <DataView value={row.values.control_points} listTemplate={pointListTemplate}/>
          </TabPanel>
          <TabPanel header="Документы">
