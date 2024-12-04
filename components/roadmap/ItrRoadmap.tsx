@@ -46,11 +46,14 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const [scalePoint, setScalePoint] = useState<number>(0);
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const [cardHeader, setCardHeader] = useState<string>('');
+   const [controlPointHeader, setControlPointHeader] = useState<string>('');
    const [submitted, setSubmitted] = useState<boolean>(false);
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const [recordState, setRecordState] = useState<RecordState>(RecordState.ready);
+   const [controlPointState, setControlPointState] = useState<RecordState>(RecordState.ready);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
+   const controlPointEditor = useRef<ICardRef>(null);
    const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
    const [nodes, setNodes] = useState<IProjectNode[]>([]);
    const [readOnly, setReadOnly] = useState<boolean>(false);
@@ -241,7 +244,7 @@ const editCard = (
          </div>
          </TabPanel>
          <TabPanel header="Контрольные точки">
-            <Toolbar start={<Button icon="pi pi-plus" className="mr-2"/>} style={{marginLeft:"0.25rem", marginRight:"0.25rem"}}/>
+            <Toolbar start={<Button type="button" icon="pi pi-plus" className="mr-2"/>} style={{marginLeft:"0.25rem", marginRight:"0.25rem"}}/>
             <DataView value={row.values.control_points} listTemplate={pointListTemplate}/>
          </TabPanel>
          <TabPanel header="Документы">
@@ -360,8 +363,58 @@ const card = (
       }
    }
 //#endregion //!SECTION CRUD
+//#region //!SECTION CONTROL POINT CRUD
+   const saveControlPointMethod = async () => {
+      setSubmitted(true);
+      if (!row.isValid) {
+         const errors = Object.values(row.errors);
+         //@ts-ignore
+         toast.current.show({
+            severity:'error',
+            summary: 'Ошибка сохранения',
+            content: (<div className="flex flex-column">
+                        <div className="text-center mb-2">
+                           <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
+                           <h3 className="text-red-500">Ошибка сохранения</h3>
+                        </div>
+                  {errors.map((item, i) => {
+                     return (
+                        // eslint-disable-next-line react/jsx-key
+                        <p className="flex align-items-left m-0">
+                           {/* @ts-ignore */}
+                           {item}
+                        </p>)
+                  })
+               }
+            </div>),
+            life: 5000
+         });
+         return;
+      }
+      try {
+         row.values.roadmap_id = roadmapId;
+         setIsLoading(true);
+         const res = 
+            await crudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, row.values);
 
-   const addButton = (<Button icon="pi pi-plus" className="mr-2" onClick={() => createMethod()}/>);
+         setIsLoading(false);
+
+         if (res.status === 'error'){
+            toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: res.data, sticky: true});
+         } else {
+            if (editor.current) {
+               editor.current.visible(false);
+            }
+            await getRoadmapData(year, division_id);
+         }
+      } catch (e: any) {
+         toast.current?.show({severity:'error', summary: 'Ошибка сохранения', detail: e.message, life: 3000});
+         setIsLoading(false);
+      }
+   }
+//#endregion
+
+   const addButton = (<Button icon="pi pi-plus" type="button" className="mr-2" onClick={() => createMethod()}/>);
    const refreshButton = (<Button icon="pi pi-refresh" className="mr-2" onClick={() => getRoadmapData(year, division_id)}/>);
    
    return (
