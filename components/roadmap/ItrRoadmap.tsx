@@ -26,6 +26,7 @@ import { IControlPoint } from "@/models/IRoadmapItemSegment";
 import { DataView } from "primereact/dataview";
 import { Badge } from "primereact/badge";
 import { Tag } from "primereact/tag";
+import { IconPin } from '@tabler/icons-react';
 
 const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
    const controllerName: string = 'roadmap/projects';
@@ -39,6 +40,7 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       end_date: new Date,
       hours: 0,
       developer_qnty: 0,
+      is_closed: false,
       control_points: []
    }
    const [roadmapData, setRoadmapData] = useState<IRoadmapItem[]>();
@@ -81,6 +83,19 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       setRoadmapId(res.data.roadmap_id);
       setIsLoaded(false);
       getPointer(year);
+   }
+
+   const acceptItemFact = async (id: number) => {
+      await fetch(`/api/roadmap/projects/finish`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            id: id
+         }),
+         cache: 'force-cache'
+      });
    }
 
 //#region //SECTION CARD
@@ -241,9 +256,11 @@ const editCard = (
                                     value={row.values.developer_qnty}
                                     onValueChange={(e) => row.setFieldValue('developer_qnty', e.value)} required autoFocus/>
             </div>
-            <Toolbar start={
-               <Button type="button" icon="pi pi-download" className="mr-2" tooltipOptions={{ position: 'top' }} tooltip="Зафиксировать окончание работ"/>
-            } className={classNames(styles.cardToolbar, recordState === RecordState.new ? styles.hidden : null)}/>
+            <Button type="button" label="Зафиксировать окончание работ" className="m-2 mt-0 mb-0" severity="warning"
+               onClick={() => acceptItemFact(row.values.id).then(() => {console.log('!!!')})}
+            >
+               <IconPin stroke={1} />
+            </Button>
          </div>
          </TabPanel>
          <TabPanel header="Контрольные точки">
@@ -259,7 +276,7 @@ const editCard = (
 const card = (
    <div className={classNames("card p-fluid", styles.card)}>
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
-      {recordState === RecordState.ready ? viewCard : editCard }
+      {recordState === RecordState.ready || row.values.is_closed ? viewCard : editCard }
    </div>
 )
 //#endregion //!SECTION CARD

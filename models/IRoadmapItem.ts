@@ -18,6 +18,7 @@ export interface IRoadmapItemCRUD {
    end_date: Date,
    hours: number,
    developer_qnty: number,
+   is_closed: boolean,
    control_points: IControlPoint[]
 }
 

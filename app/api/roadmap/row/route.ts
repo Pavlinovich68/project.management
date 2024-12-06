@@ -25,7 +25,8 @@ export const POST = async (request: NextRequest) => {
             developer_qnty: true,
             roadmap_id: true,
             project_id: true,
-            project: true
+            project: true,
+            is_closed: true
          },
          orderBy: {
             start_date: 'asc'
@@ -78,7 +79,8 @@ export const POST = async (request: NextRequest) => {
             end_date:   item.end_date,
             hours: item.hours,
             developer_qnty: item.developer_qnty,
-            control_points: item_points
+            control_points: item_points,
+            is_closed: item.is_closed
          })
          
          return {
