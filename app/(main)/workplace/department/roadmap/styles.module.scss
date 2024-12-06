@@ -138,6 +138,9 @@ $color-8: #7c8ea7;
       color: var(--surface-500);
       font-style: italic;
    }
+   .cardToolbar {
+      width: 100%;
+   }
 }
 
 .controlPointsLayear {
@@ -236,4 +239,8 @@ $color-8: #7c8ea7;
 }
 .typeTag[data-color="8"] {
    background-color: $color-8;
+}
+
+.hidden {
+   display: none;
 }

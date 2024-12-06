@@ -196,7 +196,7 @@ const viewCard = (
 
 const editCard = (
    <TabView>
-      <TabPanel header="Основные данные">
+      <TabPanel header="Основные данные">         
          <div className="p-fluid formgrid grid">
             <div className="field col-12">
                <label htmlFor="name">Проект</label>
@@ -241,6 +241,9 @@ const editCard = (
                                     value={row.values.developer_qnty}
                                     onValueChange={(e) => row.setFieldValue('developer_qnty', e.value)} required autoFocus/>
             </div>
+            <Toolbar start={
+               <Button type="button" icon="pi pi-download" className="mr-2" tooltipOptions={{ position: 'top' }} tooltip="Зафиксировать окончание работ"/>
+            } className={classNames(styles.cardToolbar, recordState === RecordState.new ? styles.hidden : null)}/>
          </div>
          </TabPanel>
          <TabPanel header="Контрольные точки">
