@@ -136,4 +136,16 @@ export default class CalendarHelper {
       }
       return hours;
    }
+
+   static planHoursInDivision = async (year: number, division_id: number): Promise<number> => {
+      const house = await this.planHoursInYear(year);
+      const rateCount = await prisma.rate.aggregate({
+         where: {
+            division_id: division_id,
+            is_work_time: true
+         },
+         _count: true
+      })
+      return house * rateCount._count;
+   }
 }
