@@ -136,7 +136,7 @@ export default class CalendarHelper {
       }
       return hours;
    }
-
+// Плановое количество часов в целом по подразделению
    static planHoursInDivision = async (year: number, division_id: number): Promise<number> => {
       const house = await this.planHoursInYear(year);
       const rateCount = await prisma.rate.aggregate({

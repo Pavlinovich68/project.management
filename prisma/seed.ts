@@ -137,25 +137,22 @@ async function main() {
          
          const rmi = await prisma.roadmap_item.create({
             data: {
-               start_date: new Date(item.start_date),
-               end_date: new Date(item.end_date),
                hours: item.hours,
                comment: item.comment,
-               developer_qnty: item.developer_qnty,
                project_id: project.id,
                roadmap_id: roadmap.id
             }
          })         
 
-         if (employee) {
-            await prisma.roadmap_fact_item.create({
-               data: {
-                  roadmap_item_id: rmi.id,
-                  hours: item.fact,
-                  employee_id: employee.id
-               }
-            })
-         }
+         // if (employee) {
+         //    await prisma.roadmap_fact_item.create({
+         //       data: {
+         //          roadmap_item_id: rmi.id,
+         //          hours: item.fact,
+         //          employee_id: employee.id
+         //       }
+         //    })
+         // }
 
          for (const point of item.control_points) {
             await prisma.control_point.create({

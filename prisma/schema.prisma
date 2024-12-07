@@ -145,18 +145,17 @@ model roadmap_item {
    roadmap        roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    project_id     Int
    project        project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   start_date     DateTime       @db.Timestamp(6)
-   end_date       DateTime       @db.Timestamp(6)
    hours          Int
-   developer_qnty Int
    is_closed      Boolean        @default(false)
    documents      attachment[]
    control_points control_point[]
    fact_items     roadmap_fact_item[]
+   @@unique([roadmap_id,  project_id])
 }
 //NOTE - Фактически затраченное время
 model roadmap_fact_item {
-   id             Int            @id @default(autoincrement())
+   id             Int         @id @default(autoincrement())
+   date           DateTime    @db.Timestamp(6)
    hours          Int
    employee_id    Int
    employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
