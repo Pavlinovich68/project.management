@@ -13,7 +13,7 @@ export const POST = async (request: NextRequest) => {
          },
          _count: true
       })
-      const result: number = await CalendarHelper.planHoursInYear(year) * rateCount._count;
+      const result: number = house * rateCount._count;
       return await NextResponse.json({status: 'success', data: result});
    } catch (error) {
       return await NextResponse.json({status: 'error', data: (error as Error).stack });
