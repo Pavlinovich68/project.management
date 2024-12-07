@@ -2,7 +2,6 @@ import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import DateHelper from "@/services/date.helpers";
 import { IRoadmapItemSegment, IRoadmapFactItemSegment, IControlPoint } from "@/models/IRoadmapItemSegment";
-import { Extensions } from "@prisma/client/runtime/library";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 
 export const POST = async (request: NextRequest) => {
@@ -41,7 +40,7 @@ export const POST = async (request: NextRequest) => {
 
       const year = records[0]?.roadmap.year;
 
-      const daysOfYear = new Date(year, 2, 0).getDate() === 29 ? 366 : 265;
+      const daysOfYear = new Date(year, 2, 0).getDate() === 29 ? 366 : 365;
       
       const points:IControlPoint[] = [];
       const baseItems: IRoadmapItemCRUD[] = [];

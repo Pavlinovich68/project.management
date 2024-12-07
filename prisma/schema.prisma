@@ -82,7 +82,7 @@ model project {
 //NOTE - Рабочий календарь
 model production_calendar {
    id          Int @id @default(autoincrement())
-   year        Int
+   year        Int @unique
    exclusions  exclusion[]
 }
 //NOTE - Исключение для всех
@@ -206,7 +206,8 @@ model post {
 model rate {
    id             Int         @id @default(autoincrement())
    no             Int         
-   post_id        Int   
+   post_id        Int
+   is_work_time   Boolean     @default(true)
    post           post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    division_id    Int         
    division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
