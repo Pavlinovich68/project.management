@@ -4,79 +4,6 @@ import { DateTime } from "luxon";
 //import { DateTime } from "luxon";
 
 export default class CalendarHelper {
-   // dropExclusionDay = async (id: number):Promise<boolean> => {      
-   //    try {         
-   //       const exlusion = await prisma.exclusion.findUnique({where: {id: id}});
-   //       if (!exlusion) return false;
-         
-   //       const year = exlusion.date.getFullYear();
-   //       const month = exlusion.date.getMonth() +1;
-   //       const day = exlusion.date.getDate();
-   //       const dayOfWeek = exlusion.date.getDay();
-   //       const isHoliday = (dayOfWeek === 0 || dayOfWeek === 6);
-
-   //       const calendars = await prisma.dept_calendar.findMany({where:{year: year}});
-   //       for (const calendar of calendars) {
-   //          await prisma.dept_calendar_cell.updateMany({
-   //             where: {
-   //                row: {
-   //                   calendar_id: calendar.id
-   //                },
-   //                month: month,
-   //                day: day
-   //             },
-   //             data: {
-   //                type: isHoliday ? 0 : 4
-   //             }
-   //          })
-   //       }
-   //       return true;
-   //    } catch (error) {
-   //       return false;
-   //    }
-   // }
-
-   // dropVacationDay = async (staff_id: number, year: number, month: number, day: number) => {
-   //    const _cell = await prisma.$queryRaw`
-   //       select
-   //          dcc.id
-   //       from
-   //          dept_calendar_row dcr
-   //          inner join dept_calendar_cell dcc on dcr.id = dcc.row_id
-   //          inner join rate r on dcr.rate_id = r.id
-   //          inner join staff s on r.id = s.rate_id
-   //          inner join public.dept_calendar dc on dc.id = dcr.calendar_id
-   //       where
-   //          dc.year = ${year}
-   //          and dcc.month = ${month}
-   //          and dcc.day = ${day}
-   //          and s.id = ${staff_id}
-   //    `
-   //    if (!_cell) return;
-   //    await prisma.dept_calendar_cell.update({
-   //       where: {id: 1},
-   //       data: {
-   //          type: 4
-   //       }
-   //    })
-   // }
-
-   static getEndDate = (date: Date, hours: number): Date => {
-      let result = 0;
-      const YEAR = date.getFullYear();
-      const MONTH = date.getMonth();
-      let _day = date.getDate();
-      let _date = new Date(Date.UTC(YEAR, MONTH, _day));
-      while (result <= hours) {
-         const _dayOfWeek = _date.getDay();
-         const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
-         result += _isHoliday ? 0 : 8;
-         _day++;
-         _date = new Date(Date.UTC(YEAR, MONTH, _day));
-      }
-      _date.setDate(_date.getDate() -1);
-      return _date;
-   }
 // Количество рабочих часов на конкретную дату
    static hoursOfDay = async (date: Date): Promise<number> => {
       // 0  - holiday            Выходной или праздничный   0
@@ -125,7 +52,7 @@ export default class CalendarHelper {
       }
    }
 // Количество рабочих часов от начала года до даты
-   static workingHoursOnDate = async (date: Date): Promise<any> => {
+   static workingHoursOnDate = async (date: Date): Promise<number> => {
       const year = date.getFullYear();
       let currentDate = new Date(year, 0, 1);
       let hours: number = 0;
@@ -136,16 +63,4 @@ export default class CalendarHelper {
       }
       return hours;
    }
-// // Плановое количество часов в целом по подразделению
-//    static workingHoursByDivision = async (date: Date, division_id: number): Promise<number> => {
-//       const hours = await this.workingHoursOnDate(date);
-//       const rateCount = await prisma.rate.aggregate({
-//          where: {
-//             division_id: division_id,
-//             is_work_time: true
-//          },
-//          _count: true
-//       })
-//       return hours * rateCount._count;
-//    }
 }

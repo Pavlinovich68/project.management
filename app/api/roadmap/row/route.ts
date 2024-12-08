@@ -27,10 +27,8 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
-      // if (!record) {
-      //    throw Error('Дорожная карта не содержит проектов!');
-      // }
-
+      if (!record) return undefined;
+      
       // Количество ставок в подразделении
       const rateCount = (await prisma.rate.aggregate({
          where: {
@@ -39,35 +37,44 @@ export const POST = async (request: NextRequest) => {
          },
          _count: true
       }))?._count;
+      
+      // Количество плановых рабочих часов по подразделению с вычетом отпускных (отпускные без привязки к конкретному графику отпусков)
+      const totalHours: number = (await CalendarHelper.workingHoursOnDate(new Date(record?.roadmap.year??new Date().getFullYear(), 11, 31)) - 28) * rateCount;
+      return await NextResponse.json({status: 'success', data: totalHours});
+      
+      // Контрольные точки по проекту      
+      const item_points = record?.control_points.map((i) => {
+         return {
+            id: i.id,
+            item_id: i.roadmap_item_id,
+            name: i.name,
+            date: i.date,
+            value: 0,
+            type: i.type
+         }
+      }).sort(function(a, b) {
+         return a.type - b.type
+      })??[];
 
-      const totalHours: number = await CalendarHelper.workingHoursOnDate(new Date(record?.roadmap.year??new Date().getFullYear(), 11, 31)) * rateCount;
-
-      const points:IControlPoint[] = [];
-      const baseItems: IRoadmapItemCRUD[] = [];
+      for (const item_point of item_points) {
+         item_point.value = await CalendarHelper.workingHoursOnDate(item_point.date) / totalHours * 100;
+      }
+      //const points:IControlPoint[] = [];
+      const baseItem: IRoadmapItemCRUD = {
+         id: record?.id??0,
+         comment: record?.comment??'',
+         project_id: record?.project_id??0,
+         project_name: record?.project.name,
+         roadmap_id: record?.roadmap_id??0,
+         //start_date: record?.start_date??new Date(),
+         end_date:   record.end_date,
+         hours: record.hours,
+         developer_qnty: record.developer_qnty,
+         control_points: item_points,
+         is_closed: record.is_closed
+      };
       // let data:IRoadmapItemSegment[] = records.map((item) => {
-      //    const item_points = item.control_points.map((i) => {
-      //       return {
-      //          id: i.id,
-      //          item_id: i.roadmap_item_id,
-      //          name: i.name,
-      //          date: i.date,
-      //          value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
-      //          type: i.type
-      //       }
-      //    }).sort(function(a, b) {
-      //       return a.type - b.type
-      //    }); 
-      //    item.control_points.map((i) => {
-      //       points.push({
-      //          id: i.id,
-      //          item_id: i.roadmap_item_id,
-      //          name: i.name,
-      //          date: i.date,
-      //          value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
-      //          type: i.type
-      //       })
-      //    }); 
-
+      
       //    baseItems.push({
       //       id: item.id,
       //       comment: item.comment??'',
