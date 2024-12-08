@@ -3,47 +3,47 @@ import { NextRequest, NextResponse } from "next/server";
 import DateHelper from "@/services/date.helpers";
 import { IRoadmapItemSegment, IRoadmapFactItemSegment, IControlPoint } from "@/models/IRoadmapItemSegment";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
+import CalendarHelper from "@/services/calendar.helper";
 
 export const POST = async (request: NextRequest) => {
    try {
       const { roadmap_id, project_id } = await request.json();
 
-      // const records = await prisma.roadmap_item.findMany({
-      //    where: {
-      //       roadmap_id: roadmap_id,
-      //       project_id: project_id
-      //    },
-      //    select: {            
-      //       id: true,
-      //       comment: true,
-      //       start_date: true,
-      //       end_date: true,
-      //       hours: true,
-      //       roadmap: true,
-      //       control_points: true,
-      //       developer_qnty: true,
-      //       roadmap_id: true,
-      //       project_id: true,
-      //       project: true,
-      //       is_closed: true
-      //    },
-      //    orderBy: {
-      //       start_date: 'asc'
-      //    }
-      // });
+      const record = await prisma.roadmap_item.findFirst({
+         where: {
+            roadmap_id: roadmap_id,
+            project_id: project_id
+         },
+         select: {            
+            id: true,
+            comment: true,
+            hours: true,
+            roadmap: true,
+            control_points: true,
+            roadmap_id: true,
+            project_id: true,
+            project: true,
+            is_closed: true
+         }
+      });
 
-      // //return await NextResponse.json({status: 'success', data: records});
-
-      // if (!records) {
+      // if (!record) {
       //    throw Error('Дорожная карта не содержит проектов!');
       // }
 
-      // const year = records[0]?.roadmap.year;
+      // Количество ставок в подразделении
+      const rateCount = (await prisma.rate.aggregate({
+         where: {
+            division_id: roadmap_id?.division_id,
+            is_work_time: true
+         },
+         _count: true
+      }))?._count;
 
-      // const daysOfYear = new Date(year, 2, 0).getDate() === 29 ? 366 : 365;
-      
-      // const points:IControlPoint[] = [];
-      // const baseItems: IRoadmapItemCRUD[] = [];
+      const totalHours: number = await CalendarHelper.workingHoursOnDate(new Date(record?.roadmap.year??new Date().getFullYear(), 11, 31)) * rateCount;
+
+      const points:IControlPoint[] = [];
+      const baseItems: IRoadmapItemCRUD[] = [];
       // let data:IRoadmapItemSegment[] = records.map((item) => {
       //    const item_points = item.control_points.map((i) => {
       //       return {
@@ -185,25 +185,113 @@ export const POST = async (request: NextRequest) => {
       //    items: baseItems
       // }});
 
-      const record = await prisma.roadmap_item.findFirst({
-         where: {
-            roadmap_id: roadmap_id,
-            project_id: project_id
-         },
-         select: {            
-            id: true,
-            comment: true,
-            hours: true,
-            roadmap: true,
-            control_points: true,
-            roadmap_id: true,
-            project_id: true,
-            project: true,
-            is_closed: true
-         }
-      });
+      
 
-      return await NextResponse.json({status: 'success', data: record});
+      // Данные по элементу дорожной карты
+      // const record = await prisma.roadmap_item.findFirst({
+      //    where: {
+      //       roadmap_id: roadmap_id,
+      //       project_id: project_id
+      //    },
+      //    select: {            
+      //       id: true,
+      //       comment: true,
+      //       hours: true,
+      //       roadmap: true,
+      //       control_points: true,
+      //       roadmap_id: true,
+      //       project_id: true,
+      //       project: true,
+      //       is_closed: true
+      //    }
+      // });
+
+      // const rateCount = await prisma.rate.aggregate({
+      //    where: {
+      //       division_id: roadmap_id?.division_id,
+      //       is_work_time: true
+      //    },
+      //    _count: true
+      // });
+
+      // const totalHours = await CalendarHelper.workingHoursOnDate(new Date(record?.roadmap.year??new Date().getFullYear(), 11, 31)) * rateCount._count;
+      // const points:IControlPoint[] = [];
+      // const baseItems: IRoadmapItemCRUD[] = [];
+
+      // const item_points = record?.control_points.map((i) => {
+      //    return {
+      //       id: i.id,
+      //       item_id: i.roadmap_item_id,
+      //       name: i.name,
+      //       date: i.date,
+      //       value: 0,
+      //       type: i.type
+      //    }
+      // }).sort(function(a, b) {
+      //    return a.type - b.type
+      // });
+
+      // if (item_points)
+      //    for(const item of item_points){
+      //       item.value = (await CalendarHelper.workingHoursOnDate(item.date) * rateCount._count) / totalHours * 100;
+      //    }
+
+      // let data:IRoadmapItemSegment[] = records.map((item) => {
+      //    const item_points = item.control_points.map((i) => {
+      //       return {
+      //          id: i.id,
+      //          item_id: i.roadmap_item_id,
+      //          name: i.name,
+      //          date: i.date,
+      //          value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
+      //          type: i.type
+      //       }
+      //    }).sort(function(a, b) {
+      //       return a.type - b.type
+      //    });
+      //    //---------- 
+      //    item.control_points.map((i) => {
+      //       points.push({
+      //          id: i.id,
+      //          item_id: i.roadmap_item_id,
+      //          name: i.name,
+      //          date: i.date,
+      //          value: DateHelper.dayNumber(i.date) / daysOfYear * 100,
+      //          type: i.type
+      //       })
+      //    }); 
+      //    //-----------
+      //    baseItems.push({
+      //       id: item.id,
+      //       comment: item.comment??'',
+      //       project_id: item.project_id,
+      //       project_name: item.project.name,
+      //       roadmap_id: item.roadmap_id,
+      //       start_date: item.start_date,
+      //       end_date:   item.end_date,
+      //       hours: item.hours,
+      //       developer_qnty: item.developer_qnty,
+      //       control_points: item_points,
+      //       is_closed: item.is_closed
+      //    })
+      //    //--------
+      //    return {
+      //       id: item.id,
+      //       name: item.comment,
+      //       start: DateHelper.dayNumber(item.start_date),
+      //       end: DateHelper.dayNumber(item.end_date),
+      //       value: undefined,
+      //       type: 1,
+      //       percent: undefined,
+      //       hours: item.hours,
+      //       fact: undefined,
+      //       points: undefined
+      //    }
+      // }).sort(function(a, b) {
+      //    return a.start - b.start
+      // })
+
+      return await NextResponse.json({status: 'success', data: 0});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }

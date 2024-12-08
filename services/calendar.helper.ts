@@ -1,5 +1,7 @@
 import { ICalendarCell } from "@/models/ICalendar";
 import prisma from "@/prisma/client";
+import { DateTime } from "luxon";
+//import { DateTime } from "luxon";
 
 export default class CalendarHelper {
    // dropExclusionDay = async (id: number):Promise<boolean> => {      
@@ -75,7 +77,7 @@ export default class CalendarHelper {
       _date.setDate(_date.getDate() -1);
       return _date;
    }
-
+// Количество рабочих часов на конкретную дату
    static hoursOfDay = async (date: Date): Promise<number> => {
       // 0  - holiday            Выходной или праздничный   0
       // 1  - reduced            Предпраздничный            7
@@ -97,12 +99,9 @@ export default class CalendarHelper {
             exclusions: true
          }
       });
-
-      if (!exclusions[0]) return 0;
-
       // День недели
-      const dayOfWeek = new Date(year, date.getMonth(), date.getDate()).getDay();
-      const exclusion = exclusions[0].exclusions.find(i => {
+      const dayOfWeek = new Date(year, date.getMonth(), date.getDate()).getDay();      
+      const exclusion = exclusions[0]?.exclusions.find(i => {
          const _year = i.date.getFullYear();
          const _month = i.date.getMonth();
          const _day = i.date.getDate();
@@ -125,27 +124,28 @@ export default class CalendarHelper {
          return result;
       }
    }
-// Количество рабочих часов в году
-   static planHoursInYear = async (year: number): Promise<number> => {
+// Количество рабочих часов от начала года до даты
+   static workingHoursOnDate = async (date: Date): Promise<any> => {
+      const year = date.getFullYear();
+      let currentDate = new Date(year, 0, 1);
       let hours: number = 0;
-      for (let i = 1; i <= 12; i++) {
-         const days = new Date(year, i, 0).getDate();
-         for (let j = 1; j <= days; j++) {
-            hours += await this.hoursOfDay(new Date(year, i-1, j));
-         }
+      while (currentDate <= date) {
+         const cnt = await this.hoursOfDay(currentDate)
+         hours += cnt;
+         currentDate.setDate(currentDate.getDate() +1);         
       }
       return hours;
    }
-// Плановое количество часов в целом по подразделению
-   static planHoursInDivision = async (year: number, division_id: number): Promise<number> => {
-      const house = await this.planHoursInYear(year);
-      const rateCount = await prisma.rate.aggregate({
-         where: {
-            division_id: division_id,
-            is_work_time: true
-         },
-         _count: true
-      })
-      return house * rateCount._count;
-   }
+// // Плановое количество часов в целом по подразделению
+//    static workingHoursByDivision = async (date: Date, division_id: number): Promise<number> => {
+//       const hours = await this.workingHoursOnDate(date);
+//       const rateCount = await prisma.rate.aggregate({
+//          where: {
+//             division_id: division_id,
+//             is_work_time: true
+//          },
+//          _count: true
+//       })
+//       return hours * rateCount._count;
+//    }
 }

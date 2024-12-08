@@ -25,3 +25,8 @@ npx prisma db seed
 ```bash
 npm i --save-dev prisma@latest @prisma/client@latest
 ```
+
+ Для работы с датами используется библиотека [Luxon](https://moment.github.io/luxon/#/)
+ ```bash
+ npm install --save luxon
+ ```
