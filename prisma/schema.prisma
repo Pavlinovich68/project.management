@@ -147,6 +147,7 @@ model roadmap_item {
    project        project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    hours          Int
    is_closed      Boolean        @default(false)
+   begin_date     DateTime?      @db.Timestamp(6)
    documents      attachment[]
    control_points control_point[]
    fact_items     roadmap_fact_item[]

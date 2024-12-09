@@ -59,7 +59,7 @@ export const POST = async (request: NextRequest) => {
          const hours = await CalendarHelper.workingHoursOnDate(item_point.date);
          item_point.value = (hours * rateCount) / totalHours * 100;
       }
-      //const points:IControlPoint[] = [];
+      
       const baseItem: IRoadmapItemCRUD = {
          id: record?.id??0,
          comment: record?.comment??'',
