@@ -52,7 +52,8 @@ export default class CalendarHelper {
       }
    }
 // Количество рабочих часов от начала года до даты
-   static workingHoursOnDate = async (date: Date): Promise<number> => {
+   static workingHoursOnDate = async (date: Date | undefined | null): Promise<number> => {
+      if (!date) return 0;
       const year = date.getFullYear();
       let currentDate = new Date(year, 0, 1);
       let hours: number = 0;

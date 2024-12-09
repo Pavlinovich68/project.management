@@ -40,10 +40,9 @@ export const POST = async (request: NextRequest) => {
       
       // Количество плановых рабочих часов по подразделению с вычетом отпускных (отпускные без привязки к конкретному графику отпусков)
       const totalHours: number = (await CalendarHelper.workingHoursOnDate(new Date(record?.roadmap.year??new Date().getFullYear(), 11, 31)) - 28) * rateCount;
-      return await NextResponse.json({status: 'success', data: totalHours});
       
       // Контрольные точки по проекту      
-      const item_points = record?.control_points.map((i) => {
+      const item_points: IControlPoint[] = record?.control_points.map((i) => {
          return {
             id: i.id,
             item_id: i.roadmap_item_id,
@@ -57,7 +56,8 @@ export const POST = async (request: NextRequest) => {
       })??[];
 
       for (const item_point of item_points) {
-         item_point.value = await CalendarHelper.workingHoursOnDate(item_point.date) / totalHours * 100;
+         const hours = await CalendarHelper.workingHoursOnDate(item_point.date);
+         item_point.value = (hours * rateCount) / totalHours * 100;
       }
       //const points:IControlPoint[] = [];
       const baseItem: IRoadmapItemCRUD = {
@@ -66,29 +66,12 @@ export const POST = async (request: NextRequest) => {
          project_id: record?.project_id??0,
          project_name: record?.project.name,
          roadmap_id: record?.roadmap_id??0,
-         //start_date: record?.start_date??new Date(),
-         end_date:   record.end_date,
-         hours: record.hours,
-         developer_qnty: record.developer_qnty,
+         hours: record?.hours??0,
          control_points: item_points,
-         is_closed: record.is_closed
+         is_closed: record?.is_closed??false
       };
+      return await NextResponse.json({status: 'success', data: baseItem});
       // let data:IRoadmapItemSegment[] = records.map((item) => {
-      
-      //    baseItems.push({
-      //       id: item.id,
-      //       comment: item.comment??'',
-      //       project_id: item.project_id,
-      //       project_name: item.project.name,
-      //       roadmap_id: item.roadmap_id,
-      //       start_date: item.start_date,
-      //       end_date:   item.end_date,
-      //       hours: item.hours,
-      //       developer_qnty: item.developer_qnty,
-      //       control_points: item_points,
-      //       is_closed: item.is_closed
-      //    })
-         
       //    return {
       //       id: item.id,
       //       name: item.comment,

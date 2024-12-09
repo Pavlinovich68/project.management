@@ -13,11 +13,8 @@ export interface IRoadmapItemCRUD {
    comment: string,
    roadmap_id: number,
    project_id: number,
-   project_name: string | undefined | null,  
-   //start_date: Date,
-   //end_date: Date,
+   project_name: string | undefined | null,
    hours: number,
-   developer_qnty: number,
    is_closed: boolean,
    control_points: IControlPoint[]
 }
