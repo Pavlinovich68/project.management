@@ -35,11 +35,8 @@ const Roadmap = ({year, division_id}:{year: number, division_id: number}) => {
       comment: '',
       roadmap_id: 0,
       project_id: 0,
-      project_name: undefined,  
-      start_date: new Date,
-      end_date: new Date,
+      project_name: undefined,
       hours: 0,
-      developer_qnty: 0,
       is_closed: false,
       control_points: []
    }
@@ -109,17 +106,8 @@ const row = useFormik<IRoadmapItemCRUD>({
       if (!data.comment){
          errors.comment = "Укажите наименование работ!";
       }
-      if (!data.start_date){
-         errors.start_date = "Укажите дату начала выполнения работ!";
-      }
-      if (!data.end_date){
-         errors.end_date = "Укажите дату окончания выполнения работ!";
-      }
       if (!data.hours){
          errors.hours = "Укажите плановую трудоемкость!";
-      }
-      if (!data.developer_qnty){
-         errors.developer_qnty = "Укажите плановую численность задействованных разработчиков!";
       }
       return errors;
    },
@@ -183,21 +171,9 @@ const viewCard = (
                <label htmlFor="name">Наименование работ</label>
                <div className={classNames(styles.fieldValue)}>{row.values.comment}</div>
             </div>               
-            <div className="field col-12 md:col-6">
-               <label htmlFor="begin_date">Дата начала</label>
-               <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.start_date)}</div>
-            </div>
-            <div className="field col-12 md:col-6">
-               <label htmlFor="end_date">Дата окончания</label>
-               <div className={classNames(styles.fieldValue)}>{DateHelper.formatDate(row.values.end_date)}</div>
-            </div>
-            <div className="field col-6">
+            <div className="field col-12">
                <label htmlFor="hours">Плановое количество часов</label>
                <div className={classNames(styles.fieldValue)}>{row.values.hours}</div>
-            </div>
-            <div className="field col-6">
-               <label htmlFor="developer_qnty">Плановая численность</label>
-               <div className={classNames(styles.fieldValue)}>{row.values.developer_qnty}</div>
             </div>
          </div>
       </TabPanel>
@@ -234,27 +210,12 @@ const editCard = (
                                     value={row.values.comment}
                                     onChange={(e) => row.setFieldValue('comment', e.target.value)} required autoFocus type="text"/>
             </div>               
-            <div className="field col-12 md:col-6">
-               <label htmlFor="begin_date">Дата начала</label>
-               <Calendar id="begin_date" className={classNames({"p-invalid": submitted && !row.values.start_date})} value={new Date(row.values.start_date as Date)} onChange={(e) => row.setFieldValue('start_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата начала"/>
-            </div>
-            <div className="field col-12 md:col-6">
-               <label htmlFor="end_date">Дата окончания</label>
-               <Calendar id="end_date" value={row.values.end_date !== null ? new Date(row.values.end_date as Date) : null} onChange={(e) => row.setFieldValue('end_date', e.target.value)} dateFormat="dd MM yy" locale="ru" showIcon required  showButtonBar tooltip="Дата окончания"/>
-            </div>
-            <div className="field col-6">
+            <div className="field col-12">
                <label htmlFor="hours">Плановое количество часов</label>
                <InputNumber id="hours"  placeholder="Плановое количество часов"
                                     className={classNames({"p-invalid": submitted && !row.values.hours})}
                                     value={row.values.hours}
                                     onValueChange={(e) => row.setFieldValue('hours', e.value)} required autoFocus/>
-            </div>
-            <div className="field col-6">
-               <label htmlFor="developer_qnty">Плановая численность</label>
-               <InputNumber id="developer_qnty"  placeholder="Плановая численность привлеченных разработчиков"
-                                    className={classNames({"p-invalid": submitted && !row.values.developer_qnty})}
-                                    value={row.values.developer_qnty}
-                                    onValueChange={(e) => row.setFieldValue('developer_qnty', e.value)} required autoFocus/>
             </div>
             <Button type="button" label="Зафиксировать окончание работ" className="m-2 mt-0 mb-0" severity="warning"
                onClick={() => acceptItemFact(row.values.id).then(() => {console.log('!!!')})}

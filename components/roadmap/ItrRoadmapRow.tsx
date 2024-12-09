@@ -7,19 +7,20 @@ import { Tooltip } from "primereact/tooltip";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
 import { itemSeignature } from "./roadmap.types";
 import { Badge } from "primereact/badge";
+import { IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
 const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name, update, drop, view}:
    {roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string, update: any, drop: any, view: any}) => {
    
-   const [data, setData] = useState<IRoadmapRowSegmentData>();
+   const [data, setData] = useState<IRoadmapProjectItem>();
    const [isLoading, setIsLoading] = useState<boolean>(false);
    
    useEffect(() => {
-      getSegments();
+      getData();
    }, [roadmap_id, project_id])
 
-   const getSegments = async () => {
+   const getData = async () => {
       setIsLoading(true);
       const res = await fetch(`/api/roadmap/row`, {
          method: "POST",
@@ -37,27 +38,30 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
       setIsLoading(false);
    }
 
-   const itemMethod = (fn: itemSeignature, id: number) => {
-      const item = getCRUDItem(id);
-      return fn(item);
-   }
+   // const itemMethod = (fn: itemSeignature, id: number) => {
+   //    const item = getCRUDItem(id);
+   //    return fn(item);
+   // }
 
-   const getCRUDItem = (id: number): IRoadmapItemCRUD | undefined => {
-      return data?.items.find((item) => item.id === id);
-   }
+   // const getCRUDItem = (id: number): IRoadmapItemCRUD | undefined => {
+   //    return data?.items.find((item) => item.id === id);
+   // }
 
    return (      
       <React.Fragment>
          <Tooltip target=".custom-target-icon"/>
          <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>         
          <div className={classNames(styles.controlPointsLayear)}>
-            {data?.points.map((point) => 
-               <div className={classNames(styles.controlPoint)} data-color={point.type} style={{left: `${point.value}%`}}>
+            {data?.control_points.map((point) => 
+               <div className={classNames(styles.controlPoint)} data-color={point.type} style={{left: `${point.width}%`}}>
                   <Badge className={classNames(styles.badge)}/>
                </div>
             )}
          </div>
-         <div className={classNames(styles.segmentBar)}>
+         <div className={classNames(styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `100%`}}>
+
+         </div>
+         {/* <div className={classNames(styles.segmentBar)}>
             {            
                data?.segments?.map((elem) => 
                      <React.Fragment>
@@ -91,7 +95,7 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
                      </React.Fragment>
                )
             }
-         </div>
+         </div> */}
       </React.Fragment>      
    );
 };
