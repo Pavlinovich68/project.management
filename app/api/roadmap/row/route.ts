@@ -78,7 +78,7 @@ export const POST = async (request: NextRequest) => {
          start_width: start_width,
          plan_width: record.hours / totalHours * 100,
          fact_hours: fact,
-         fact_width: fact??0 / totalHours * 100,
+         fact_width: (fact??0) / totalHours * 100,
          control_points: item_points
       }
       return await NextResponse.json({status: 'success', data: result});

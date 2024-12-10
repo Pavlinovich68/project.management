@@ -407,10 +407,7 @@ const card = (
                {
                   roadmapData?.map((item) => <ItrRoadmapRow 
                      roadmap_id={item.roadmap_id} 
-                     item_id={item.id} 
                      project_id={item.project_id} 
-                     project_code={item.project_code} 
-                     project_name={item.project_name}
                      update={updateMethod}
                      drop={deleteMethod}
                      view={viewMethod}

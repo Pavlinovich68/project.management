@@ -4,48 +4,69 @@
       "comment": "Первый этап",
       "begin_date": "2024-01-10",
       "hours": 800,
-      "control_points": [] 
+      "control_points": [],
+      "fact": [
+         {"date": "2024-01-10", "hours": 300, "employee_id": 1}
+      ]
    },
    {
       "project": "P2",
       "comment": "Первый этап",
       "begin_date": "2024-03-01",
       "hours": 1000,
-      "control_points": []
+      "control_points": [],
+      "fact": [
+         {"date": "2024-03-01", "hours": 800, "employee_id": 1}
+      ]
    },
    {
       "project": "P3",
       "comment": "Первый этап",
       "begin_date": "2024-05-01",
       "hours": 1200,
-      "control_points": []
+      "control_points": [],
+      "fact": [
+         {"date": "2024-05-01", "hours": 224, "employee_id": 1}
+      ]
    },
    {
       "project": "P4",
       "comment": "Первый этап",
       "begin_date": "2024-03-01",
       "hours": 800,
-      "control_points": []
+      "control_points": [],
+      "fact": [
+         {"date": "2024-03-01", "hours": 322, "employee_id": 1}
+      ]
    },
    {
       "project": "P5",
       "comment": "Первый этап",
       "begin_date": "2024-06-10",
       "hours": 800,
-      "control_points": []
+      "control_points": [],
+      "fact": [
+         {"date": "2024-06-10", "hours": 366, "employee_id": 1}
+      ]
    },
    {
       "project": "P6",
       "comment": "Первый этап",
       "begin_date": "2024-10-20",
       "hours": 1000,
-      "control_points": []
+      "control_points": [],
+      "fact": [
+         {"date": "2024-10-28", "hours": 540, "employee_id": 1}
+      ]
    },
    {
       "project": "P7",
       "comment": "Первый этап",
       "begin_date": "2024-05-01",
       "hours": 1000,
-      "control_points": []
+      "control_points": [],
+      "fact": [
+         {"date": "2024-05-10", "hours": 800, "employee_id": 1}
+      ]
    }
 ]

@@ -139,6 +139,17 @@ async function main() {
             }
          })
 
+         for (const fact_item of item.fact) {
+            await prisma.roadmap_fact_item.create({
+               data: {
+                  date: new Date(fact_item.date),
+                  hours: fact_item.hours,
+                  employee_id: fact_item.employee_id,
+                  roadmap_item_id: rmi.id
+               }
+            });
+         }
+
          // for (const point of item.control_points) {
          //    await prisma.control_point.create({
          //       data: {
