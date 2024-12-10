@@ -5,7 +5,7 @@ import { classNames } from "primereact/utils";
 import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
 import { Tooltip } from "primereact/tooltip";
 import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
-import { itemSeignature } from "./roadmap.types";
+import { itemSignature } from "./roadmap.types";
 import { Badge } from "primereact/badge";
 import { IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
 
@@ -38,13 +38,19 @@ const RoadmapRow = ({roadmap_id, project_id, update, drop, view}:
       setIsLoading(false);
    }
 
-   const itemMethod = (fn: itemSeignature, id: number | undefined) => {
-      const item = getCRUDItem(id);
+   const itemMethod = (fn: itemSignature, id: number | undefined) => {
+      if (!data) return undefined;
+      const item: IRoadmapItemCRUD = {
+         id: data.roadmap_item_id,
+         comment: data.comment,
+         roadmap_id: data.roadmap_id,
+         project_id: data.roadmap_id,
+         project_name: data.project_name,
+         hours: data.hours,
+         is_closed: data.is_closed,
+         control_points: data.control_points
+      };
       return fn(item);
-   }
-
-   const getCRUDItem = (id: number | undefined): IRoadmapItemCRUD | undefined => {
-      return undefined//data?.items.find((item) => item.id === id);
    }
 
    return (      
@@ -62,6 +68,7 @@ const RoadmapRow = ({roadmap_id, project_id, update, drop, view}:
             <div className={classNames(styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `100%`}}>
                <span className={classNames(styles.segmentItemTitle)}>{data?.comment}</span>
                <span className={classNames(styles.segmentItemValue)}>{data?.hours} рабочих часов</span>
+               <span className={classNames(styles.segmentItemPercentage)}>Исполнено на {data?.percentage}%</span>
                <div className={classNames(styles.segmentItemPlan)} style={{left: `${data?.start_width}%`, width: `${data?.plan_width}%`}}></div>
                <div className={classNames(styles.segmentItemFact)} style={{left: `${data?.start_width}%`, width: `${data?.fact_width}%`}}></div>
                <div className={classNames("flex justify-content-end flex-wrap", styles.buttonBar)}>
@@ -86,22 +93,6 @@ const RoadmapRow = ({roadmap_id, project_id, update, drop, view}:
                </div>
             </div>
          </div>
-         {/* <div className={classNames(styles.segmentBar)}>
-            {            
-               data?.segments?.map((elem) => 
-                     <React.Fragment>
-                        <div className={classNames(elem.type === 1 ? styles.segmentItemPlan : styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`}}>
-                           {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
-                           <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней, ' + elem.hours + ' рабочих часов.' : ''}</span>
-                           {elem.type === 1 ? <div className={classNames(styles.segmentItemFact)} style={{width: `${elem.fact?.percent}%`}}></div> : ''}
-                           {elem.type === 1 ?                            
-                               
-                           : ''}
-                        </div>
-                     </React.Fragment>
-               )
-            }
-         </div> */}
       </React.Fragment>      
    );
 };

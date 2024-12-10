@@ -1,4 +1,4 @@
-import { IControlPoint } from "./IRoadmapItemSegment";
+import { IRoadmapControlPoint } from "./IRoadmapProjectItem";
 
 export interface IRoadmapItem {
    roadmap_id: number,
@@ -16,7 +16,7 @@ export interface IRoadmapItemCRUD {
    project_name: string | undefined | null,
    hours: number,
    is_closed: boolean,
-   control_points: IControlPoint[]
+   control_points: IRoadmapControlPoint[]
 }
 
 export interface IRoadmapItemsCollection {

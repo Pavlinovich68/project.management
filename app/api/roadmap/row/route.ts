@@ -71,7 +71,7 @@ export const POST = async (request: NextRequest) => {
       const result: IRoadmapProjectItem = {
          roadmap_id: record.roadmap_id,         
          roadmap_item_id: record.id,   
-         comment: record.comment,
+         comment: record.comment??'',
          project_code: record.project.code,
          project_name: record.project.name,
          hours: record.hours,
@@ -79,7 +79,9 @@ export const POST = async (request: NextRequest) => {
          plan_width: record.hours / totalHours * 100,
          fact_hours: fact,
          fact_width: (fact??0) / totalHours * 100,
-         control_points: item_points
+         control_points: item_points,         
+         is_closed: record.is_closed,
+         percentage: Math.floor(((fact??0) / record.hours * 100) * 100) / 100
       }
       return await NextResponse.json({status: 'success', data: result});
    } catch (error: Error | unknown) {      
