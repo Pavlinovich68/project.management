@@ -38,7 +38,7 @@ export const POST = async (request: NextRequest) => {
       }))?._count;
       
       // Количество плановых рабочих часов по подразделению с вычетом отпускных (отпускные без привязки к конкретному графику отпусков)
-      const totalHours: number = (await CalendarHelper.workingHoursOnDate(new Date(record?.roadmap.year??new Date().getFullYear(), 11, 31)) - 224) * rateCount;      
+      const totalHours: number = (await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), new Date(record.roadmap.year, 11, 31)) - 224) * rateCount;      
       // Контрольные точки по проекту      
       const item_points: IRoadmapControlPoint[] = record?.control_points.map((i) => {
          return {
@@ -53,14 +53,11 @@ export const POST = async (request: NextRequest) => {
       })??[];
 
       for (const item_point of item_points) {
-         const hours = await CalendarHelper.workingHoursOnDate(item_point.date);
+         const hours = await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), item_point.date);
          item_point.width = hours * rateCount / totalHours * 100;
       }
 
-      let start_width = 0;
-      if (record.begin_date) {         
-         start_width = (await CalendarHelper.workingHoursOnDate(record.begin_date) * rateCount) / totalHours * 100;
-      }
+      const start_width = (await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), record.begin_date) * rateCount) / totalHours * 100;      
 
       const fact = (await prisma.roadmap_fact_item.aggregate({
          where: {
@@ -80,8 +77,8 @@ export const POST = async (request: NextRequest) => {
          hours: record.hours,
          start_width: start_width,
          plan_width: record.hours / totalHours * 100,
-         fact_hours: fact??0 / totalHours * 100,
-         fact_width: undefined,
+         fact_hours: fact,
+         fact_width: fact??0 / totalHours * 100,
          control_points: item_points
       }
       return await NextResponse.json({status: 'success', data: result});

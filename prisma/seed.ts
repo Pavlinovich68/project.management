@@ -129,41 +129,26 @@ async function main() {
             throw new Error(`Не удалось получить проект ${item.project}`)
          }
 
-         const employee = await prisma.employee.findFirst({
-            where: {
-               name: item.employee
-            }
-         });
-         
          const rmi = await prisma.roadmap_item.create({
             data: {
                hours: item.hours,
                comment: item.comment,
                project_id: project.id,
-               roadmap_id: roadmap.id
+               roadmap_id: roadmap.id,
+               begin_date: new Date(item.begin_date)
             }
-         })         
+         })
 
-         // if (employee) {
-         //    await prisma.roadmap_fact_item.create({
+         // for (const point of item.control_points) {
+         //    await prisma.control_point.create({
          //       data: {
          //          roadmap_item_id: rmi.id,
-         //          hours: item.fact,
-         //          employee_id: employee.id
+         //          name: point.name,
+         //          date: new Date(point.date),
+         //          type: point.type
          //       }
          //    })
          // }
-
-         for (const point of item.control_points) {
-            await prisma.control_point.create({
-               data: {
-                  roadmap_item_id: rmi.id,
-                  name: point.name,
-                  date: new Date(point.date),
-                  type: point.type
-               }
-            })
-         }
 
          index++;
       }

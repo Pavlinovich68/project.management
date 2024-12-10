@@ -31,36 +31,54 @@ $color-8: #7c8ea7;
    width: 100%;
    height: 30px;
    position: relative;   
-   z-index: 100;
-}
-
-.segmentItemWrapper {
-   display: inline-flex;
-   height: 100%;
-   padding: 0;
-   position: relative;
-   overflow: hidden;
-}
-.segmentItemPlan {
-   background: linear-gradient(
-      to right,
-      #067E23,
-      #043914
-   );
-   .buttonBar {
-      position: absolute;
-      right: 10px;
-      top: 8px;
-      z-index: 51;
-      .button {
-         font-size: 13px;
-         margin-right: 5px;         
+   z-index: 1;
+   .segmentItemWrapper {
+      display: inline-flex;
+      height: 100%;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      .segmentItemPlan {
+         position: relative;
+         z-index: 2;
+         background: linear-gradient(
+            to right,
+            #067E23,
+            #043914
+         );
+         .buttonBar {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            z-index: 51;
+            .button {
+               font-size: 13px;
+               margin-right: 5px;         
+            }
+            .button:last-child{
+               margin-right: 0;
+            }
+         }
       }
-      .button:last-child{
-         margin-right: 0;
+      .segmentItemFact {
+         position: absolute;
+         margin: 0;
+         z-index: 3;
+         background: linear-gradient(
+            to right, 
+            #AE0623,      
+            #590414);
       }
    }
+   .segmentEmpty {
+      background: linear-gradient(
+         to right,
+         #d2d4d5,
+         #797d82
+      )
+   }
 }
+
 
 .segmentItemFact {
    position: absolute;
@@ -68,14 +86,6 @@ $color-8: #7c8ea7;
    z-index: 50;
    height: 30px;
    background: linear-gradient(to right, #AE0623,      #590414);
-}
-
-.segmentEmpty {
-   background: linear-gradient(
-      to right,
-      #d2d4d5,
-      #797d82
-   )
 }
 
 .segmentItemPercentage {

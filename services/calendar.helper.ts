@@ -51,13 +51,12 @@ export default class CalendarHelper {
          return result;
       }
    }
-// Количество рабочих часов от начала года до даты
-   static workingHoursOnDate = async (date: Date | undefined | null): Promise<number> => {
-      if (!date) return 0;
-      const year = date.getFullYear();
-      let currentDate = new Date(year, 0, 1);
+// Количество рабочих часов между двумя датами
+   static workingHoursBetweenDates = async (from: Date, to: Date | undefined | null): Promise<number> => {
+      if (!from || !to) return 0;
+      let currentDate = new Date(from);
       let hours: number = 0;
-      while (currentDate <= date) {
+      while (currentDate <= to) {
          const cnt = await this.hoursOfDay(currentDate)
          hours += cnt;
          currentDate.setDate(currentDate.getDate() +1);         
