@@ -6,9 +6,18 @@ $color-5: #d63384;
 $color-6: #6610f2;
 $color-7: #dc3545;
 $color-8: #7c8ea7;
-.roadmap {
-   padding: 0.5rem;
-   margin-top: 0.5rem;
+
+.dashboard {
+   padding-top: 1rem;
+   .block {
+      padding: 5px;
+      .innerArea {
+         padding: 1rem;
+      }
+   }
+}
+
+.roadmap {   
    .roadmapContainer {
       margin-top: 5px;
       display: block;

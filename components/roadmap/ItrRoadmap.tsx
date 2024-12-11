@@ -399,10 +399,7 @@ const card = (
    const refreshButton = (<Button icon="pi pi-refresh" className="mr-2" onClick={() => getRoadmapData(year, division_id)}/>);
    
    return (
-      <>
-         <div className={classNames("card col-6")}>
-            <h5>Баланс рабочего времени</h5>
-         </div>
+      <div className={classNames("col-12", styles.block)}> 
          <div className={classNames("card", styles.roadmap)} style={{position: "relative"}}>
             <Toolbar start={addButton} end={refreshButton} style={{marginTop: "1rem"}}/>
             {
@@ -433,7 +430,7 @@ const card = (
             <ConfirmDialog />
             <Toast ref={toast} />
          </div>
-      </>
+      </div>
    );
 };
 

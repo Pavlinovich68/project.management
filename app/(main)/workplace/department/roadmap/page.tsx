@@ -3,6 +3,8 @@ import React, {useRef, useState, useEffect} from "react";
 import ItrYearSwitsh from "@/components/ItrYearSwitch";
 import ItrRoadmap from "@/components/roadmap/ItrRoadmap";
 import { useSession } from "next-auth/react";
+import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
+import { classNames } from "primereact/utils";
 
 const Roadmap = () => {
    const [year, setYear] = useState<number>(new Date().getFullYear());
@@ -20,9 +22,24 @@ const Roadmap = () => {
 
    return (
       <React.Fragment>
-         <h3>Дорожная карта по реализации проектов</h3>
+         <h3>Дашборд процессов подразделения</h3>         
          <ItrYearSwitsh year={year} onChange={changeYear}/>
-         <ItrRoadmap year={year} division_id={session.user.division_id}/>
+         <div className={classNames("grid", styles.dashboard)}>
+            <div className={classNames("col-12 lg:col-6", styles.block)}>
+               <div className={classNames("card", styles.innerArea)}>
+                  <span className={classNames("block text-500 font-medium mb-3")}>Баланс рабочего времени</span>
+               </div>               
+            </div>
+            <div className={classNames("col-6 lg:col-3", styles.block)}>
+               <div className={classNames("card")}>
+               </div>               
+            </div>
+            <div className={classNames("col-6 lg:col-3", styles.block)}>
+               <div className={classNames("card")}>
+               </div>               
+            </div>
+            <ItrRoadmap year={year} division_id={session.user.division_id}/>
+         </div>         
       </React.Fragment>
    );
 };

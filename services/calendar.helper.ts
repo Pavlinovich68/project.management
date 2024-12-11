@@ -62,4 +62,19 @@ export default class CalendarHelper {
       }
       return hours;
    }
+
+   static timeRatio = async () => {
+      const now = new Date();
+      const lastDay = new Date(now.getFullYear(), 11, 31);
+      let currentDay = new Date(now.getFullYear(), 0, 1);
+      let before: number = 0;
+      let all: number = 0;
+      while (currentDay <= lastDay) {
+         const cnt = await this.hoursOfDay(currentDay)
+         if (currentDay <= now) before += cnt;
+         all += cnt;
+         currentDay.setDate(currentDay.getDate() +1);         
+      }
+      return before / all;
+   }
 }
