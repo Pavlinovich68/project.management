@@ -6,7 +6,7 @@
       "hours": 800,
       "control_points": [],
       "fact": [
-         {"date": "2024-01-10", "hours": 300, "employee_id": 1}
+         {"date": "2024-01-10", "hours": 4, "employee_id": 1}
       ]
    },
    {

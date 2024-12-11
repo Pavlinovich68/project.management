@@ -399,36 +399,41 @@ const card = (
    const refreshButton = (<Button icon="pi pi-refresh" className="mr-2" onClick={() => getRoadmapData(year, division_id)}/>);
    
    return (
-      <div className={classNames("card", styles.roadmap)} style={{position: "relative"}}>
-         <Toolbar start={addButton} end={refreshButton} style={{marginTop: "1rem"}}/>
-         {
-            isLoaded ? <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center mt-4" style={{ fontSize: '10rem', color: '#326fd1'}}/> :
-            <div className={classNames(styles.roadmapContainer)} style={{zIndex:"1", position:"relative"}}>
-               {
-                  roadmapData?.map((item) => <ItrRoadmapRow 
-                     roadmap_id={item.roadmap_id} 
-                     project_id={item.project_id} 
-                     update={updateMethod}
-                     drop={deleteMethod}
-                     view={viewMethod}
-                  />)
-               }
-               <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>
-                  <div className={classNames(styles.scalePointer)} style={{width: `${scalePoint}%`}}/>
+      <>
+         <div className={classNames("card col-6")}>
+            <h5>Баланс рабочего времени</h5>
+         </div>
+         <div className={classNames("card", styles.roadmap)} style={{position: "relative"}}>
+            <Toolbar start={addButton} end={refreshButton} style={{marginTop: "1rem"}}/>
+            {
+               isLoaded ? <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center mt-4" style={{ fontSize: '10rem', color: '#326fd1'}}/> :
+               <div className={classNames(styles.roadmapContainer)} style={{zIndex:"1", position:"relative"}}>
+                  {
+                     roadmapData?.map((item) => <ItrRoadmapRow 
+                        roadmap_id={item.roadmap_id} 
+                        project_id={item.project_id} 
+                        update={updateMethod}
+                        drop={deleteMethod}
+                        view={viewMethod}
+                     />)
+                  }
+                  <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>
+                     <div className={classNames(styles.scalePointer)} style={{width: `${scalePoint}%`}}/>
+                  </div>
                </div>
-            </div>
-         }
-         <ItrCard
-            header={cardHeader}
-            width={'35vw'}
-            save={saveMethod}
-            hiddenSave={recordState === RecordState.ready}
-            body={card}
-            ref={editor}            
-         />
-         <ConfirmDialog />
-         <Toast ref={toast} />
-      </div>
+            }
+            <ItrCard
+               header={cardHeader}
+               width={'35vw'}
+               save={saveMethod}
+               hiddenSave={recordState === RecordState.ready}
+               body={card}
+               ref={editor}            
+            />
+            <ConfirmDialog />
+            <Toast ref={toast} />
+         </div>
+      </>
    );
 };
 
