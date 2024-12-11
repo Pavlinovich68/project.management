@@ -63,8 +63,12 @@ export default class CalendarHelper {
       return hours;
    }
 
-   static timeRatio = async () => {
-      const now = new Date();
+   static timeRatio = async (year: number) => {
+      let now = new Date();
+      if (now.getFullYear() < year)
+         now = new Date(year, 11, 31);
+      if (now.getFullYear() > year)
+         now = new Date(year, 0, 1);
       const lastDay = new Date(now.getFullYear(), 11, 31);
       let currentDay = new Date(now.getFullYear(), 0, 1);
       let before: number = 0;

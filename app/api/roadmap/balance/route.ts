@@ -38,7 +38,7 @@ export const POST = async (request: NextRequest) => {
       }))?._count;
 
       const total = await CalendarHelper.workingHoursBetweenDates(new Date(roadmap?.year??0, 0, 1), new Date(roadmap?.year??0, 11, 31))
-      const ratio = await CalendarHelper.timeRatio();
+      const ratio = await CalendarHelper.timeRatio(roadmap?.year??0);
 
       /*
       Показываем: 
