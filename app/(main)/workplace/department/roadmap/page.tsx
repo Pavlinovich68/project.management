@@ -15,17 +15,19 @@ interface IBalanceData {
 
 const Roadmap = () => {
    const [year, setYear] = useState<number>(new Date().getFullYear());
+   const [balanceData, setBalanceData] = useState<IBalanceData>()
    const {data: session} = useSession();
 
    useEffect(() => {
-      changeYear(year);      
+      changeYear(year);
+      getBalanceData(year).then((i) => {setBalanceData(i); console.log(`---------->${i}<------------`)});
    }, []);
 
    const changeYear = (val: number) => {
       setYear(val);
    }
 
-   const balanceData = async (_year: number): Promise<IBalanceData> => {
+   const getBalanceData = async (_year: number): Promise<IBalanceData> => {
       const res = await fetch(`/api/roadmap/balance`, {
          method: "POST",
          headers: {
@@ -42,13 +44,12 @@ const Roadmap = () => {
 
    if (!session) return;
 
-   const balanceElement = async (_year: number) => {
-      const _data = await balanceData(_year);
+   const balanceElement = (_year: number) => {
       return (
          <div className={classNames("col-12 lg:col-6", styles.block)}>
             <div className={classNames("card", styles.innerArea)}>
                <span className={classNames("block text-500 font-medium mb-3")}>Баланс рабочего времени</span>
-               <div>{_data.total.toLocaleString()}</div>
+               <div>{balanceData?.total}</div>
             </div>               
          </div>
       ) 

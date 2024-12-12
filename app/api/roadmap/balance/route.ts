@@ -5,13 +5,13 @@ import { IRoadmapControlPoint, IRoadmapProjectItem } from "@/models/IRoadmapProj
 
 export const POST = async (request: NextRequest) => {
    try {
-      const { roadmap_id } = await request.json();
+      const { year } = await request.json();
 
-      const roadmap = await prisma.roadmap.findUnique({where: {id: roadmap_id}});
+      const roadmap = await prisma.roadmap.findFirst({where: {year: year}});
 
       const plan = await prisma.roadmap_item.aggregate({
          where: {
-            roadmap_id: roadmap_id
+            roadmap_id: roadmap?.id
          },
          _sum: {
             hours: true
@@ -21,7 +21,7 @@ export const POST = async (request: NextRequest) => {
       const fact = await prisma.roadmap_fact_item.aggregate({
          where: {
             roadmap_item: {
-               roadmap_id: roadmap_id
+               roadmap_id: roadmap?.id
             }
          },
          _sum: {
@@ -31,7 +31,7 @@ export const POST = async (request: NextRequest) => {
 
       const rateCount = (await prisma.rate.aggregate({
          where: {
-            division_id: roadmap_id?.division_id,
+            division_id: roadmap?.division_id,
             is_work_time: true
          },
          _count: true
