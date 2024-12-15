@@ -1,4 +1,6 @@
+import Vacations from "@/app/(main)/workplace/department/vacations/page";
 import { ICalendarCell } from "@/models/ICalendar";
+import { IDateHours } from "@/models/IDateHours";
 import prisma from "@/prisma/client";
 //import { DateTime } from "luxon";
 
@@ -63,22 +65,73 @@ export default class CalendarHelper {
       return hours;
    }
 
-   static timeRatio = async (year: number) => {
-      let now = new Date();
-      if (now.getFullYear() < year)
-         now = new Date(year, 11, 31);
-      if (now.getFullYear() > year)
-         now = new Date(year, 0, 1);
-      const lastDay = new Date(now.getFullYear(), 11, 31);
-      let currentDay = new Date(now.getFullYear(), 0, 1);
-      let before: number = 0;
-      let all: number = 0;
-      while (currentDay <= lastDay) {
-         const cnt = await this.hoursOfDay(currentDay)
-         if (currentDay <= now) before += cnt;
-         all += cnt;
-         currentDay.setDate(currentDay.getDate() +1);         
+   // Возвращает все рабочие часы по году с разбивкой по датам
+   static getDateHours = async (year: number): Promise<IDateHours[]> => {
+      const yearLength = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
+      let days: IDateHours[] = [];
+
+      let index: number = 0;
+      while (index <= yearLength) {
+         const currentDate = new Date(year, 0, index + 1);
+         const cnt = await CalendarHelper.hoursOfDay(currentDate);
+         days.push({ date: currentDate, hours: cnt });
+         index++;
       }
-      return before / all;
+
+      //@ts-ignore
+      return days.sort((a, b) => new Date(a.date) - new Date(b.date));
+   } 
+
+   static timeAvailable = async (year: number) => {
+      if (year < new Date().getFullYear()) 
+         return 0;
+      if (year > new Date().getFullYear()) 
+         return await this.workingHoursBetweenDates(new Date(year, 0, 1), new Date(year, 11, 31));
+      return await this.workingHoursBetweenDates(new Date(), new Date(year, 11, 31));
+   }
+
+   static getDivisionHoursOfDate = async (division_id: number, date: Date): Promise<any> => {
+      const hours = await this.hoursOfDay(date);
+      const _date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), Math.abs(new Date().getTimezoneOffset())/60);
+      // Если выходной то 0 независимо от количества ставок      
+      if (hours === 0) return 0;      
+      const rateCaunt = await prisma.rate.count({where: {division_id: division_id}});
+      const vacationCount = await prisma.vacation.count({
+         where: {
+            AND: [
+               {
+                  staff: {
+                     rate: {
+                        division_id: division_id
+                     }
+                  }
+               },
+               {
+                  start_date: {
+                     lte: _date
+                  }
+               },
+               {
+                  end_date: {
+                     gte: _date
+                  }
+               }
+            ]            
+         }
+      });
+      const result = (rateCaunt - vacationCount) * hours;      
+      return result;
+   }
+
+   static getDivisionHoursBetweenDates = async (division_id: number, from: Date, to: Date | undefined | null): Promise<number> => {
+      if (!from || !to) return 0;
+      let currentDate = new Date(from);
+      let hours: number = 0;
+      while (currentDate <= to) {
+         const cnt = await this.getDivisionHoursOfDate(division_id, currentDate);
+         hours += cnt;
+         currentDate.setDate(currentDate.getDate() +1);
+      }
+      return hours;
    }
 }

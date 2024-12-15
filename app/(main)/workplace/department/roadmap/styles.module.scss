@@ -7,12 +7,41 @@ $color-6: #6610f2;
 $color-7: #dc3545;
 $color-8: #7c8ea7;
 
+$color-9: #8dfafb;
+$color-10: #F68383;
+
 .dashboard {
    padding-top: 1rem;
    .block {
       padding: 5px;
       .innerArea {
          padding: 0.5rem 1rem 1rem 1rem;
+         .caption {
+            margin-bottom: 0 !important;
+            small {
+               font-size: x-small;
+               margin-left: 0.3rem;
+            }
+         }
+         .indicator {
+            font-size: 0.9rem;
+            .indicatorValue {
+               font-size: large;
+               font-weight: 700;
+               color: $color-9;
+            }
+            .indicatorValueBad {
+               font-size: large;
+               font-weight: 700;
+               color: $color-10;
+            }
+            .indicatorCaption {
+               margin-left: 0.5rem;
+            }
+         }
+         hr {
+            margin: 0.2rem 0 0.2rem 0;
+         }
       }
    }
 }
@@ -101,6 +130,7 @@ $color-8: #7c8ea7;
       }
    }
    .segmentEmpty {
+      width: 100%;
       background: linear-gradient(
          to right,
          #cfd0d1,
