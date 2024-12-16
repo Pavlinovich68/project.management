@@ -1,11 +1,9 @@
-export interface IRoadmapData {
-   length: number,
-   data: IRoadmapDataItem[]
-}
-
 export interface IRoadmapDataItem {
-   comment: string | undefined
+   project_code: string,
+   project_name: string,
+   comment: string | undefined | null,
    begin_date: Date,
    hours: number,
-   start: number
+   left: number,
+   length: number
 }

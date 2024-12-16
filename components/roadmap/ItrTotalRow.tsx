@@ -1,8 +1,34 @@
 import React, { useState, useEffect } from "react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
+import { IRoadmapDataItem } from "@/models/IRoadmapData";
+import { ColorPicker } from "primereact/colorpicker";
 
-const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {   
+const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
+   const [data, setData] = useState<IRoadmapDataItem[]>();
+   
+   useEffect(() => {
+      getTotalData();
+   }, [year, division_id])
+
+   const getTotalData = async () => {
+      const res = await fetch(`/api/roadmap/total`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            year: year,
+            division: division_id
+         }),
+         cache: 'force-cache'
+      });
+      const response = await res.json();
+      setData(response.data);    
+   }
+
+   //getTotalData();
+
    return (      
       <React.Fragment>
          <div className={classNames("col-12", styles.block)}> 
@@ -11,7 +37,13 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
                   <span className="block text-500 font-medium mb-3">Распределение рабочего времени по проектам</span>
                </div>
                <div className={classNames(styles.segmentBar)}>
-                  <div className={classNames(styles.segmentEmpty)}></div>
+                  <div className={classNames(styles.segmentEmpty)}>
+                     {
+                        data?.map((segment) => 
+                           <div className={classNames(styles.totalRowSegment)} style={{zIndex: 2, left: `${segment?.left}%`, width: `${segment?.length}%`}}/>
+                        )
+                     }
+                  </div>
                </div>
             </div>
          </div>

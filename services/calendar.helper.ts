@@ -1,8 +1,12 @@
 import Vacations from "@/app/(main)/workplace/department/vacations/page";
 import { ICalendarCell } from "@/models/ICalendar";
-import { IDateHours } from "@/models/IDateHours";
 import prisma from "@/prisma/client";
 //import { DateTime } from "luxon";
+
+export interface IDateHours {
+   date: Date,
+   hours: number
+}
 
 export default class CalendarHelper {
 // Количество рабочих часов на конкретную дату
@@ -63,23 +67,6 @@ export default class CalendarHelper {
          currentDate.setDate(currentDate.getDate() +1);         
       }
       return hours;
-   }
-
-   // Возвращает все рабочие часы по году с разбивкой по датам
-   static getDateHours = async (year: number): Promise<IDateHours[]> => {
-      const yearLength = new Date(year, 2, 0).getDate() === 28 ? 365 : 366;
-      let days: IDateHours[] = [];
-
-      let index: number = 0;
-      while (index <= yearLength) {
-         const currentDate = new Date(year, 0, index + 1);
-         const cnt = await CalendarHelper.hoursOfDay(currentDate);
-         days.push({ date: currentDate, hours: cnt });
-         index++;
-      }
-
-      //@ts-ignore
-      return days.sort((a, b) => new Date(a.date) - new Date(b.date));
    } 
 
    static timeAvailable = async (year: number) => {
@@ -90,7 +77,7 @@ export default class CalendarHelper {
       return await this.workingHoursBetweenDates(new Date(), new Date(year, 11, 31));
    }
 
-   static getDivisionHoursOfDate = async (division_id: number, date: Date): Promise<any> => {
+   static getDivisionHoursOfDate = async (division_id: number, date: Date): Promise<number> => {
       const hours = await this.hoursOfDay(date);
       const _date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), Math.abs(new Date().getTimezoneOffset())/60);
       // Если выходной то 0 независимо от количества ставок      
@@ -123,6 +110,11 @@ export default class CalendarHelper {
       return result;
    }
 
+   getVacancyHoursOnDate = async (division_id: number, date: Date): Promise<number> => {
+      return 0;
+   }
+
+// Количество рабочих часов между двумя датами
    static getDivisionHoursBetweenDates = async (division_id: number, from: Date, to: Date | undefined | null): Promise<number> => {
       if (!from || !to) return 0;
       let currentDate = new Date(from);
