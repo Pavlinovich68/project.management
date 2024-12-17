@@ -18,7 +18,7 @@ export const POST = async (request: NextRequest) => {
          dateHours.push({date: new Date(year, month, day), hours: hours});
          currentDate.setDate(currentDate.getDate() +1);
       }
-
+      
       const items = await prisma.roadmap_item.findMany({
          where: {
             roadmap: {
@@ -39,6 +39,16 @@ export const POST = async (request: NextRequest) => {
 
       const totalHours = dateHours.map(i => i.hours).reduce((accumulator, currentValue) => {return accumulator + currentValue}, 0);
       
+      const scale = [];
+      let acc: number = 0;
+      for(let i = 0; i < 12; i++) {
+         const monthHours = dateHours.filter((j) => j.date.getMonth() === i)
+            .map((j) => j.hours)
+            .reduce((accumulator, hours) => {return accumulator + hours}, 0);      
+         scale.push({month: i, value: monthHours, left: acc / totalHours * 100, length: monthHours / totalHours * 100});
+         acc += monthHours;
+      }
+      
       const result = [];
       for (const item of items) {
          const left = dateHours.filter((i) => i.date >= new Date(year, 0, 1) && i.date <= item.begin_date)
@@ -57,7 +67,7 @@ export const POST = async (request: NextRequest) => {
          result.push(_item);
       }
 
-      return await NextResponse.json({status: 'success', data: result});
+      return await NextResponse.json({status: 'success', hours: totalHours, scale: scale, data: result});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }

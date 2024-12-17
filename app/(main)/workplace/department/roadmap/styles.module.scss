@@ -141,7 +141,47 @@ $color-10: #F68383;
       position: absolute;
       z-index: 2;
       height: 100%;
-      background-color: #067E2388;
+      background-color: #067E2377;
+      text-align: center;
+      font-size: 11px;
+      padding-top: 7px;
+   }
+}
+
+.scaleBar {
+   display: flex;
+   font-size: 12px;
+   flex-wrap: nowrap;
+   width: 100%;
+   height: 1rem;
+   position: relative;   
+   z-index: 1;
+   border-left: 1px #A6A8AB solid;
+   .scaleItem {
+      border-right: 1px #A6A8AB solid;
+      color: #A6A8AB;
+      text-align: center;
+      font-weight: 700;
+      sup {
+         font-weight: 300;
+         font-size: 9px;
+         color: #eeeeee;
+      }
+   }
+}
+
+.hoursScale {
+   display: flex;
+   font-size: 12px;
+   flex-wrap: nowrap;
+   width: 100%;
+   height: 0.5rem;
+   position: relative;   
+   z-index: 1;
+   margin-top: 2px;
+   border-left: 1px #A6A8AB solid;
+   .scaleItem {
+      border-right: 1px #A6A8AB solid;
    }
 }
 

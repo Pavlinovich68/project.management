@@ -5,7 +5,6 @@ import ItrRoadmap from "@/components/roadmap/ItrRoadmap";
 import { useSession } from "next-auth/react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
-import { IconRun, IconAbacus, IconAlertCircle } from '@tabler/icons-react';
 import ItrTotalRow from "@/components/roadmap/ItrTotalRow";
 
 interface IBalanceData {
