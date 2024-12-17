@@ -3,6 +3,7 @@ import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss
 import { classNames } from "primereact/utils";
 import { IRoadmapDataItem } from "@/models/IRoadmapData";
 import { ColorPicker } from "primereact/colorpicker";
+import { Tooltip } from "primereact/tooltip";
 
 const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
    const [data, setData] = useState<IRoadmapDataItem[]>();
@@ -27,10 +28,13 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
       setData(response.data);    
    }
 
-   //getTotalData();
+   const tooltipData = (segmentData: IRoadmapDataItem) => {
+
+   }
 
    return (      
       <React.Fragment>
+         <Tooltip target=".total-row-segment"/>
          <div className={classNames("col-12", styles.block)}> 
             <div className={classNames("card", styles.innerArea)}>
                <div className={classNames("flex justify-content-between mb-3", styles.caption)}>
@@ -40,7 +44,8 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
                   <div className={classNames(styles.segmentEmpty)}>
                      {
                         data?.map((segment) => 
-                           <div className={classNames(styles.totalRowSegment)} style={{zIndex: 2, left: `${segment?.left}%`, width: `${segment?.length}%`}}/>
+                           <div className={classNames('total-row-segment', styles.totalRowSegment)} data-pr-tooltip="Просмотреть атрибуты элемента"
+                              data-pr-position="top" style={{zIndex: 2, left: `${segment?.left}%`, width: `${segment?.length}%`}}/>
                         )
                      }
                   </div>
