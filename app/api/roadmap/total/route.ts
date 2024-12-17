@@ -19,8 +19,6 @@ export const POST = async (request: NextRequest) => {
          currentDate.setDate(currentDate.getDate() +1);
       }
 
-      return await NextResponse.json({status: 'success', data: dateHours});
-
       const items = await prisma.roadmap_item.findMany({
          where: {
             roadmap: {
@@ -39,11 +37,13 @@ export const POST = async (request: NextRequest) => {
 
       if (!items) return undefined;
 
-      const totalHours = await CalendarHelper.getDivisionHoursBetweenDates(division_id, new Date(year, 0, 1), new Date(year, 11, 31));
+      const totalHours = dateHours.map(i => i.hours).reduce((accumulator, currentValue) => {return accumulator + currentValue}, 0);
       
       const result = [];
       for (const item of items) {
-         const left = await CalendarHelper.getDivisionHoursBetweenDates(division_id, new Date(year, 0, 1), item.begin_date) / totalHours * 100;
+         const left = dateHours.filter((i) => i.date >= new Date(year, 0, 1) && i.date <= item.begin_date)
+            .map(i => i.hours)
+            .reduce((accumulator, currentValue) => {return accumulator + currentValue}, 0) / totalHours * 100;
 
          const _item: IRoadmapDataItem = {
             project_code: item.project.code,
