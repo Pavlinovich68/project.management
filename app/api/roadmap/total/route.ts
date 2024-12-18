@@ -8,7 +8,7 @@ export const POST = async (request: NextRequest) => {
    try {
       const { year, division_id } = await request.json();
 
-      const dateHours = [];
+      const dateHours:IDateHours[] = [];
       let currentDate = new Date(year, 0, 1);
       const last = new Date(year, 11, 31);
       while (currentDate <= last) {
@@ -55,6 +55,16 @@ export const POST = async (request: NextRequest) => {
             .map(i => i.hours)
             .reduce((accumulator, currentValue) => {return accumulator + currentValue}, 0) / totalHours * 100;
 
+         let end_date = item.begin_date;
+         let _hours = item.hours;
+         for (const _date of dateHours) {
+            end_date = _date.date;
+            if (_date.date >= item.begin_date) {               
+               _hours -= _date.hours;
+            }
+            if (_hours <= 0) break;
+         }
+
          const _item: IRoadmapDataItem = {
             project_code: item.project.code,
             project_name: item.project.name,
@@ -62,7 +72,8 @@ export const POST = async (request: NextRequest) => {
             begin_date: item.begin_date,
             hours: item.hours,
             left: left,
-            length: item.hours / totalHours * 100
+            length: item.hours / totalHours * 100,
+            end_date: end_date
          }
          result.push(_item);
       }

@@ -5,5 +5,6 @@ export interface IRoadmapDataItem {
    begin_date: Date,
    hours: number,
    left: number,
-   length: number
+   length: number,
+   end_date: Date
 }
