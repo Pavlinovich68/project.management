@@ -69,10 +69,6 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
       setHours(result);
    }
 
-   const tooltipData = (segmentData: IRoadmapDataItem) => {
-
-   }
-
    return (      
       <React.Fragment>
          <Tooltip target=".total-row-segment"/>
@@ -85,8 +81,9 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
                   <div className={classNames(styles.segmentEmpty)}>
                      {
                         data?.map((segment) => 
-                           <div className={classNames('total-row-segment', styles.totalRowSegment)} data-pr-tooltip="Просмотреть атрибуты элемента"
-                              data-pr-position="top" style={{zIndex: 2, left: `${segment?.left}%`, width: `${segment?.length}%`}}>{segment.project_code}</div>
+                           <div className={classNames('total-row-segment', styles.totalRowSegment)} style={{zIndex: 2, left: `${segment?.left}%`, width: `${segment?.length}%`}}>
+                              {segment.project_code}
+                           </div>
                         )
                      }
                   </div>
