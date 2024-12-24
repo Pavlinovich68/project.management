@@ -8,6 +8,7 @@ export const POST = async (request: NextRequest) => {
    try {
       const { year, division_id } = await request.json();
 
+      //NOTE - [{Дата, количество рабочих часов}] по штатному расписанию
       const dateHours:IDateHours[] = [];
       let currentDate = new Date(year, 0, 1);
       const last = new Date(year, 11, 31);

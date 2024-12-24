@@ -109,8 +109,12 @@ export default class CalendarHelper {
       const result = (rateCaunt - vacationCount) * hours;      
       return result;
    }
-
-   getVacancyHoursOnDate = async (division_id: number, date: Date): Promise<number> => {
+//NOTE - Дефицит рабочего времени
+   static getVacancyHoursOnDate = async (division_id: number, date: Date): Promise<number> => {
+      const hours = await this.hoursOfDay(date);
+      const _date = new Date(date.getFullYear(), date.getMonth(), date.getDate(), Math.abs(new Date().getTimezoneOffset())/60);
+      // Если выходной то 0 независимо от количества ставок      
+      if (hours === 0) return 0;
       return 0;
    }
 
