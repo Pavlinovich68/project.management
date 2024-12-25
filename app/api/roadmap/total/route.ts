@@ -6,8 +6,10 @@ import { IRoadmapDataItem } from "@/models/IRoadmapData";
 
 export const POST = async (request: NextRequest) => {
    try {
-      const { year, division_id } = await request.json();
+      const { year, division_id, date } = await request.json();
 
+      const res = await CalendarHelper.getVacancyHoursOnDate(division_id, new Date(date));
+      return await NextResponse.json({status: 'success', data: res});
       //NOTE - [{Дата, количество рабочих часов}] по штатному расписанию
       const dateHours:IDateHours[] = [];
       let currentDate = new Date(year, 0, 1);
@@ -16,9 +18,11 @@ export const POST = async (request: NextRequest) => {
          const hours = await CalendarHelper.getDivisionHoursOfDate(division_id, currentDate);
          const day = currentDate.getDate();
          const month = currentDate.getMonth();
-         dateHours.push({date: new Date(year, month, day), hours: hours});
+         const vacancyCount = await CalendarHelper.getVacancyHoursOnDate(division_id, currentDate);
+         dateHours.push({date: new Date(year, month, day), hours: hours, vacancyHours: vacancyCount});
          currentDate.setDate(currentDate.getDate() +1);
       }
+
       
       const items = await prisma.roadmap_item.findMany({
          where: {
@@ -79,7 +83,9 @@ export const POST = async (request: NextRequest) => {
          result.push(_item);
       }
 
-      return await NextResponse.json({status: 'success', hours: totalHours, scale: scale, data: result});
+      const vacancyHours = dateHours.map(i => i.vacancyHours).reduce((accumulator, currentValue) => {return accumulator + currentValue}, 0);
+
+      return await NextResponse.json({status: 'success', hours: totalHours, vacancyHours: vacancyHours, scale: scale, data: result});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }
