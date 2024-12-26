@@ -41,8 +41,15 @@ export const POST = async (request: NextRequest) => {
 
       const total = await CalendarHelper.workingHoursBetweenDates(new Date(year, 0, 1), new Date(year, 11, 31))
       const available = await CalendarHelper.timeAvailable(year);
+      const lack = await CalendarHelper.vacancyHours(division_id, year);
 
-      return await NextResponse.json({status: 'success', data: {plan: plan._sum.hours??0, fact: fact._sum.hours??0, total: (total * rateCount) -224, available: available * rateCount}});
+      return await NextResponse.json({status: 'success', data: {
+         plan: plan._sum.hours??0, 
+         fact: fact._sum.hours??0, 
+         total: (total * rateCount) -224, 
+         available: available * rateCount,
+         lack: lack
+      }});
    } catch (error: Error | unknown) {      
       return await NextResponse.json({status: 'error', data: (error as Error).message }); 
    }

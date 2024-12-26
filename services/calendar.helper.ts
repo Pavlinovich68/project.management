@@ -6,7 +6,6 @@ import prisma from "@/prisma/client";
 export interface IDateHours {
    date: Date,
    hours: number
-   vacancyHours: number
 }
 
 export default class CalendarHelper {
@@ -110,7 +109,7 @@ export default class CalendarHelper {
       const result = (rateCaunt - vacationCount) * hours;      
       return result;
    }
-//NOTE - Дефицит рабочего времени
+//NOTE - Дефицит рабочего времени на конкретную дату
    static getVacancyHoursOnDate = async (division_id: number, date: Date): Promise<number> => {
       const hours = await this.hoursOfDay(date);      
       // Если выходной то 0 независимо от количества ставок      
@@ -144,6 +143,18 @@ export default class CalendarHelper {
       const result = vacancyCount * hours;
       return result;
    }
+
+   static vacancyHours = async (division_id: number, year: number): Promise<number> => {
+      const to = new Date(year, 11, 31)
+      let currentDate = new Date(year, 0, 1);      
+      let hours: number = 0;
+      while (currentDate <= to) {
+         const cnt = await this.getVacancyHoursOnDate(division_id, currentDate)
+         hours += cnt;
+         currentDate.setDate(currentDate.getDate() +1);         
+      }
+      return hours;
+   } 
 
 // Количество рабочих часов между двумя датами
    static getDivisionHoursBetweenDates = async (division_id: number, from: Date, to: Date | undefined | null): Promise<number> => {

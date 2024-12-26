@@ -11,7 +11,8 @@ interface IBalanceData {
    plan: number,
    fact: number,
    total: number,
-   available: number
+   available: number,
+   lack: number
 }
 
 const Roadmap = () => {
@@ -70,6 +71,10 @@ const Roadmap = () => {
                      <span className={classNames(styles.indicatorValue)}>{balanceData?.available.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>доступно</span>
                   </div>
+                  <div className={classNames(styles.indicator)}>
+                     <span className={classNames(styles.indicatorValueBad)}>{balanceData?.lack.toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorCaption)}>дефицит (вакансии)</span>
+                  </div>
                </div>               
             </div>
             <div className={classNames("col-12 lg:col-3", styles.block)}>
@@ -78,11 +83,11 @@ const Roadmap = () => {
                      <span className="block text-500 font-medium mb-3">Спланировано</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue)}>{balanceData?.plan.toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{balanceData?.plan.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>человеко/часов</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue)}>{percentPlan().toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{percentPlan().toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>%</span>
                   </div>
                </div>
@@ -93,11 +98,11 @@ const Roadmap = () => {
                      <span className="block text-500 font-medium mb-3">Исполнение плана</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue)}>{balanceData?.fact.toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{balanceData?.fact.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>человеко/часов</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue)}>{percentFact().toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{percentFact().toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>%</span>
                   </div>
                </div>               
@@ -108,11 +113,11 @@ const Roadmap = () => {
                      <span className="block text-500 font-medium mb-3">Неспланировано</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValueBad)}>{((balanceData?.total??0) - (balanceData?.plan??0)).toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValueBad, styles.fontLarge)}>{((balanceData?.total??0) - (balanceData?.plan??0)).toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>человеко/часов</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValueBad)}>{(Math.round((100 - ((balanceData?.plan??0) / (balanceData?.total??0) * 100)) * 100) / 100).toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValueBad, styles.fontLarge)}>{(Math.round((100 - ((balanceData?.plan??0) / (balanceData?.total??0) * 100)) * 100) / 100).toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>%</span>
                   </div>
                </div>
@@ -128,7 +133,7 @@ const Roadmap = () => {
          <div className={classNames("grid", styles.dashboard)}>
             {balanceWidget(year)}
             <ItrTotalRow year={year} division_id={session.user.division_id}/>
-            <ItrRoadmap year={year} division_id={session.user.division_id}/>
+            {/* <ItrRoadmap year={year} division_id={session.user.division_id}/> */}
          </div>         
       </React.Fragment>
    );
