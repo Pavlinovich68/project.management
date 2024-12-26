@@ -31,6 +31,11 @@ export const POST = async (request: NextRequest) => {
             project: true,
             is_closed: true,
             begin_date: true
+         },
+         orderBy: {
+            project: {
+               code: 'asc'
+            }
          }
       });
 
