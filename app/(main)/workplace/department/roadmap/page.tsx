@@ -133,7 +133,6 @@ const Roadmap = () => {
          <div className={classNames("grid", styles.dashboard)}>
             {balanceWidget(year)}
             <ItrTotalRow year={year} division_id={session.user.division_id}/>
-            {/* <ItrRoadmap year={year} division_id={session.user.division_id}/> */}
          </div>         
       </React.Fragment>
    );

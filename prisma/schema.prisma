@@ -136,6 +136,7 @@ model roadmap {
    division_id    Int         
    division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    roadmap_items  roadmap_item[]
+   @@unique([year,  division_id])
 }
 //NOTE - Элемент дорожной карты
 model roadmap_item {

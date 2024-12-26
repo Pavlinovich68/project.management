@@ -5,12 +5,22 @@ import { IRoadmapControlPoint, IRoadmapProjectItem } from "@/models/IRoadmapProj
 
 export const POST = async (request: NextRequest) => {
    try {
-      const { roadmap_id, project_id } = await request.json();
+      const { division_id, year } = await request.json();
 
-      const record = await prisma.roadmap_item.findFirst({
+      const roadmap = await prisma.roadmap.findUnique({
          where: {
-            roadmap_id: roadmap_id,
-            project_id: project_id
+            year_division_id: {
+               year: year,
+               division_id: division_id
+            }
+         }
+      });
+
+      return await NextResponse.json({status: 'success', data: roadmap});
+
+      const records = await prisma.roadmap_item.findMany({
+         where: {
+            roadmap_id: 1
          },
          select: {            
             id: true,
@@ -25,6 +35,8 @@ export const POST = async (request: NextRequest) => {
             begin_date: true
          }
       });
+
+      return await NextResponse.json({status: 'success', data: records});
 
       if (!record) return undefined;
       

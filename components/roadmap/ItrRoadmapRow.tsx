@@ -10,18 +10,16 @@ import { Badge } from "primereact/badge";
 import { IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
-const RoadmapRow = ({roadmap_id, project_id, update, drop, view}:
-   {roadmap_id: number, project_id: number, update: any, drop: any, view: any}) => {
+const RoadmapRow = ({roadmap_id, project_id}:
+   {roadmap_id: number, project_id: number}) => {
    
    const [data, setData] = useState<IRoadmapProjectItem>();
-   const [isLoading, setIsLoading] = useState<boolean>(false);
    
    useEffect(() => {
       getData();
    }, [roadmap_id, project_id])
 
    const getData = async () => {
-      setIsLoading(true);
       const res = await fetch(`/api/roadmap/row`, {
          method: "POST",
          headers: {
@@ -35,22 +33,6 @@ const RoadmapRow = ({roadmap_id, project_id, update, drop, view}:
       });
       const response = await res.json();
       setData(response.data);
-      setIsLoading(false);
-   }
-
-   const itemMethod = (fn: itemSignature, id: number | undefined) => {
-      if (!data) return undefined;
-      const item: IRoadmapItemCRUD = {
-         id: data.roadmap_item_id,
-         comment: data.comment,
-         roadmap_id: data.roadmap_id,
-         project_id: data.roadmap_id,
-         project_name: data.project_name,
-         hours: data.hours,
-         is_closed: data.is_closed,
-         control_points: data.control_points
-      };
-      return fn(item);
    }
 
    return (      
@@ -71,26 +53,6 @@ const RoadmapRow = ({roadmap_id, project_id, update, drop, view}:
                <span className={classNames(styles.segmentItemPercentage)}>Исполнено на {data?.percentage}%</span>
                <div className={classNames(styles.segmentItemPlan)} style={{left: `${data?.start_width}%`, width: `${data?.plan_width}%`}}></div>
                <div className={classNames(styles.segmentItemFact)} style={{left: `${data?.start_width}%`, width: `${data?.fact_width}%`}}></div>
-               <div className={classNames("flex justify-content-end flex-wrap", styles.buttonBar)}>
-                  <i className={classNames("custom-target-icon pi pi-eye flex align-items-center justify-content-center", styles.button)}
-                     data-pr-tooltip="Просмотреть атрибуты элемента"
-                     data-pr-position="top"
-                     style={{cursor:"pointer"}}
-                     onClick={() => itemMethod(view, data?.roadmap_item_id)}                                    
-                  ></i>
-                  <i className={classNames("custom-target-icon pi pi-pencil flex align-items-center justify-content-center", styles.button)}
-                     data-pr-tooltip="Редактировать атрибуты элемента"
-                     data-pr-position="top"
-                     style={{cursor:"pointer"}}
-                     onClick={() => itemMethod(update, data?.roadmap_item_id)}
-                  ></i>
-                  <i className={classNames("custom-target-icon pi pi-trash flex align-items-center justify-content-center", styles.button)}
-                     data-pr-tooltip="Удалить элемент"
-                     data-pr-position="top"
-                     style={{cursor:"pointer"}}
-                     onClick={() => itemMethod(drop, data?.roadmap_item_id)}
-                  ></i>
-               </div>
             </div>
          </div>
       </React.Fragment>      
