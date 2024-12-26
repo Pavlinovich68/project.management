@@ -14,9 +14,7 @@ export const POST = async (request: NextRequest) => {
                division_id: division_id
             }
          }
-      });
-
-      return await NextResponse.json({status: 'success', data: roadmap});
+      });      
 
       const records = await prisma.roadmap_item.findMany({
          where: {
