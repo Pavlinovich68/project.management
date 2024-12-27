@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
 import ItrTotalRow from "@/components/roadmap/ItrTotalRow";
+import { IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
 
 interface IBalanceData {
    plan: number,
@@ -18,6 +19,7 @@ interface IBalanceData {
 const Roadmap = () => {
    const [year, setYear] = useState<number>(new Date().getFullYear());
    const [balanceData, setBalanceData] = useState<IBalanceData>()
+   const [projectsData, setProjectsData] = useState<IRoadmapProjectItem[]>()
    const {data: session} = useSession();
 
    useEffect(() => {
@@ -27,6 +29,7 @@ const Roadmap = () => {
    const changeYear = (val: number) => {
       setYear(val);
       getBalanceData(val).then((i) => setBalanceData(i));
+      getProjectsData().then((i) => setProjectsData(i))
    }
 
    const getBalanceData = async (_year: number): Promise<IBalanceData> => {
@@ -43,6 +46,22 @@ const Roadmap = () => {
       });
       const response = await res.json();
       return response.data;      
+   }
+
+   const getProjectsData = async (): Promise<IRoadmapProjectItem[]> => {
+      const res = await fetch(`/api/roadmap/row`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            year: year,
+            division: session?.user.division_id
+         }),
+         cache: 'force-cache'
+      });
+      const response = await res.json();
+      return response.data;
    }
 
    if (!session) return;
@@ -133,6 +152,24 @@ const Roadmap = () => {
          <div className={classNames("grid", styles.dashboard)}>
             {balanceWidget(year)}
             <ItrTotalRow year={year} division_id={session.user.division_id}/>
+            {
+               projectsData?.map((item, i) =>
+                     <div className={classNames("col-12", styles.block)}> 
+                        <div className={classNames("card", styles.innerArea)}>
+                           <div className="text-left mt-1 text-sm font-semibold text-500">{item?.project_code}: {item?.project_name}</div>
+                           <div className="text-left mb-2 text-sm text-400">{item?.comment}</div>
+                           <div className={classNames(styles.segmentBar)}>
+                              <div className={classNames(styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `100%`}}>
+                                 {/* <span className={classNames(styles.segmentItemValue)}>{item?.hours} рабочих часов</span>
+                                 <span className={classNames(styles.segmentItemPercentage)}>Исполнено на {item?.percentage}%</span> */}
+                                 <div className={classNames(styles.segmentItemPlan)} style={{left: `${item?.start_width}%`, width: `${item?.plan_width}%`}}></div>
+                                 <div className={classNames(styles.segmentItemFact)} style={{left: `${item?.start_width}%`, width: `${item?.fact_width}%`}}></div>
+                              </div>
+                           </div>                           
+                        </div>
+                     </div>
+               )
+            }
          </div>         
       </React.Fragment>
    );
