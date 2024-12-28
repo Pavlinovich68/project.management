@@ -24,7 +24,7 @@ $color-10: #F68383;
             }
          }
          .indicator {
-            font-size: 0.9rem;
+            font-size: large;
             .indicatorValue {
                font-size: large;
                font-weight: 700;
@@ -37,9 +37,6 @@ $color-10: #F68383;
             }
             .indicatorCaption {
                margin-left: 0.5rem;
-            }
-            .fontLarge {
-               font-size: 1.8em;
             }
          }
          hr {

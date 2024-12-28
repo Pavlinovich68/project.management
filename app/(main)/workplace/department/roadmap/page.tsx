@@ -65,6 +65,7 @@ const Roadmap = () => {
    }
 
    if (!session) return;
+   if (!projectsData) return;
 
    const balanceWidget = (_year: number) => {
       const percentPlan = () => {
@@ -90,10 +91,14 @@ const Roadmap = () => {
                      <span className={classNames(styles.indicatorValue)}>{balanceData?.available.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>доступно</span>
                   </div>
-                  <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValueBad)}>{balanceData?.lack.toLocaleString()}</span>
-                     <span className={classNames(styles.indicatorCaption)}>дефицит (вакансии)</span>
-                  </div>
+                  {
+                     (balanceData?.lack??0) > 0 ?
+                        <div className={classNames(styles.indicator)}>
+                           <span className={classNames(styles.indicatorValueBad)}>{balanceData?.lack.toLocaleString()}</span>
+                           <span className={classNames(styles.indicatorCaption)}>дефицит (вакансии)</span>
+                        </div> :
+                        <></>
+                  }
                </div>               
             </div>
             <div className={classNames("col-12 lg:col-3", styles.block)}>
