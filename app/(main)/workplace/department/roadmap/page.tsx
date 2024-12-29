@@ -159,7 +159,7 @@ const Roadmap = () => {
             <ItrTotalRow year={year} division_id={session.user.division_id}/>
             {
                projectsData?.map((item, i) =>
-                     <div className={classNames("col-12", styles.block)}> 
+                     <div className={classNames("col-4", styles.block)}> 
                         <div className={classNames("card", styles.innerArea)}>
                            <div className="text-left mt-1 text-sm font-semibold text-500">{item?.project_code}: {item?.project_name}</div>
                            <div className="text-left mb-2 text-sm text-400">{item?.comment}</div>
