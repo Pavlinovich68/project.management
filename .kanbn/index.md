@@ -5,7 +5,7 @@ completedColumns:
   - Done
 ---
 
-# project.management
+# worktime.management
 
 ## Backlog
 
