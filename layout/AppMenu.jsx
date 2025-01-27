@@ -8,7 +8,8 @@ import { MenuProvider } from './context/menucontext';
 import { IconAdjustmentsHorizontal, IconAlignLeft2, IconCalendarBolt, IconCalendarUser } from '@tabler/icons-react';
 import { IconBooks, IconUsers } from '@tabler/icons-react';
 import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup,
-   IconStar, IconStars, IconStackMiddle, IconShare, IconAlignLeft, IconTower, IconChartArrows } from '@tabler/icons-react';
+   IconStar, IconStars, IconStackMiddle, IconShare, IconAlignLeft, IconTower, IconChartArrows,
+   IconClock } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -79,8 +80,8 @@ const AppMenu = () => {
                      to: '/workplace/department/roadmap',               
                   },
                   {
-                     label: 'Проекты в работе',
-                     tabler: <IconCalendarBolt className='mr-1' stroke={1.5}/>,
+                     label: 'Мое рабочее время',
+                     tabler: <IconClock className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
                      to: '/workplace/department/projectcalendar',               
                   },
@@ -107,12 +108,6 @@ const AppMenu = () => {
                      tabler: <IconShare className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
                      to: '/workplace/references/projects'
-                  },
-                  {
-                     label: 'Модули проектов',
-                     tabler: <IconStackMiddle className='mr-1' stroke={1.5}/>,
-                     visible: checkRoles(['developer', 'master']),
-                     to: '/workplace/references/modules'
                   },
                   {
                      label: 'Производственный календарь',

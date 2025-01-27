@@ -165,10 +165,10 @@ async function main() {
       }
    }
 
-   const seedCalendar = async () => {
-      let calendar = await prisma.production_calendar.findFirst({ where: { year: 2024 } });
+   const seedCalendar = async (year: number) => {
+      let calendar = await prisma.production_calendar.findFirst({ where: { year: year } });
       if (!calendar) {
-         calendar = await prisma.production_calendar.create({ data: { year: 2024 } });
+         calendar = await prisma.production_calendar.create({ data: { year: year } });
       }
       const _count = production_calendar.length;
       let _index = 0;
@@ -197,7 +197,7 @@ async function main() {
                });
             }
             const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
-            const _calendar = await prisma.dept_calendar.findFirst({where:{year:2024,division_id:_division?.id}});
+            const _calendar = await prisma.dept_calendar.findFirst({where:{year:year,division_id:_division?.id}});
 
             let hours = 8;
             switch (_node.exclusion_type) {
@@ -229,12 +229,13 @@ async function main() {
       return _index;
    }
 
-   const seedProdCalendar = async () => {
+   const seedProdCalendar = async (year: number) => {
       try {
+         const _yearLength = new Date(year, 2, 0).getDate() === 29 ? 366 : 365;
          const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
          if (!_division) return
          const _calendar = await prisma.dept_calendar.create({
-            data: { division_id: _division?.id, year: 2024 }
+            data: { division_id: _division?.id, year: year }
          })
 
          let rates = await prisma.rate.findMany({
@@ -256,9 +257,9 @@ async function main() {
                }
             });
             let _i = 0;
-            while (_i < 366) {
+            while (_i < _yearLength) {
                _i++
-               let _date = new Date(Date.UTC(2024, 0, _i))
+               let _date = new Date(Date.UTC(year, 0, _i))
                const _dayOfWeek = _date.getDay();
                const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
                await prisma.dept_calendar_cell.create({
@@ -486,8 +487,10 @@ async function main() {
    await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
    await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
    await seedRoadmap().finally(() => console.log(`\x1b[32mRoadmap seeded\x1b[0m`));
-   await seedProdCalendar().finally(() => console.log(`\x1b[32mWorked calendar seeded\x1b[0m`));
-   await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
+   await seedProdCalendar(2024).finally(() => console.log(`\x1b[32mWorked calendar seeded\x1b[0m`));
+   await seedProdCalendar(2025).finally(() => console.log(`\x1b[32mWorked calendar seeded\x1b[0m`));
+   await seedCalendar(2024).finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
+   await seedCalendar(2025).finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
 
 }

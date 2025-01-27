@@ -135,7 +135,8 @@ export const POST = async (request: NextRequest) => {
                month: month,
                row: {
                   calendar: {
-                     division_id: division_id
+                     division_id: division_id,
+                     year: year
                   }
                }
             },
