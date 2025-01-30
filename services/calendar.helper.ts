@@ -1,6 +1,7 @@
 import Vacations from "@/app/(main)/workplace/department/vacations/page";
 import { ICalendarCell } from "@/models/ICalendar";
 import prisma from "@/prisma/client";
+import { exclusion } from "@prisma/client";
 //import { DateTime } from "luxon";
 
 export interface IDateHours {
@@ -8,9 +9,14 @@ export interface IDateHours {
    hours: number
 }
 
+export interface IHoursAndType {
+   hours: number,
+   type: number
+}
+
 export default class CalendarHelper {
 // Количество рабочих часов на конкретную дату
-   static hoursOfDay = async (date: Date): Promise<number> => {
+   static hoursOfDayExt = async (date: Date): Promise<IHoursAndType> => {
       // 0  - holiday            Выходной или праздничный   0
       // 1  - reduced            Предпраздничный            7
       // 2  - holiday transfer   Перенесенный выходной      0
@@ -43,19 +49,25 @@ export default class CalendarHelper {
       });
       
       if (!exclusion) {
-         return (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8;
+         return (dayOfWeek === 6 || dayOfWeek === 0) ? {type: 0, hours: 0} : {type: 4, hours: 8};
       } else {
-         let result = 0;
+         let _hours = 0;
          switch (exclusion.exclusion_type) {
-            case 1: result = 7; break;
-            case 3: result = 8; break;
-            case 4: result = 8; break;
-            case 10: result = 8; break;
-            default: result = 0; break;
+            case 1: _hours = 7; break;
+            case 3: _hours = 8; break;
+            case 4: _hours = 8; break;
+            case 10: _hours = 8; break;
+            default: _hours = 0; break;
          }
-         return result;
+         return {type: exclusion.exclusion_type, hours: _hours};
       }
    }
+
+   static hoursOfDay = async (date: Date): Promise<number> => {
+      const data = await this.hoursOfDayExt(date);
+      return data.hours;
+   }
+
 // Количество рабочих часов между двумя датами
    static workingHoursBetweenDates = async (from: Date, to: Date | undefined | null): Promise<number> => {
       if (!from || !to) return 0;
@@ -167,5 +179,49 @@ export default class CalendarHelper {
          currentDate.setDate(currentDate.getDate() +1);
       }
       return hours;
+   }
+
+   // Количество рабочи часов по конкретной штатной еденице
+   static staffHours = async (staffId: number | null | undefined, from: Date, to: Date):Promise<number> => {
+      let currentDate = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 0,0,0,0);      
+      const result: number[] = [];
+      const maxDate = new Date(to.getFullYear(), to.getMonth(), to.getDate(), 0, 0, 0, 0);
+      const _staff = await prisma.staff.findUnique({where: { id: staffId??-1 }});
+      const staffBeginDate = _staff?.begin_date ? new Date(_staff.begin_date.getFullYear(), _staff.begin_date.getMonth(), _staff.begin_date.getDate(), 0,0,0,0) : new Date(0,0,0,0,0,0,0);
+      const staffEndDate = _staff?.end_date ? new Date(_staff.end_date.getFullYear(), _staff.end_date.getMonth(), _staff.end_date.getDate(), 0,0,0,0) : null;
+
+      while (currentDate <= maxDate) {
+         //Проверяем на действительность ставки         
+         let item: number = 0;
+         if (!_staff || staffBeginDate > currentDate || (staffEndDate && staffEndDate < currentDate)) {
+            // Если ставка вакантна
+            item = 0;
+         } else {            
+            const _cellItem = await prisma.dept_calendar_cell.findFirst({
+               where: {
+                  row: {
+                     rate_id: _staff.rate_id,
+                     calendar: {
+                        year: currentDate.getFullYear()
+                     }
+                  },
+                  month: currentDate.getMonth() +1,
+                  day: currentDate.getDate()
+               }
+            });
+            
+            if (_cellItem) {
+               // Если есть исключение - подставляем исключение
+               item = _cellItem.hours
+            } else {
+               // Базовое значение из производственного календаря
+               let _item = await CalendarHelper.hoursOfDayExt(currentDate);
+               item = _item.hours;
+            }
+         }
+         result.push(item);
+         currentDate.setDate(currentDate.getDate() + 1);
+      }
+      return result.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
    }
 }

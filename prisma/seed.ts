@@ -358,7 +358,7 @@ async function main() {
                   email: _node.email,
                   contacts: _node.contacts,
                   begin_date: new Date(_node.begin_date),
-                  end_date: null
+                  end_date: _node.end_date ? new Date(_node.end_date) : null
                }
             });
             await createUser(_node, emp.id);
@@ -382,7 +382,8 @@ async function main() {
                   throw new Error('Не удалось найти сотрудника');
                await prisma.staff.create({
                   data: {
-                     begin_date: new Date(2024, 0, 1),
+                     begin_date: new Date(_node.begin_date),
+                     end_date: _node.end_date ? new Date(_node.end_date) : null,
                      employee_id: emp.id,
                      rate_id: rate.id
                   }

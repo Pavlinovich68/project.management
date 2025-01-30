@@ -1,9 +1,9 @@
 [
    {      
-      "name": "Савельев Павел Иванович",
-      "email": "p.savelev@localhost",
+      "name": "Aкопян Левон Дмитриевич",
+      "email": "l.akopyan@mininform74.ru",
       "contacts": "(351) 211-68-27 (вн. 355)",
-      "begin_date": "2024-01-01",
+      "begin_date": "2025-01-27",
       "end_date": null,
       "post": "Главный специалист",
       "role": {
@@ -173,7 +173,7 @@
       "email": "d.prokopenko@localhost",
       "contacts": "(351) 211-68-27 (вн. 355)",
       "begin_date": "2024-01-01",
-      "end_date": null,
+      "end_date": "2024-12-31",
       "post": "Главный специалист",
       "role": {
          "name": "developer",

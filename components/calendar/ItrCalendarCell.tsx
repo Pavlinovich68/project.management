@@ -1,4 +1,3 @@
-'use client'
 import { ICalendarCell, ICellDictionary } from "@/models/ICalendar";
 import CellTypes from "@/services/cell.types";
 import { classNames } from "primereact/utils";
@@ -9,6 +8,7 @@ const ItrCalendarCell = ({row, cell, writeMode, dayType, recalc, onEdit}:
    {row: number, cell: ICalendarCell, writeMode: boolean, dayType: number | undefined, recalc: any, onEdit: any}) => {
    const [hours, setHours] = useState<number>(cell.hours)
 
+   //NOTE - Получение количества часов в конкретной ячейке
    const getHours = (type: number): number => {
       if (type === 1) return 7;
       if ([3,4,10].includes(type)) return 8;

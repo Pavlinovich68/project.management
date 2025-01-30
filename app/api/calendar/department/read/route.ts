@@ -2,6 +2,7 @@ import { ICalendar, ICalendarCell, ICalendarFooter, ICalendarRow } from "@/model
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import StringHelper from '@/services/string.helper';
+import CalendarHelper from "@/services/calendar.helper";
 
 // 0  - holiday            Выходной или праздничный   0
 // 1  - reduced            Предпраздничный            7
@@ -15,6 +16,51 @@ import StringHelper from '@/services/string.helper';
 // 9  - vacancy            Вакансия                   0
 // 10 - work on weekends   Работа в выходной          8
 export const POST = async (request: NextRequest) => {
+   const rowCells = async (staffId: number | null | undefined, year: number, month: number):Promise<ICalendarCell[]> => {
+      let currentDate = new Date(year, month-1, 1, 0,0,0,0);      
+      const result: ICalendarCell[] = [];      
+      const maxDate = new Date(year, month, 0);
+      const _staff = await prisma.staff.findUnique({where: { id: staffId??-1 }});
+      const staffBeginDate = _staff?.begin_date ? new Date(_staff.begin_date.getFullYear(), _staff.begin_date.getMonth(), _staff.begin_date.getDate(), 0,0,0,0) : new Date(0,0,0,0,0,0,0);
+      const staffEndDate = _staff?.end_date ? new Date(_staff.end_date.getFullYear(), _staff.end_date.getMonth(), _staff.end_date.getDate(), 0,0,0,0) : null;
+
+      while (currentDate <= maxDate) {
+         //Проверяем на действительность ставки         
+         let item: ICalendarCell = {id: 0, day: currentDate.getDate(), hours: 0, type: 0 };
+         if (!_staff || staffBeginDate > currentDate || (staffEndDate && staffEndDate < currentDate)) {
+            // Если ставка вакантна
+            item.type = 9
+         } else {            
+            const _day = currentDate.getDate();
+            const _cellItem = await prisma.dept_calendar_cell.findFirst({
+               where: {
+                  row: {
+                     rate_id: _staff.rate_id,
+                     calendar: {
+                        year: year
+                     }
+                  },
+                  month: month,
+                  day: _day,
+               }
+            });
+            if (_cellItem) {
+               // Если есть исключение - подставляем исключение
+               item.type = _cellItem.type,
+               item.hours = _cellItem.hours
+            } else {
+               // Базовое значение из производственного календаря
+               let _item = await CalendarHelper.hoursOfDayExt(currentDate);
+               item.type = _item.type;
+               item.hours = _item.hours;
+            }
+         }
+         result.push(item);
+         currentDate.setDate(currentDate.getDate() + 1);
+      }
+      return result;
+   }
+
    try {
       const { division_id, year, month } = await request.json();
 // Календарь
@@ -72,6 +118,7 @@ export const POST = async (request: NextRequest) => {
             }
          });
          
+         // Наименование строки
          let _rowHeader = undefined;
          if (_staff) {
             const _employee = await prisma.employee.findFirst({ where: {id: _staff.employee_id } });
@@ -83,44 +130,17 @@ export const POST = async (request: NextRequest) => {
          } else {
             _rowHeader = 'Вакансия';            
          }
-
-         const _cells = await prisma.dept_calendar_cell.findMany({
-            where: {
-               row_id: _row.id,
-               month: month
-            },
-            orderBy: {
-               day: 'asc'
-            }
-         });
-
-         const _sum = _cells.map(i => i.hours).reduce((part, a) => part + a, 0);
-         const cells:ICalendarCell[] = _cells.map(i => {
-            return {
-               id: i.id,
-               day: i.day,
-               type: i.type,
-               hours: i.hours,
-            }
-         })
+         // Создаем и заполняем массив по дням
+         const cells = await rowCells(_staff?.id, year, month);
+         const _sum = cells.map(i => i.hours).reduce((part, a) => part + a, 0);
          
-         const _total = await prisma.dept_calendar_cell.aggregate({
-            where: {
-               row_id: _row.id,
-               month: {
-                  lte: month
-               }
-            },
-            _sum: {
-               hours: true
-            }
-         })
+         const _total = await CalendarHelper.staffHours(_staff?.id, new Date(year, 0, 1), lastDay);
          
          const row: ICalendarRow = {
             name: _rowHeader,
             cells: cells,
             hours: _sum,
-            total: _total._sum.hours??0
+            total: _total
          }
 
          result.rows?.push(row);
