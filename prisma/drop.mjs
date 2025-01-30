@@ -24,7 +24,7 @@ const main = async () => {
    };
 
 
-   await execute(`SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'projectmanagement'`, client);
+   await execute(`SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'worktimemanagement'`, client);
    console.log(`\x1b[32mSessions successful cleaning!\x1b[0m`);
 
    const client1 = new pkg.Client({
@@ -35,7 +35,7 @@ const main = async () => {
       port: 5432,
    });
 
-   const result = await execute('DROP DATABASE projectmanagement', client1);
+   const result = await execute('DROP DATABASE worktimemanagement', client1);
 
    if (result) {
       console.log(`\x1b[32mDatabase successful dropped!\x1b[0m`);

@@ -23,7 +23,7 @@ const main = async () => {
    };
    
    
-   await execute(`create database projectmanagement`, client);
+   await execute(`create database worktimemanagement`, client);
    console.log(`\x1b[32mDatabase successful created!\x1b[0m`);
 }
 

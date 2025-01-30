@@ -1,4 +1,3 @@
-'use client'
 import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import React, {useRef, useState, useEffect} from "react";

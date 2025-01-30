@@ -19,7 +19,7 @@ export const POST = async (request) => {
 
       const result = data.map((item) => {
          return {
-            key: `${id??0}-${item.id}`,
+            key: item.id.toString(),
             label: item.name,
             data: {
                id: item.id,

@@ -1,20 +1,25 @@
 'use client'
-import React, {useRef, useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
 import { classNames } from "primereact/utils";
-import { IRoadmapItemSegment } from "@/models/IRoadmapItemSegment";
+import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
+import { Tooltip } from "primereact/tooltip";
+import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
+import { itemSignature } from "./roadmap.types";
+import { Badge } from "primereact/badge";
+import { IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
-const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name}:{roadmap_id: number, item_id: number, project_id: number, project_code: string, project_name: string}) => {
-   const [data, setData] = useState<IRoadmapItemSegment[]>();
-   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
+const RoadmapRow = ({roadmap_id, project_id}:
+   {roadmap_id: number, project_id: number}) => {
+   
+   const [data, setData] = useState<IRoadmapProjectItem>();
+   
    useEffect(() => {
-      getSegments();
+      getData();
    }, [roadmap_id, project_id])
 
-   const getSegments = async () => {
-      setIsLoaded(true);
+   const getData = async () => {
       const res = await fetch(`/api/roadmap/row`, {
          method: "POST",
          headers: {
@@ -28,23 +33,27 @@ const RoadmapRow = ({roadmap_id, item_id, project_id, project_code, project_name
       });
       const response = await res.json();
       setData(response.data);
-      setIsLoaded(false);
    }
 
    return (      
       <React.Fragment>
-         <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{project_code}: {project_name}</div>
-         <div className={classNames(styles.segmentBar)}>         
-            {            
-               data?.map((elem) =>
-                     <div className={classNames(elem.type === 1 ? styles.segmentItemPlan : styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `${elem.percent??0 * 100}%`}}>
-                        {/* <span className={classNames(styles.segmentItemPercentage)}>{elem.percent??0 * 100}%</span> */}
-                        {elem.type === 1 ? <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> : ''}
-                        <span className={classNames(styles.segmentItemValue)}>{elem.type === 1 ? elem.value?.toLocaleString("en-US") + ' дней, ' + elem.hours + ' рабочих часов.' : ''}</span>
-                        {/* <span className={classNames(styles.segmentItemTitle)}>{elem.name}</span> */}                     
-                     </div>
-               )
-            }
+         <Tooltip target=".custom-target-icon"/>
+         <div className="text-left mb-1 mt-2 text-sm font-semibold text-500">{data?.project_code}: {data?.project_name}</div>         
+         <div className={classNames(styles.controlPointsLayear)}>
+            {data?.control_points.map((point) => 
+               <div className={classNames(styles.controlPoint)} data-color={point.type} style={{left: `${point.width}%`}}>
+                  <Badge className={classNames(styles.badge)}/>
+               </div>
+            )}
+         </div>
+         <div className={classNames(styles.segmentBar)}>
+            <div className={classNames(styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `100%`}}>
+               <span className={classNames(styles.segmentItemTitle)}>{data?.comment}</span>
+               <span className={classNames(styles.segmentItemValue)}>{data?.hours} рабочих часов</span>
+               <span className={classNames(styles.segmentItemPercentage)}>Исполнено на {data?.percentage}%</span>
+               <div className={classNames(styles.segmentItemPlan)} style={{left: `${data?.start_width}%`, width: `${data?.plan_width}%`}}></div>
+               <div className={classNames(styles.segmentItemFact)} style={{left: `${data?.start_width}%`, width: `${data?.fact_width}%`}}></div>
+            </div>
          </div>
       </React.Fragment>      
    );

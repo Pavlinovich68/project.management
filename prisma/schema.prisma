@@ -40,6 +40,7 @@ model division {
    childrens      division[]  @relation("divisionTodivision")
    rate           rate[]
    dept_calendar  dept_calendar[]
+   roadmaps       roadmap[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -81,7 +82,7 @@ model project {
 //NOTE - Рабочий календарь
 model production_calendar {
    id          Int @id @default(autoincrement())
-   year        Int
+   year        Int @unique
    exclusions  exclusion[]
 }
 //NOTE - Исключение для всех
@@ -109,14 +110,15 @@ model exclusion {
 // 3 - unknown
 //!SECTION
 model employee {
-   id          Int         @id @default(autoincrement())
-   name        String      @db.VarChar(75)
-   email       String      @unique(map: "employee_email_u_ind") @db.VarChar(50)
-   contacts    String?     @db.VarChar(50)
-   begin_date  DateTime    @default(now()) @db.Timestamp(6)
-   end_date    DateTime?   @db.Timestamp(6)
-   staff       staff[]
-   users       users[]
+   id             Int         @id @default(autoincrement())
+   name           String      @db.VarChar(75)
+   email          String      @unique(map: "employee_email_u_ind") @db.VarChar(50)
+   contacts       String?     @db.VarChar(50)
+   begin_date     DateTime    @default(now()) @db.Timestamp(6)
+   end_date       DateTime?   @db.Timestamp(6)
+   staff          staff[]
+   users          users[]
+   roadmap_items  roadmap_fact_item[]
 }
 //NOTE - График отпусков
 model vacation {
@@ -131,28 +133,51 @@ model vacation {
 model roadmap {
    id             Int      @id @default(autoincrement())
    year           Int
+   division_id    Int         
+   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    roadmap_items  roadmap_item[]
+   @@unique([year,  division_id])
 }
 //NOTE - Элемент дорожной карты
 model roadmap_item {
-   id                Int            @id @default(autoincrement())
-   comment           String?        @db.VarChar(250)
-   roadmap_id        Int
-   roadmap           roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   project_id        Int
-   project           project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   start_date        DateTime       @db.Timestamp(6)
-   end_date          DateTime       @db.Timestamp(6)
-   hours             Int
-   documents         attachment[]
-   control_points    control_point[]
-   project_divisions project_division[]
+   id             Int            @id @default(autoincrement())
+   comment        String?        @db.VarChar(250)
+   roadmap_id     Int
+   roadmap        roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   project_id     Int
+   project        project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   hours          Int
+   is_closed      Boolean        @default(false)
+   begin_date     DateTime      @db.Timestamp(6)
+   documents      attachment[]
+   control_points control_point[]
+   fact_items     roadmap_fact_item[]
+   @@unique([roadmap_id,  project_id])
+}
+//NOTE - Фактически затраченное время
+model roadmap_fact_item {
+   id             Int         @id @default(autoincrement())
+   date           DateTime    @db.Timestamp(6)
+   hours          Int
+   employee_id    Int
+   employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   roadmap_item_id   Int
+   roadmap_item   roadmap_item @relation(fields: [roadmap_item_id], references: [id])
 }
 //NOTE - Контрольная точка
+// 1 - Предоставление требований
+// 2 - Подготовка ТЗ
+// 3 - Согласование ТЗ
+// 4 - Предварительные испытания
+// 5 - Опытная эксплуатация
+// 6 - Приемочные испытания
+// 7 - Ввод в эксплуатацию
+// 8 - Прочее
 model control_point {
    id                Int            @id @default(autoincrement())
    date              DateTime       @db.Timestamp(6)
    name              String         @db.VarChar(250)
+   type              Int            @default(8)
    roadmap_item_id   Int
    roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -182,7 +207,8 @@ model post {
 model rate {
    id             Int         @id @default(autoincrement())
    no             Int         
-   post_id        Int   
+   post_id        Int
+   is_work_time   Boolean     @default(true)
    post           post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    division_id    Int         
    division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -211,7 +237,7 @@ model dept_calendar {
    rows        dept_calendar_row[]
    @@unique([year, division_id])
 }
-
+//NOTE - Привязка ставки к календарю
 model dept_calendar_row {
    id          Int            @id @default(autoincrement())
    no          Int
@@ -245,11 +271,4 @@ model dept_calendar_cell {
    row_id   Int
    row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    @@unique([month, day, row_id])
-}
-//NOTE - Элементы дорожной карты в работе у подразделения
-model project_division {
-   id                Int            @id @default(autoincrement())
-   labour_intensity  Int?
-   roadmap_item_id   Int
-   roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

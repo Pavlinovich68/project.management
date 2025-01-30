@@ -1,14 +1,10 @@
 'use client'
-import React, {useRef, useState, useEffect, cache, SyntheticEvent, Ref, forwardRef} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
-import { ICalendar, ICellDictionary, ICellProperty } from "@/models/ICalendar";
+import { ICalendar } from "@/models/ICalendar";
 import { Session } from "next-auth";
-import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
-import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
-import { Dropdown } from "primereact/dropdown";
 import ItrCalendarRow from "./ItrCalendarRow";
 import ItrCalendarHeader from "./ItrCalendarHeader";
 import ItrCalendarFooter from "./ItrCalendarFooter";

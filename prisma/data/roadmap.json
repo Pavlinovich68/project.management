@@ -1,58 +1,72 @@
 [
    {
       "project": "P1",
-      "comment": "Первый этап",
-      "start_date": "2024-01-10",
-      "end_date": "2024-11-30",
-      "hours": 800
+      "comment": "Доработки в рамках цифровой трансформации",
+      "begin_date": "2024-01-10",
+      "hours": 800,
+      "control_points": [],
+      "fact": [
+         {"date": "2024-01-10", "hours": 4, "employee_id": 1}
+      ]
    },
    {
       "project": "P2",
-      "comment": "Первый этап",
-      "start_date": "2024-03-01",
-      "end_date": "2024-06-30",
-      "hours": 1000
+      "comment": "Доработки в рамках цифровой трансформации",
+      "begin_date": "2024-03-01",
+      "hours": 1000,
+      "control_points": [],
+      "fact": [
+         {"date": "2024-03-01", "hours": 800, "employee_id": 1}
+      ]
    },
    {
       "project": "P3",
-      "comment": "Первый этап",
-      "start_date": "2024-05-01",
-      "end_date": "2024-12-10",
-      "hours": 1200
+      "comment": "Доработки в рамках цифровой трансформации",
+      "begin_date": "2024-05-01",
+      "hours": 1200,
+      "control_points": [],
+      "fact": [
+         {"date": "2024-05-01", "hours": 224, "employee_id": 1}
+      ]
    },
    {
       "project": "P4",
-      "comment": "Первый этап",
-      "start_date": "2024-03-01",
-      "end_date": "2024-05-31",
-      "hours": 800      
+      "comment": "Доработки в рамках цифровой трансформации",
+      "begin_date": "2024-03-01",
+      "hours": 800,
+      "control_points": [],
+      "fact": [
+         {"date": "2024-03-01", "hours": 322, "employee_id": 1}
+      ]
    },
    {
       "project": "P5",
-      "comment": "Первый этап",
-      "start_date": "2024-01-10",
-      "end_date": "2024-12-25",
-      "hours": 800
+      "comment": "Доработки в рамках цифровой трансформации",
+      "begin_date": "2024-06-10",
+      "hours": 800,
+      "control_points": [],
+      "fact": [
+         {"date": "2024-06-10", "hours": 366, "employee_id": 1}
+      ]
    },
    {
       "project": "P6",
-      "comment": "Первый этап",
-      "start_date": "2024-01-20",
-      "end_date": "2024-04-01",
-      "hours": 1000
-   },
-   {
-      "project": "P6",
-      "comment": "Второй этап",
-      "start_date": "2024-07-01",
-      "end_date": "2024-12-25",
-      "hours": 1200
+      "comment": "Доработки в рамках цифровой трансформации",
+      "begin_date": "2024-10-20",
+      "hours": 1000,
+      "control_points": [],
+      "fact": [
+         {"date": "2024-10-28", "hours": 540, "employee_id": 1}
+      ]
    },
    {
       "project": "P7",
-      "comment": "Первый этап",
-      "start_date": "2024-04-01",
-      "end_date": "2024-05-31",
-      "hours": 1000
+      "comment": "Доработки в рамках цифровой трансформации",
+      "begin_date": "2024-05-01",
+      "hours": 1000,
+      "control_points": [],
+      "fact": [
+         {"date": "2024-05-10", "hours": 800, "employee_id": 1}
+      ]
    }
 ]
