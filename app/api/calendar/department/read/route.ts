@@ -3,6 +3,7 @@ import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import StringHelper from '@/services/string.helper';
 import CalendarHelper from "@/services/calendar.helper";
+import { it } from "node:test";
 
 // 0  - holiday            Выходной или праздничный   0
 // 1  - reduced            Предпраздничный            7
@@ -15,6 +16,12 @@ import CalendarHelper from "@/services/calendar.helper";
 // 8  - absense from work  Прогул                     0
 // 9  - vacancy            Вакансия                   0
 // 10 - work on weekends   Работа в выходной          8
+
+/*
+1. Вытянуть в память из производственного календаря все исключения за месяц
+2. Построить словарь где ключ это день месяца а значение это количество часов
+3. Итоги от начала года расчитывать за предидущие месяца при первом обращении и расчитываьб при первом обращении
+*/
 export const POST = async (request: NextRequest) => {
    const rowCells = async (staffId: number | null | undefined, year: number, month: number):Promise<ICalendarCell[]> => {
       let currentDate = new Date(year, month-1, 1, 0,0,0,0);      
@@ -63,6 +70,57 @@ export const POST = async (request: NextRequest) => {
 
    try {
       const { division_id, year, month } = await request.json();
+
+      const firstMonthDay = new Date(year, month-1, 1);
+      const lastMonthDay = new Date(year, month, 0);      
+
+      const monthCalendarExclusionsQuery = await prisma.production_calendar.findFirst({
+         where: {
+            year: year
+         },
+         select: {
+            exclusions: {
+               where: {
+                  AND: [
+                     {
+                        date: {
+                           gte: firstMonthDay
+                        }
+                     },
+                     {
+                        date: {
+                           lte: lastMonthDay
+                        }
+                     }
+                  ]
+               }
+            }
+         }
+      });
+
+      const monthHours: {[key: number]: number} = {};
+      if (monthCalendarExclusionsQuery?.exclusions) {
+         for (let item of monthCalendarExclusionsQuery?.exclusions) {
+            const day = item.date.getDate();
+            let hours = 0;
+            switch (item.exclusion_type) {
+               case 1: hours = 7; break;
+               case 3: hours = 8; break;
+               case 10: hours = 8; break;
+            }
+            monthHours[day] = hours;
+         }
+      }
+
+      for (let i = 1; i <= lastMonthDay.getDate(); i++) {
+         if (monthHours[i] === undefined) {
+            const dayOfWeek = new Date(year, month -1, i).getDay();
+            monthHours[i] = (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8;
+         }
+      }
+      
+      return await NextResponse.json(monthHours);
+
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
          where: {
