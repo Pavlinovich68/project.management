@@ -94,12 +94,8 @@ export default class DateHelper {
       return result;
    }
 
-   static truncTime = (date: Date): Date => {
-      const utcDate = new Date(Date.UTC(
-         date.getUTCFullYear(),
-         date.getUTCMonth(),
-         date.getUTCDate(), 0, 0, 0
-      ));
+   static toUTC = (date: Date): Date => {
+      const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0));
       return utcDate;
    }
 }

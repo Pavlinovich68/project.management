@@ -154,19 +154,27 @@ export const POST = async (request: NextRequest) => {
          }
       })
 //NOTE - Разработчики по состоянию на текущий день либо на последний день месяца
-      const currentDay = month === new Date().getMonth()+1 ? DateHelper.truncTime(new Date()) : DateHelper.truncTime(new Date(year, month, 0));
+      const currentDay = month === new Date().getMonth()+1 ? DateHelper.toUTC(new Date()) : DateHelper.toUTC(new Date(year, month, 0));
 
       const staffs = await prisma.staff.findMany({
          where: {
             rate: {
                division_id: division_id
             },
-
+            begin_date: {
+               lt: currentDay
+            },
+            // end_date: {
+            //    gt: currentDay
+            // }
+         },
+         select: {
+            employee: true            
          }
       })
 //NOTE - Вакансии
 //NOTE - Отпуска      
-      return await NextResponse.json(currentDay);
+      return await NextResponse.json(staffs);
 
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
