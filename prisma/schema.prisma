@@ -248,7 +248,7 @@ model dept_calendar_row {
    calendar    dept_calendar  @relation(fields: [calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    @@unique([rate_id, calendar_id])
 }
-//NOTE - Типы дня. Частично совпадает с типами исключений
+//NOTE - Персональные исключения
 //SECTION
 //NOTE - exclusion_type
 // 0 - holiday

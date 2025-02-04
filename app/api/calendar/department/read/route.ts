@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import StringHelper from '@/services/string.helper';
 import CalendarHelper from "@/services/calendar.helper";
 import { it } from "node:test";
+import DateHelper from "@/services/date.helpers";
 
 // 0  - holiday            Выходной или праздничный   0
 // 1  - reduced            Предпраздничный            7
@@ -70,7 +71,7 @@ export const POST = async (request: NextRequest) => {
 
    try {
       const { division_id, year, month } = await request.json();
-
+//NOTE - Рабочие часы по графику в соответствии с производственным календарем
       const firstMonthDay = new Date(year, month-1, 1);
       const lastMonthDay = new Date(year, month, 0);      
 
@@ -118,8 +119,54 @@ export const POST = async (request: NextRequest) => {
             monthHours[i] = (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8;
          }
       }
-      
-      return await NextResponse.json(monthHours);
+//NOTE - Персональные исключения из рабочего графика
+      const personalExclusions = await prisma.dept_calendar.findFirst({
+         where: {
+            division_id: division_id,
+            year: year
+         },
+         select: {
+            rows: {
+               select: {
+                  rate: {
+                     select: {
+                        post_id: true
+                     }
+                  },
+                  cells: {
+                     where: {
+                        month: month
+                     },
+                     select: {
+                        day: true,
+                        type: true,
+                        hours: true
+                     },
+                     orderBy: {
+                        day: 'asc'
+                     }
+                  }
+               },
+               orderBy: {
+                  no: 'asc'
+               }
+            }
+         }
+      })
+//NOTE - Разработчики по состоянию на текущий день либо на последний день месяца
+      const currentDay = month === new Date().getMonth()+1 ? DateHelper.truncTime(new Date()) : DateHelper.truncTime(new Date(year, month, 0));
+
+      const staffs = await prisma.staff.findMany({
+         where: {
+            rate: {
+               division_id: division_id
+            },
+
+         }
+      })
+//NOTE - Вакансии
+//NOTE - Отпуска      
+      return await NextResponse.json(currentDay);
 
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
