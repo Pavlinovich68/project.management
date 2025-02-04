@@ -165,7 +165,7 @@ export const POST = async (request: NextRequest) => {
                lt: currentDay
             },
             // end_date: {
-            //    gt: currentDay
+            //    gte: currentDay
             // }
          },
          select: {
