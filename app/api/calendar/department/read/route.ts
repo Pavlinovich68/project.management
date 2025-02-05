@@ -72,6 +72,7 @@ export const POST = async (request: NextRequest) => {
    try {
       const { division_id, year, month } = await request.json();
 //NOTE - Рабочие часы по графику в соответствии с производственным календарем
+//#region 
       const firstMonthDay = new Date(year, month-1, 1);
       const lastMonthDay = new Date(year, month, 0);      
 
@@ -119,7 +120,9 @@ export const POST = async (request: NextRequest) => {
             monthHours[i] = (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8;
          }
       }
+//#endregion
 //NOTE - Персональные исключения из рабочего графика
+//#region
       const personalExclusions = await prisma.dept_calendar.findFirst({
          where: {
             division_id: division_id,
@@ -128,11 +131,7 @@ export const POST = async (request: NextRequest) => {
          select: {
             rows: {
                select: {
-                  rate: {
-                     select: {
-                        post_id: true
-                     }
-                  },
+                  rate_id: true,
                   cells: {
                      where: {
                         month: month
@@ -153,28 +152,85 @@ export const POST = async (request: NextRequest) => {
             }
          }
       })
-//NOTE - Разработчики по состоянию на текущий день либо на последний день месяца
+//#endregion
+//NOTE - Разработчики по состоянию на текущий день либо на последний день месяца (первая колонка)
+//#region
       const currentDay = month === new Date().getMonth()+1 ? DateHelper.toUTC(new Date()) : DateHelper.toUTC(new Date(year, month, 0));
 
-      const staffs = await prisma.staff.findMany({
+      const rates = await prisma.rate.findMany({
          where: {
-            rate: {
-               division_id: division_id
-            },
-            begin_date: {
-               lt: currentDay
-            },
-            // end_date: {
-            //    gte: currentDay
-            // }
+            division_id: division_id
          },
          select: {
-            employee: true            
+            id: true,
+            staff: {
+               where: {
+                  begin_date: {
+                     lt: currentDay
+                  },
+                  OR: [
+                     {
+                        end_date: null
+                     },
+                     {
+                        end_date: {
+                           gte: currentDay
+                        }
+                     }
+                  ]
+               },
+               select: {
+                  employee: {
+                     select: {
+                        name: true
+                     }
+                  }
+               }
+            }
+         },
+         orderBy: {
+            no: 'asc'
          }
-      })
+      });
+
+      const rowNames = rates.map((i) => {
+         return {
+            rate_id: i.id,
+            name: i.staff[0] ? i.staff[0].employee.name : 'Вакансия'
+         }
+      });
+//#endregion      
 //NOTE - Вакансии
+      const vacancies = (await prisma.rate.findMany({
+         where: {
+            division_id: division_id
+         },
+         select: {
+            id: true,
+            staff: {
+               where: {
+                  OR: [
+                     {
+                        begin_date: {
+                           gt: firstMonthDay
+                        }
+                     },
+                     {
+                        end_date: {
+                           lt: lastMonthDay
+                        }
+                     }
+                  ]
+               },
+               select: {
+                  begin_date: true,
+                  end_date: true
+               }
+            }
+         }
+      })).filter(i => i.staff.length > 0);
 //NOTE - Отпуска      
-      return await NextResponse.json(staffs);
+      return await NextResponse.json(vacancies);
 
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
