@@ -1,4 +1,4 @@
-POST http://localhost:3001/api/calendar/department/read
+POST http://localhost:3000/api/calendar/department/read
 content-type: application/json
 
 {

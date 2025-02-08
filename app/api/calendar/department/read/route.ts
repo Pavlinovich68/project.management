@@ -5,6 +5,7 @@ import StringHelper from '@/services/string.helper';
 import CalendarHelper from "@/services/calendar.helper";
 import { it } from "node:test";
 import DateHelper from "@/services/date.helpers";
+import { start } from "repl";
 
 // 0  - holiday            Выходной или праздничный   0
 // 1  - reduced            Предпраздничный            7
@@ -23,7 +24,15 @@ import DateHelper from "@/services/date.helpers";
 2. Построить словарь где ключ это день месяца а значение это количество часов
 3. Итоги от начала года расчитывать за предидущие месяца при первом обращении и расчитываьб при первом обращении
 */
+
 export const POST = async (request: NextRequest) => {
+
+   function* numberGenerator(n: number): Generator<number> {
+      for (let i = 1; i <= n; i++) {
+         yield i;
+      }
+   }
+
    const rowCells = async (staffId: number | null | undefined, year: number, month: number):Promise<ICalendarCell[]> => {
       let currentDate = new Date(year, month-1, 1, 0,0,0,0);      
       const result: ICalendarCell[] = [];      
@@ -201,7 +210,8 @@ export const POST = async (request: NextRequest) => {
       });
 //#endregion      
 //NOTE - Вакансии
-      const vacancies = (await prisma.rate.findMany({
+//#region
+      const vacanciesData = (await prisma.rate.findMany({
          where: {
             division_id: division_id
          },
@@ -211,13 +221,41 @@ export const POST = async (request: NextRequest) => {
                where: {
                   OR: [
                      {
-                        begin_date: {
-                           gt: firstMonthDay
-                        }
+                        AND: [
+                           {
+                              begin_date: {
+                                 gt: firstMonthDay
+                              }
+                           },
+                           {
+                              begin_date: {
+                                 lt: lastMonthDay
+                              }
+                           }
+                        ]                        
+                     },
+                     {
+                        AND: [
+                           {
+                              end_date: {
+                                 lt: lastMonthDay
+                              }
+                           },
+                           {
+                              end_date: {
+                                 gt: firstMonthDay
+                              }
+                           }
+                        ]                        
                      },
                      {
                         end_date: {
-                           lt: lastMonthDay
+                           lt: firstMonthDay
+                        }
+                     },
+                     {
+                        begin_date: {
+                           gt: lastMonthDay
                         }
                      }
                   ]
@@ -229,8 +267,27 @@ export const POST = async (request: NextRequest) => {
             }
          }
       })).filter(i => i.staff.length > 0);
-//NOTE - Отпуска      
-      return await NextResponse.json(vacancies);
+
+      const daysArray = [...numberGenerator(lastMonthDay.getDate())];
+
+      const vacanciesDays: {[key: number]: number[]} = {};
+      for (let _rate of vacanciesData) {
+         let _rateDays: number[] = daysArray;
+         for (let _staff of _rate.staff) {
+            let _begin_date = DateHelper.toUTC(_staff.begin_date < firstMonthDay ? firstMonthDay : _staff.begin_date);
+            let _end_date = DateHelper.toUTC((_staff.end_date??lastMonthDay) >= lastMonthDay ? lastMonthDay : (_staff.end_date??lastMonthDay));            
+            let _iterate_day = _begin_date            
+            while (_iterate_day <= _end_date) {
+               const _day = _iterate_day.getDate();
+               _rateDays = _rateDays.filter(num => num !== _day);
+               _iterate_day.setDate(_iterate_day.getDate() + 1)
+            }            
+         }
+         vacanciesDays[_rate.id] = _rateDays;
+      }
+//#endregion
+//NOTE - Отпуска
+return await NextResponse.json(vacanciesDays);
 
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
