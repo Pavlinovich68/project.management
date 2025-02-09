@@ -33,6 +33,18 @@ export const POST = async (request: NextRequest) => {
       }
    }
 
+   const getDatesBetween = (startDate: Date, endDate: Date, month: number) => {
+      const dates = [];
+      let currentDate = new Date(startDate);
+      // Убедимся, что конечная дата больше начальной
+      while (currentDate <= endDate) {
+         if (new Date(currentDate).getMonth()+1 === month)
+         dates.push(new Date(currentDate).getDate());
+         currentDate.setDate(currentDate.getDate() + 1);
+      }
+      return dates;
+   }
+
    const rowCells = async (staffId: number | null | undefined, year: number, month: number):Promise<ICalendarCell[]> => {
       let currentDate = new Date(year, month-1, 1, 0,0,0,0);      
       const result: ICalendarCell[] = [];      
@@ -287,7 +299,42 @@ export const POST = async (request: NextRequest) => {
       }
 //#endregion
 //NOTE - Отпуска
-return await NextResponse.json(vacanciesDays);
+//#region
+      const vacationsQuery = await prisma.vacation.findMany({
+         where: {
+            year: year
+         },
+         select: {
+            start_date: true,
+            end_date: true,
+            staff: {
+               select: {
+                  rate: true
+               }
+            }
+         }
+      });
+
+      const vacations = vacationsQuery.map((i) => {
+         return {
+            start_date: i.start_date,
+            end_date: i.end_date,
+            start_month: i.start_date.getMonth() +1,
+            end_month: i.end_date.getMonth() +1,
+            rate_id: i.staff?.rate.id,
+            division_id: i.staff?.rate.division_id
+         }
+      }).filter((i) => (i.start_month === month || i.end_month === month) && i.division_id === division_id).map((i) => {
+         return {
+            rate_id: i.rate_id,
+            days: getDatesBetween(i.start_date, i.end_date, month)
+         }
+      });
+//#endregion
+//NOTE - Начинаем строить сетку календаря
+//#region 
+   return await NextResponse.json(vacations);
+//#endregion
 
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
