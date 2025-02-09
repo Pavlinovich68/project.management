@@ -331,10 +331,20 @@ export const POST = async (request: NextRequest) => {
          }
       });
 //#endregion
-//NOTE - Начинаем строить сетку календаря
-//#region 
-   return await NextResponse.json(vacations);
+//NOTE - Выходная модель
+//#region
+   const _dayCount = new Date(year, month, 0).getDate();
+   const _dayArray = Array.from(Array(_dayCount+1).keys()).filter(i => i>0);
+   const _result: ICalendar = {
+      year: year,
+      month: month,
+      header: { name: 'Фамилия', days: _dayArray, hours: 'Всего', total: 'От начала' },
+      rows: [],
+      footer: undefined
+   }   
 //#endregion
+//NOTE - Заполняю строки   
+   return await NextResponse.json(_result);
 
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
