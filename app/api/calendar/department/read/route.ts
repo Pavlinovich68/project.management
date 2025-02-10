@@ -46,14 +46,6 @@ export const POST = async (request: NextRequest) => {
       return dates;
    }
 
-   const rateTotalHours = (year: number, month: number, rate_id: number, currentSum: number) => {
-      const firstMonthDay = new Date(year, month-1, 1);
-      const lastMonthDay = new Date(year, month+1, 0);
-      const currentYear = new Date().getFullYear();
-      const currentMonth = new Date().getMonth() +1;
-      if ((year === currentYear) && (month === currentMonth)) return currentSum;
-   }
-
    const rowCells = async (staffId: number | null | undefined, year: number, month: number):Promise<ICalendarCell[]> => {
       let currentDate = new Date(year, month-1, 1, 0,0,0,0);      
       const result: ICalendarCell[] = [];      
@@ -103,6 +95,33 @@ export const POST = async (request: NextRequest) => {
       const { division_id, year, month } = await request.json();
       const firstMonthDay = new Date(year, month-1, 1);
       const lastMonthDay = new Date(year, month, 0);
+
+      const rateTotalHours = async (rate_id: number, currentSum: number): Promise<number> => {
+         // Если январь то нарастающий итог совпадает с итогом за месяц
+         if (month === 1) return currentSum;
+         // Берем нарастающий итог за предшествующий месяц
+         const accItem = await prisma.acc_hours.findFirst({
+            where: {
+               rate_id: rate_id,
+               year: year,
+               month: month-1
+            }
+         });
+         const storedValue = accItem?.value;
+         // Если значение не найдено значит месяц еще не настал либо значение еще не было расчитано.
+         if (!storedValue) {
+            // Если месяц еще не настал
+            if (month > new Date().getMonth()+1) {
+               // Вытаскиваем то что есть сохраненное, остальное по производственному календарю
+            } else {
+               // Берем за предшествующий месяц, сохраняем и возвращаем
+            }
+
+            return 0;
+         } else
+            return storedValue + currentSum;
+      }
+
 //NOTE - Рабочие часы по графику в соответствии с производственным календарем
 //#region
       const monthCalendarExclusionsQuery = await prisma.production_calendar.findFirst({

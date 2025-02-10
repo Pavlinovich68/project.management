@@ -284,5 +284,6 @@ model acc_hours {
    year     Int
    month    Int
    rate_id  Int
+   value    Int
    rate     rate  @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
