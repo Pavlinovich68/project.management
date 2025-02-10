@@ -6,6 +6,7 @@ import CalendarHelper from "@/services/calendar.helper";
 import { it } from "node:test";
 import DateHelper from "@/services/date.helpers";
 import { start } from "repl";
+import ItrCalendarRow from "@/components/calendar/ItrCalendarRow";
 
 // 0  - holiday            Выходной или праздничный   0
 // 1  - reduced            Предпраздничный            7
@@ -43,6 +44,14 @@ export const POST = async (request: NextRequest) => {
          currentDate.setDate(currentDate.getDate() + 1);
       }
       return dates;
+   }
+
+   const rateTotalHours = (year: number, month: number, rate_id: number, currentSum: number) => {
+      const firstMonthDay = new Date(year, month-1, 1);
+      const lastMonthDay = new Date(year, month+1, 0);
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth() +1;
+      if ((year === currentYear) && (month === currentMonth)) return currentSum;
    }
 
    const rowCells = async (staffId: number | null | undefined, year: number, month: number):Promise<ICalendarCell[]> => {
@@ -92,11 +101,10 @@ export const POST = async (request: NextRequest) => {
 
    try {
       const { division_id, year, month } = await request.json();
-//NOTE - Рабочие часы по графику в соответствии с производственным календарем
-//#region 
       const firstMonthDay = new Date(year, month-1, 1);
-      const lastMonthDay = new Date(year, month, 0);      
-
+      const lastMonthDay = new Date(year, month, 0);
+//NOTE - Рабочие часы по графику в соответствии с производственным календарем
+//#region
       const monthCalendarExclusionsQuery = await prisma.production_calendar.findFirst({
          where: {
             year: year
@@ -121,7 +129,7 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
-      const monthHours: {[key: number]: number} = {};
+      let baseCells: ICalendarCell[] = [];
       if (monthCalendarExclusionsQuery?.exclusions) {
          for (let item of monthCalendarExclusionsQuery?.exclusions) {
             const day = item.date.getDate();
@@ -131,16 +139,18 @@ export const POST = async (request: NextRequest) => {
                case 3: hours = 8; break;
                case 10: hours = 8; break;
             }
-            monthHours[day] = hours;
+            baseCells.push({day: day, type: item.exclusion_type, hours: hours});
+            //monthHours[day] = hours;
          }
       }
 
       for (let i = 1; i <= lastMonthDay.getDate(); i++) {
-         if (monthHours[i] === undefined) {
+         if (baseCells.find((_cell) => _cell.day === i) === undefined) {
             const dayOfWeek = new Date(year, month -1, i).getDay();
-            monthHours[i] = (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8;
+            baseCells.push({day: i, type: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 4, hours: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8});
          }
       }
+      baseCells = baseCells.sort(function(a, b) { return a.day - b.day })
 //#endregion
 //NOTE - Персональные исключения из рабочего графика
 //#region
@@ -333,18 +343,21 @@ export const POST = async (request: NextRequest) => {
 //#endregion
 //NOTE - Выходная модель
 //#region
-   const _dayCount = new Date(year, month, 0).getDate();
-   const _dayArray = Array.from(Array(_dayCount+1).keys()).filter(i => i>0);
-   const _result: ICalendar = {
-      year: year,
-      month: month,
-      header: { name: 'Фамилия', days: _dayArray, hours: 'Всего', total: 'От начала' },
-      rows: [],
-      footer: undefined
-   }   
+   const grid: ICalendarRow[] = [];
+   for (const _row of rowNames) {
+      const rowICalendar: ICalendarRow = {
+         rate_id: _row.rate_id,
+         name: _row.name,
+         cells: baseCells,
+         hours: baseCells.reduce((acc, curr) => acc + curr.hours, 0),
+         total: 0
+      }
+      grid.push(rowICalendar)
+   }
 //#endregion
 //NOTE - Заполняю строки   
-   return await NextResponse.json(_result);
+   //return await NextResponse.json(Object.keys(monthHours).map((key, value) => key));
+   return await NextResponse.json(grid);
 
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({

@@ -16,6 +16,7 @@ export interface ICalendarHeader {
 }
 
 export interface ICalendarRow {
+   rate_id: number | undefined | null,
    name: string | undefined | null,
    cells: ICalendarCell[] | undefined
    hours: number
@@ -23,7 +24,7 @@ export interface ICalendarRow {
 }
 
 export interface ICalendarCell {
-   id: number,
+   //id: number,
    day: number,
    type: number,
    hours: number
