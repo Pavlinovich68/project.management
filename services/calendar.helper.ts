@@ -243,7 +243,8 @@ export default class CalendarHelper {
       }
       return dates;
    }
-
+//NOTE - Получаем с сервера все необходимые для построения календаря данные
+//#region
    static prepareCalendarData = async (division_id: number, year: number, month: number): Promise<ICalendarRow[]> => {
       const firstMonthDay = new Date(year, month-1, 1);
       const lastMonthDay = new Date(year, month, 0);
@@ -487,7 +488,53 @@ export default class CalendarHelper {
 //#endregion
 //NOTE - Итоги от начала года
 //#region
-      const accumulator = await this.getAccumulatorValues(division_id, year, month);
+      let accumulator: ICalendarSum[] = []
+      if (month !== 1) {
+         const accumulatorData = await prisma.acc_hours.groupBy({
+            by: ['rate_id'],
+            where: {
+               year: year,
+               month: month -1,
+               rate: {
+                  division_id: division_id
+               }
+            },
+            _sum: {
+               value: true
+            }
+         })
+         if (accumulatorData.length === 0) {
+            const prevData = await this.prepareCalendarData(division_id, year, month-1);
+            console.log(prevData);
+            if (month < new Date().getMonth()+1) {
+               for (let item of prevData) {
+                  await prisma.acc_hours.create({
+                     data: {
+                        rate_id: item.rate_id??0,
+                        year: year,
+                        month: month-1,
+                        value: item.total??0
+                     }
+                  })
+               }
+            }
+            accumulator = prevData.map(i => {
+               return {
+                  rate_id: i.rate_id,
+                  sum: i.total
+               }
+            });
+         } else {
+            accumulator = accumulatorData.map(i => {
+               return {
+                  rate_id: i.rate_id,
+                  sum: i._sum.value
+               }
+            });
+         }
+      } else {
+         accumulator = [];
+      }      
 //#endregion
 //NOTE - Выходная модель
 //#region
@@ -508,30 +555,7 @@ export default class CalendarHelper {
 //#endregion
       return grid;
    }
-
-   static getAccumulatorValues = async (division_id: number, year: number, month: number): Promise<ICalendarSum[] | undefined> => {
-      const data = await prisma.acc_hours.groupBy({
-         by: ['rate_id'],
-         where: {
-            year: year,
-            month: month -1,
-            rate: {
-               division_id: division_id
-            }
-         },
-         _sum: {
-            value: true
-         }
-      })
-      const result: ICalendarSum[] = data.map(i => {
-         return {
-            rate_id: i.rate_id,
-            sum: i._sum.value
-         }
-      });
-      return result;
-   }
-
+//#endregion
    static getCalendarRow = async (
          year: number,
          month: number,
@@ -577,18 +601,9 @@ export default class CalendarHelper {
          name: baseRow.name,
          cells: baseCells,
          hours: rowSum,
-         total: total
+         total: month === 1 ? rowSum : rowSum + total
       }
 
-      const currentMonth = new Date().getMonth();
-      if (month == currentMonth) {
-         result.total = result.hours;
-      } else
-      if (month < currentMonth) {
-         result.total = total;
-      } else {
-         result.total = 0;
-      }
       return result;
    }
 }
