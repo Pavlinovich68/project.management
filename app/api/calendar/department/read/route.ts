@@ -1,4 +1,4 @@
-import { ICalendar, ICalendarCell, ICalendarFooter, ICalendarRow } from "@/models/ICalendar";
+import { ICalendar, ICalendarCell, ICalendarFooter, ICalendarRow, ICalendarHeader } from "@/models/ICalendar";
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import StringHelper from '@/services/string.helper';
@@ -81,9 +81,16 @@ export const POST = async (request: NextRequest) => {
 
    try {
       const { division_id, year, month } = await request.json();
-
+// Получаем сетку календаря
       const grid = await CalendarHelper.prepareCalendarData(division_id, year, month);
-      return await NextResponse.json(grid);      
+// Готовим шапку календаря
+      const lastDayOfMonth = new Date(year, month, 0).getDate();
+      const daysList = [...CalendarHelper.numberGenerator(lastDayOfMonth)]
+      const gridHeader: ICalendarHeader = { name: 'Фамилия', days: daysList, hours: 'Всего', total: 'От начала' }
+      // const calendarFooter: ICalendarFooter = {
+      //    name: 'Итого:',
+      // }
+      return await NextResponse.json({lastDayOfMonth, daysList, grid});
 // Календарь
       const _calendar = await prisma.dept_calendar.findFirst({
          where: {

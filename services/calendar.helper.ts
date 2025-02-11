@@ -156,7 +156,7 @@ export default class CalendarHelper {
       const result = vacancyCount * hours;
       return result;
    }
-
+//NOTE - Количество часов вакансий за год
    static vacancyHours = async (division_id: number, year: number): Promise<number> => {
       const to = new Date(year, 11, 31)
       let currentDate = new Date(year, 0, 1);      
@@ -169,7 +169,7 @@ export default class CalendarHelper {
       return hours;
    } 
 
-// Количество рабочих часов между двумя датами
+//NOTE - Количество рабочих часов между двумя датами
    static getDivisionHoursBetweenDates = async (division_id: number, from: Date, to: Date | undefined | null): Promise<number> => {
       if (!from || !to) return 0;
       let currentDate = new Date(from);
@@ -182,7 +182,7 @@ export default class CalendarHelper {
       return hours;
    }   
    
-   // Количество рабочи часов по конкретной штатной еденице
+//NOTE - Количество рабочи часов по конкретной штатной еденице
    static staffHours = async (staffId: number | null | undefined, from: Date, to: Date):Promise<number> => {
       let currentDate = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 0,0,0,0);      
       const result: number[] = [];
@@ -225,13 +225,13 @@ export default class CalendarHelper {
       }
       return result.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
    }
-
+//NOTE - Метод возвращающий последовательность
    static *numberGenerator(n: number): Generator<number> {
       for (let i = 1; i <= n; i++) {
          yield i;
       }
    }
-
+//NOTE - Возвращает даты между двумя точками
    static getDatesBetween = (startDate: Date, endDate: Date, month: number) => {
       const dates = [];
       let currentDate = new Date(startDate);
@@ -490,6 +490,8 @@ export default class CalendarHelper {
 //#region
       let accumulator: ICalendarSum[] = []
       if (month !== 1) {
+// Итлги для января не нужны
+// Считываем ранее сохраненные итоги за предыдущий месяц 
          const accumulatorData = await prisma.acc_hours.groupBy({
             by: ['rate_id'],
             where: {
@@ -504,9 +506,10 @@ export default class CalendarHelper {
             }
          })
          if (accumulatorData.length === 0) {
+// Если итоги не обнаружены то получаем массив данных за предыдущий месяц
             const prevData = await this.prepareCalendarData(division_id, year, month-1);
-            console.log(prevData);
-            if (month < new Date().getMonth()+1) {
+            if (month < new Date().getMonth()+2) {
+// Если мецяц уже прошел сохраняем его в аккумуляторе
                for (let item of prevData) {
                   await prisma.acc_hours.create({
                      data: {
@@ -518,6 +521,7 @@ export default class CalendarHelper {
                   })
                }
             }
+// Возвращаем значение аккумулятора
             accumulator = prevData.map(i => {
                return {
                   rate_id: i.rate_id,
@@ -525,6 +529,7 @@ export default class CalendarHelper {
                }
             });
          } else {
+// Если данные уже были просто возвращаем значения аккумулятора
             accumulator = accumulatorData.map(i => {
                return {
                   rate_id: i.rate_id,
@@ -532,8 +537,6 @@ export default class CalendarHelper {
                }
             });
          }
-      } else {
-         accumulator = [];
       }      
 //#endregion
 //NOTE - Выходная модель
@@ -541,7 +544,6 @@ export default class CalendarHelper {
       const grid: ICalendarRow[] = [];
       for (const _row of rowNames) {
          const row: ICalendarRow = await this.getCalendarRow(
-            year,
             month,
             _row, 
             baseCells, 
@@ -557,7 +559,6 @@ export default class CalendarHelper {
    }
 //#endregion
    static getCalendarRow = async (
-         year: number,
          month: number,
          baseRow: ICalendarBaseRow, // rate_id и имя ставки
          baseCells: ICalendarCell[], // часы в соответствии с производственным календарем
