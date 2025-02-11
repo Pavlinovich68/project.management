@@ -15,6 +15,16 @@ export interface ICalendarHeader {
    total: string | undefined
 }
 
+export interface ICalendarBaseRow {
+   rate_id: number | undefined | null
+   name: string | undefined | null
+}
+
+export interface ICalendarSum {
+   rate_id: number | undefined | null
+   sum: number | undefined | null
+}
+
 export interface ICalendarRow {
    rate_id: number | undefined | null,
    name: string | undefined | null,
