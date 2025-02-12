@@ -15,7 +15,18 @@ export interface ICalendarHeader {
    total: string | undefined
 }
 
+export interface ICalendarBaseRow {
+   rate_id: number | undefined | null
+   name: string | undefined | null
+}
+
+export interface ICalendarSum {
+   rate_id: number | undefined | null
+   sum: number | undefined | null
+}
+
 export interface ICalendarRow {
+   rate_id: number | undefined | null,
    name: string | undefined | null,
    cells: ICalendarCell[] | undefined
    hours: number
@@ -23,7 +34,7 @@ export interface ICalendarRow {
 }
 
 export interface ICalendarCell {
-   id: number,
+   //id: number,
    day: number,
    type: number,
    hours: number
@@ -31,7 +42,7 @@ export interface ICalendarCell {
 
 export interface ICalendarFooter {
    name: string | undefined,
-   hours: ICalendarFooterItem[] | undefined,
+   hours: number[],//ICalendarFooterItem[] | undefined,
    sum: number | undefined,
    total: number | undefined
 }

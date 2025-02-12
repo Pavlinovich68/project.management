@@ -469,7 +469,7 @@ async function main() {
             });
             const vac = await prisma.vacation.create({
                data: {
-                  year: 2024,
+                  year: new Date(_node.start_date).getFullYear(),
                   start_date: new Date(_node.start_date),
                   end_date: new Date(_node.end_date),
                   staff_id: staff?.id,

@@ -4,7 +4,6 @@ import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
 import { ICalendar } from "@/models/ICalendar";
-import { Session } from "next-auth";
 import ItrCalendarRow from "./ItrCalendarRow";
 import ItrCalendarHeader from "./ItrCalendarHeader";
 import ItrCalendarFooter from "./ItrCalendarFooter";
@@ -14,12 +13,10 @@ interface Exclusion {
    name: string
 }
 
-const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, dayType, onEdit}: 
-   {year: number, month: number, division_id: number, session: Session, refresh: boolean, writeMode: boolean, dayType: number | undefined, onEdit: any}) => {
+const ItrCalendar = ({year, month, division_id, refresh}:{year: number, month: number, division_id: number, refresh: boolean}) => {
    const toast = useRef<Toast>(null);
    const [calendarData, setCalendarData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
-   const [checker, setChecker] = useState<boolean>(false);
 
    useEffect(() => {
       getCalendarData();
@@ -37,7 +34,7 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
             "Content-Type": "application/json",
          },
          body: JSON.stringify({
-            division: division_id, 
+            division_id: division_id, 
             year: year, 
             month: month}),
          cache: 'force-cache'
@@ -45,20 +42,6 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
       const response = await res.json();
       setCalendarData(response.data);
       setIsLoaded(false);
-   }
-
-   const recalcFooter = (day: number, delta: number) => {
-      let _data = calendarData;
-      const item = _data?.footer?.hours?.find((i) => i.day === day);
-      if (item)
-         item.hours = item.hours - delta;
-      if (_data?.footer?.sum)
-         _data.footer.sum = _data.footer.sum - delta;
-      if (_data?.footer?.total)
-         _data.footer.total = _data.footer.total - delta;
-      setChecker(!checker);
-      setCalendarData(_data);
-
    }
 
    //@ts-ignore
@@ -72,10 +55,10 @@ const ItrCalendar = ({year, month, division_id, session, refresh, writeMode, day
                {
                   calendarData?.rows?.map((row, i) => {
                      const key = `calendar-row-${i}`
-                     return <ItrCalendarRow key={key} row={row} index={i} writeMode={writeMode} dayType={dayType} recalcFooter={recalcFooter} onEdit={onEdit}/> 
+                     return <ItrCalendarRow key={key} row={row} index={i}/> 
                   })
                }
-               <ItrCalendarFooter footerData={calendarData?.footer} checker={checker}/>
+               <ItrCalendarFooter footerData={calendarData?.footer}/>
             </div>
             <Toast ref={toast} />
       </React.Fragment>
