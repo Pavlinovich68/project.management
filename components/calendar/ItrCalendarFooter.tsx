@@ -1,15 +1,15 @@
 'use client'
 import { classNames } from "primereact/utils";
-import React, {useRef, useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { ICalendarFooter } from "@/models/ICalendar";
 
-const ItrCalendarFooter = ({footerData, checker}:{footerData: ICalendarFooter | null | undefined, checker: boolean}) => {
+const ItrCalendarFooter = ({footerData}:{footerData: ICalendarFooter | null | undefined}) => {
    const [footer, setFooter] = useState<ICalendarFooter | undefined | null>(footerData);
 
    useEffect(()=>{
       setFooter(footerData);
-   }, [footerData, checker])
+   }, [footerData])
 
    return (
       <div className={classNames("flex justify-content-center", styles.calendarFooter)}>
@@ -18,10 +18,9 @@ const ItrCalendarFooter = ({footerData, checker}:{footerData: ICalendarFooter | 
          </div>
          {
             footer?.hours?.map((day) => {
-               const key = `calendar-footer-${day.day}`
                return (
-                  <div key={key} className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBr, styles.cellBb, styles.cellVertical)}>
-                     {day.hours}
+                  <div className={classNames("flex align-items-center justify-content-center font-bold", styles.dataCell, styles.cellBr, styles.cellBb, styles.cellVertical)}>
+                     {day}
                   </div>
                )
             })

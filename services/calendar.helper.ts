@@ -3,6 +3,7 @@ import { ICalendarBaseRow, ICalendarCell, ICalendarRow, ICalendarSum } from "@/m
 import prisma from "@/prisma/client";
 import { exclusion } from "@prisma/client";
 import DateHelper from "./date.helpers";
+import StringHelper from "./string.helper";
 //import { DateTime } from "luxon";
 
 export interface IDateHours {
@@ -543,10 +544,11 @@ export default class CalendarHelper {
 //#region
       const grid: ICalendarRow[] = [];
       for (const _row of rowNames) {
+         let _baseCells = JSON.parse(JSON.stringify(baseCells));
          const row: ICalendarRow = await this.getCalendarRow(
             month,
             _row, 
-            baseCells, 
+            _baseCells, 
             personalExclusions?.rows.find(i => i.rate_id === _row.rate_id)?.cells ?? [],
             vacanciesDays[_row.rate_id],
             vacations.find(i => i.rate_id === _row.rate_id)?.days ?? [],
@@ -599,7 +601,7 @@ export default class CalendarHelper {
       // Итог
       const result: ICalendarRow = {
          rate_id: baseRow.rate_id,
-         name: baseRow.name,
+         name: StringHelper.fullNameTransform(baseRow.name),
          cells: baseCells,
          hours: rowSum,
          total: month === 1 ? rowSum : rowSum + total
