@@ -1,27 +1,15 @@
 'use client'
 import ItrMonthCalendar from "@/components/calendar/ItrMonthCalendar";
 import ItrCalendarSwitch from "@/components/ItrMonthSwitch";
-import { ICellDictionary } from "@/models/ICalendar";
 import { useSession } from "next-auth/react";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState} from "react";
 
 const ProjectCalendar = () => {
    const {data: session} = useSession()
    const [date, setDate] = useState<Date>(new Date())
    const toast = useRef<Toast>(null)
-   const [isLoaded, setIsLoaded] = useState<boolean>(false)
-   const [calendarData, setCalendarData] = useState();
-   const [refresh, setRefresh] = useState<boolean>(false)
-   const [editMode, setEditMode] = useState<boolean>(false);
-   const [editDayType, setEditDayType] = useState<number | undefined>(undefined);
-   const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
-   let values: ICellDictionary = {};
-
-   const onEdit = () => {
-      setSaveEnabled(Object.keys(values).length > 0)
-   }
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
