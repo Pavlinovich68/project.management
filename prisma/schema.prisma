@@ -181,21 +181,6 @@ model control_point {
    roadmap_item_id   Int
    roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-//NOTE - Дни пропуска
-//SECTION
-//NOTE - type
-// 0 - sick_leave    Больничный
-// 1 - rest          Отгул
-// 2 - without_pay   Без содержания
-// 3 - absenteeism   Прогул
-//!SECTION
-model days_off {
-   id          Int   @id @default(autoincrement())
-   start_date  DateTime @db.Timestamp(6)
-   end_date    DateTime @db.Timestamp(6)
-   type        Int
-   comment     String   @db.VarChar(150)
-}
 //NOTE Должности
 model post {
    id                Int      @id @default(autoincrement())

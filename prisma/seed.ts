@@ -33,11 +33,11 @@ async function main() {
    await prisma.$queryRaw`delete from roadmap_item`;
    await prisma.$queryRaw`delete from project`;
    await prisma.$queryRaw`delete from employee`;
-   await prisma.$queryRaw`delete from dept_calendar_cell`;
    await prisma.$queryRaw`delete from dept_calendar_row`;
    await prisma.$queryRaw`delete from dept_calendar`;
    await prisma.$queryRaw`delete from vacation`;
    await prisma.$queryRaw`delete from staff`;
+   await prisma.$queryRaw`delete from acc_hours`;
    await prisma.$queryRaw`delete from rate`;
    await prisma.$queryRaw`delete from post`;
 
@@ -114,68 +114,59 @@ async function main() {
       }      
    }
 
-   const seedRoadmap = async () => {
-      const roadmap = await prisma.roadmap.create({data: {year: 2024, division_id: division?.id??0}});
-      const count = roadmap_data.length;
-      let index = 0;
-      while (index < count) {
-         const item = roadmap_data[index];
-         let project = undefined;
-         try {
-            project = await prisma.project.findFirst({where: {code: item.project}});
-            if (!project)
-               throw new Error(`Не удалось получить проект ${item.project}`)
-         } catch (error) {
-            throw new Error(`Не удалось получить проект ${item.project}`)
-         }
+   // const seedRoadmap = async () => {      
+   //    const count = roadmap_data.length;
+   //    let index = 0;
+   //    while (index < count) {
+   //       const item = roadmap_data[index];
+   //       const _date = new Date(item.begin_date)
+   //       const roadmap = await prisma.roadmap.findFirst({where: {year: _date.getFullYear(), division_id: division?.id??0}}) ?? await prisma.roadmap.create({data: {year: _date.getFullYear(), division_id: division?.id??0}});         
+   //       let project = undefined;
+   //       try {
+   //          project = await prisma.project.findFirst({where: {code: item.project}});
+   //          if (!project)
+   //             throw new Error(`Не удалось получить проект ${item.project}`)
+   //       } catch (error) {
+   //          throw new Error(`Не удалось получить проект ${item.project}`)
+   //       }
 
-         const rmi = await prisma.roadmap_item.create({
-            data: {
-               hours: item.hours,
-               comment: item.comment,
-               project_id: project.id,
-               roadmap_id: roadmap.id,
-               begin_date: new Date(item.begin_date)
-            }
-         })
+   //       const rmi = await prisma.roadmap_item.create({
+   //          data: {
+   //             hours: item.hours,
+   //             comment: item.comment,
+   //             project_id: project.id,
+   //             roadmap_id: roadmap.id,
+   //             begin_date: _date
+   //          }
+   //       })
 
-         for (const fact_item of item.fact) {
-            await prisma.roadmap_fact_item.create({
-               data: {
-                  date: new Date(fact_item.date),
-                  hours: fact_item.hours,
-                  employee_id: fact_item.employee_id,
-                  roadmap_item_id: rmi.id
-               }
-            });
-         }
+   //       console.log(rmi);
 
-         // for (const point of item.control_points) {
-         //    await prisma.control_point.create({
-         //       data: {
-         //          roadmap_item_id: rmi.id,
-         //          name: point.name,
-         //          date: new Date(point.date),
-         //          type: point.type
-         //       }
-         //    })
-         // }
+   //       for (const fact_item of item.fact) {
+   //          await prisma.roadmap_fact_item.create({
+   //             data: {
+   //                date: new Date(fact_item.date),
+   //                hours: fact_item.hours,
+   //                employee_id: fact_item.employee_id,
+   //                roadmap_item_id: rmi.id
+   //             }
+   //          });
+   //       }
+   //       index++;
+   //    }
+   // }
 
-         index++;
-      }
-   }
-
-   const seedCalendar = async (year: number) => {
-      let calendar = await prisma.production_calendar.findFirst({ where: { year: year } });
-      if (!calendar) {
-         calendar = await prisma.production_calendar.create({ data: { year: year } });
-      }
+   const seedCalendar = async () => {
       const _count = production_calendar.length;
       let _index = 0;
       while (_index < _count) {         
          let _node = production_calendar[_index];
-         try {
+         try {            
             const _date = new Date(_node.date);
+            let calendar = await prisma.production_calendar.findFirst({ where: { year: _date.getFullYear() } });
+            if (!calendar) {
+               calendar = await prisma.production_calendar.create({ data: { year: _date.getFullYear() } });
+            }            
             const exclusion = await prisma.exclusion.findFirst({ where: { production_calendar_id: calendar.id, date: _date } });
             if (exclusion) {
                await prisma.exclusion.update({
@@ -195,87 +186,13 @@ async function main() {
                      exclusion_type: _node.exclusion_type
                   }
                });
-            }
-            const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
-            const _calendar = await prisma.dept_calendar.findFirst({where:{year:year,division_id:_division?.id}});
-
-            let hours = 8;
-            switch (_node.exclusion_type) {
-               case 0: hours = 0; break;
-               case 1: hours = 7; break;
-               case 2: hours = 0; break;
-               case 3: hours = 8; break;
-            }
-            if (_calendar) {
-               const _cells = await prisma.dept_calendar_cell.updateMany({
-                  where: {
-                     row: {
-                        calendar_id: _calendar.id
-                     },
-                     month: _date.getMonth() +1,
-                     day: _date.getDate()
-                  },
-                  data: {
-                     type: _node.exclusion_type,
-                     hours: hours
-                  }
-               });
-            }
+            }            
             _index++;
          } catch (error) {
             throw new Error(`Не удалось создать запись календаря: ${_node.date}`);
          }
       }
       return _index;
-   }
-
-   const seedProdCalendar = async (year: number) => {
-      try {
-         const _yearLength = new Date(year, 2, 0).getDate() === 29 ? 366 : 365;
-         const _division = await prisma.division.findFirst({where: {name: "Отдел автоматизации процессов и веб-технологий"}});
-         if (!_division) return
-         const _calendar = await prisma.dept_calendar.create({
-            data: { division_id: _division?.id, year: year }
-         })
-
-         let rates = await prisma.rate.findMany({
-            where: { division_id: _division.id },
-            orderBy: { no: 'asc' }
-         })
-
-         for (const rate of rates) {
-            const _worker = await prisma.staff.findFirst({
-               where: {rate_id: rate.id},
-               select: {employee: true}
-            })
-            
-            const _row = await prisma.dept_calendar_row.create({
-               data: {
-                  no: rate.no,
-                  calendar_id: _calendar.id,
-                  rate_id: rate.id
-               }
-            });
-            let _i = 0;
-            while (_i < _yearLength) {
-               _i++
-               let _date = new Date(Date.UTC(year, 0, _i))
-               const _dayOfWeek = _date.getDay();
-               const _isHoliday = (_dayOfWeek === 0 || _dayOfWeek === 6);
-               await prisma.dept_calendar_cell.create({
-                  data: {
-                     month: _date.getMonth() +1,
-                     day: _date.getDate(),
-                     hours: _isHoliday ? 0 : 8,
-                     type: _isHoliday ? 0 : 4,
-                     row_id: _row.id
-                  }
-               });
-            }
-         }
-      } catch (error) {
-         throw error;
-      }
    }
 
    const seedPosts = async () => {
@@ -396,30 +313,30 @@ async function main() {
       }      
    }
 
-   const getVacationDayId = async (staff_id: number, year: number, month: number, day: number) => {
-      try {
-         const _cell = await prisma.$queryRaw`
-            select
-               dcc.id
-            from
-               dept_calendar_row dcr
-               inner join dept_calendar_cell dcc on dcr.id = dcc.row_id
-               inner join rate r on dcr.rate_id = r.id
-               inner join staff s on r.id = s.rate_id
-               inner join public.dept_calendar dc on dc.id = dcr.calendar_id
-            where
-               dc.year = ${year}
-               and dcc.month = ${month}
-               and dcc.day = ${day}
-               and s.id = ${staff_id}
-         `
-         //@ts-ignore
-         const result = _cell ? _cell[0].id : undefined;
-         return result;
-      } catch (error) {
-         throw new Error(`Ошибка поиска ячейки - staff-id:${staff_id}, year:${year}, month:${month}, day${day}`)
-      }      
-   }
+   // const getVacationDayId = async (staff_id: number, year: number, month: number, day: number) => {
+   //    try {
+   //       const _cell = await prisma.$queryRaw`
+   //          select
+   //             dcc.id
+   //          from
+   //             dept_calendar_row dcr
+   //             inner join dept_calendar_cell dcc on dcr.id = dcc.row_id
+   //             inner join rate r on dcr.rate_id = r.id
+   //             inner join staff s on r.id = s.rate_id
+   //             inner join public.dept_calendar dc on dc.id = dcr.calendar_id
+   //          where
+   //             dc.year = ${year}
+   //             and dcc.month = ${month}
+   //             and dcc.day = ${day}
+   //             and s.id = ${staff_id}
+   //       `
+   //       //@ts-ignore
+   //       const result = _cell ? _cell[0].id : undefined;
+   //       return result;
+   //    } catch (error) {
+   //       throw new Error(`Ошибка поиска ячейки - staff-id:${staff_id}, year:${year}, month:${month}, day${day}`)
+   //    }      
+   // }
 
    const addDays = (date: Date, days: number): Date => {
       var _date = new Date(date.valueOf());
@@ -427,29 +344,29 @@ async function main() {
       return _date;
    }
    
-   const createVacation = async (staff_id: number, start_date: Date, end_date: Date) => {
-      let _start_date = new Date(start_date);
-      const _end_date = new Date(end_date);
-      while(_start_date <= _end_date){      
-         const _year = _start_date.getFullYear();   
-         const _month = _start_date.getMonth();
-         const _day = _start_date.getDate();         
+   // const createVacation = async (staff_id: number, start_date: Date, end_date: Date) => {
+   //    let _start_date = new Date(start_date);
+   //    const _end_date = new Date(end_date);
+   //    while(_start_date <= _end_date){      
+   //       const _year = _start_date.getFullYear();   
+   //       const _month = _start_date.getMonth();
+   //       const _day = _start_date.getDate();         
          
-         const _row_id = await getVacationDayId(staff_id, _year, _month+1, _day)
+   //       const _row_id = await getVacationDayId(staff_id, _year, _month+1, _day)
 
-         await prisma.dept_calendar_cell.updateMany({
-            where: {
-               id: _row_id
-            },
-            data: {
-               type: 5,
-               hours: 0
-            }
-         })
+   //       await prisma.dept_calendar_cell.updateMany({
+   //          where: {
+   //             id: _row_id
+   //          },
+   //          data: {
+   //             type: 5,
+   //             hours: 0
+   //          }
+   //       })
 
-         _start_date = addDays(_start_date, 1);
-      }
-   }
+   //       _start_date = addDays(_start_date, 1);
+   //    }
+   // }
 
    const seedVacations = async () => {
       try {         
@@ -475,7 +392,7 @@ async function main() {
                   staff_id: staff?.id,
                }
             });
-            await createVacation(vac.staff_id, vac.start_date, vac.end_date);
+            //await createVacation(vac.staff_id, vac.start_date, vac.end_date);
             _index++;
          }         
       } catch (error) {
@@ -487,11 +404,7 @@ async function main() {
    await seedPosts().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
    await seedRate().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
    await seedEmployees().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
-   await seedRoadmap().finally(() => console.log(`\x1b[32mRoadmap seeded\x1b[0m`));
-   await seedProdCalendar(2024).finally(() => console.log(`\x1b[32mWorked calendar seeded\x1b[0m`));
-   await seedProdCalendar(2025).finally(() => console.log(`\x1b[32mWorked calendar seeded\x1b[0m`));
-   await seedCalendar(2024).finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
-   await seedCalendar(2025).finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
+   await seedCalendar().finally(() => console.log(`\x1b[32mProduction calendar seeded\x1b[0m`));
    await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
 
 }
