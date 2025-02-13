@@ -1,0 +1,9 @@
+POST http://localhost:3000/api/calendar/department/month
+content-type: application/json
+
+{
+   "staff_id": 1,
+   "month": 1,
+   "year": 2025,
+   "roles": {"master": "Начальник отдела", "developer":"Разработчик"}
+}

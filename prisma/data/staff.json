@@ -1,121 +1,121 @@
 [
-  {
-    "id": 1,
-    "employee_id": 1,
-    "rate_id": 2,
-    "begin_date": "2025-01-27 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 2,
-    "employee_id": 2,
-    "rate_id": 3,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 3,
-    "employee_id": 3,
-    "rate_id": 4,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 4,
-    "employee_id": 4,
-    "rate_id": 16,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 5,
-    "employee_id": 5,
-    "rate_id": 5,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 6,
-    "employee_id": 6,
-    "rate_id": 6,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 7,
-    "employee_id": 7,
-    "rate_id": 7,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 8,
-    "employee_id": 8,
-    "rate_id": 8,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 9,
-    "employee_id": 9,
-    "rate_id": 9,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 10,
-    "employee_id": 10,
-    "rate_id": 10,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 11,
-    "employee_id": 11,
-    "rate_id": 11,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 12,
-    "employee_id": 12,
-    "rate_id": 1,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 13,
-    "employee_id": 13,
-    "rate_id": 12,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 14,
-    "employee_id": 14,
-    "rate_id": 13,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": "2024-12-31 00:00:00.000000"
-  },
-  {
-    "id": 15,
-    "employee_id": 15,
-    "rate_id": 14,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 16,
-    "employee_id": 16,
-    "rate_id": 15,
-    "begin_date": "2024-01-01 00:00:00.000000",
-    "end_date": null
-  },
-  {
-    "id": 17,
-    "employee_id": 22,
-    "rate_id": 13,
-    "begin_date": "2025-02-10 00:00:00.000000",
-    "end_date": null
-  }
+   {
+      "id": 1,
+      "employee_id": 1,
+      "rate_id": 2,
+      "begin_date": "2025-01-27 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 2,
+      "employee_id": 2,
+      "rate_id": 3,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 3,
+      "employee_id": 3,
+      "rate_id": 4,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 4,
+      "employee_id": 4,
+      "rate_id": 16,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 5,
+      "employee_id": 5,
+      "rate_id": 5,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 6,
+      "employee_id": 6,
+      "rate_id": 6,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 7,
+      "employee_id": 7,
+      "rate_id": 7,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 8,
+      "employee_id": 8,
+      "rate_id": 8,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 9,
+      "employee_id": 9,
+      "rate_id": 9,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 10,
+      "employee_id": 10,
+      "rate_id": 10,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 11,
+      "employee_id": 11,
+      "rate_id": 11,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 12,
+      "employee_id": 12,
+      "rate_id": 1,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 13,
+      "employee_id": 13,
+      "rate_id": 12,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 14,
+      "employee_id": 14,
+      "rate_id": 13,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": "2024-12-31 00:00:00.000000"
+   },
+   {
+      "id": 15,
+      "employee_id": 15,
+      "rate_id": 14,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 16,
+      "employee_id": 16,
+      "rate_id": 15,
+      "begin_date": "2024-01-01 00:00:00.000000",
+      "end_date": null
+   },
+   {
+      "id": 17,
+      "employee_id": 22,
+      "rate_id": 13,
+      "begin_date": "2025-02-10 00:00:00.000000",
+      "end_date": null
+   }
 ]

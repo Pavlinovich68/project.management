@@ -21,9 +21,11 @@ const ProjectCalendar = () => {
 
    if (!session) return;
 
+   console.log(session.user.roles)
+
    return (
       <React.Fragment>
-         <div className="grid">
+         {/* <div className="grid">
             <div className="col-12">
                <div className="card">
                   <h3>Проекты в работе</h3>               
@@ -37,7 +39,7 @@ const ProjectCalendar = () => {
                   />
                </div>
             </div>
-         </div>
+         </div> */}
          <Toast ref={toast} />
       </React.Fragment>      
    );
