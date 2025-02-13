@@ -1,0 +1,212 @@
+[
+  {
+    "id": 1,
+    "password": "$2b$08$RG5Y3WEhtNFOVYcU10jtGOAcFMhZjMCHs/LVo2hpCxo6W3/K9LYEy",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 1
+  },
+  {
+    "id": 2,
+    "password": "$2b$08$PxemFf/4Ak3//hBxzKSdt.I.9qojrKz5Ai4P1W.LEW524K2YAecaG",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 2
+  },
+  {
+    "id": 3,
+    "password": "$2b$08$a2EGFm.K/Df3ypeJIrCh3OvdqsrIWxvEwxZ.SUvcgQD8KleZmIc.C",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 3
+  },
+  {
+    "id": 4,
+    "password": "$2b$08$LaSe5qxd5i.s08jbKuzeRu3vPdqFe0rCFJP3DQAN5iwOwPFSXLDiK",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 4
+  },
+  {
+    "id": 5,
+    "password": "$2b$08$CuGywMWW7N0oSUAQIpIQ0uTN/E/0.8LiAT/6qBjsLZjKil7AzG16i",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 5
+  },
+  {
+    "id": 6,
+    "password": "$2b$08$uhS7GriAGhHEpd8giJF28.dTgA3Nmq76dYlCl3OaMI3ErhCMzvgOC",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 6
+  },
+  {
+    "id": 7,
+    "password": "$2b$08$PKTTsS8oEmsxfZ3EjOcPiuqHhUjnmfDQ7puDF7J8Kfkge6ra0BSOG",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 7
+  },
+  {
+    "id": 8,
+    "password": "$2b$08$KJUIKqSAX.B8ECcxCRpj2OftwvBsftMETL3CuHgTZI0gtng1nkDU.",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 8
+  },
+  {
+    "id": 9,
+    "password": "$2b$08$GgrG6f2ZHrXBYlgbcxx6K.ZOkS2sbbBSEJlUsPeKsjl2t06G3jLje",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 9
+  },
+  {
+    "id": 10,
+    "password": "$2b$08$5B7PbKBsMXwylebonKo8Bum.tbA8RoDBvYHZcjITmbsmHMvTp8xpq",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 10
+  },
+  {
+    "id": 11,
+    "password": "$2b$08$WPFYQppuXKVO8aI9R2rxhejr9Xr4.MQgf1m9Qk0RyyYRVmpX7nPyK",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 11
+  },
+  {
+    "id": 12,
+    "password": "$2b$08$JIhiREntQQhK7x5pHMZVo.o0jXVsO6jR2lp.cheO6XDMvuBqIn3kG",
+    "roles": {"master":"Начальник отдела"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 12
+  },
+  {
+    "id": 13,
+    "password": "$2b$08$zn4jp.YrgoiKrIRD2bxez.mzHbk2BttMpqc9cC0r467bM1ddg5EuS",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 13
+  },
+  {
+    "id": 14,
+    "password": "$2b$08$iRx21qr8QiLxJHgTyYpYfOgSxQ9ZZxg39PvKnCpG.ATcAWmfyE9tW",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 14
+  },
+  {
+    "id": 15,
+    "password": "$2b$08$SCpWZxGZB34fjEBxiN.wPuN8XxRL1cBUUMYlTvaY58w7x8bG1IfAC",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 15
+  },
+  {
+    "id": 16,
+    "password": "$2b$08$1jpimEmaPuH7BalIOhHR/O9L1WgdN2y.vouQdBFDRjd2s8ACJnB.6",
+    "roles": {"developer":"Разработчик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 16
+  },
+  {
+    "id": 17,
+    "password": "$2b$08$3CT/5MES8SamGSbl1/9/XOtEE4ZHyBvgpkyUHuCQnsW1IHYD3FmQ6",
+    "roles": {"analyst":"Аналитик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 17
+  },
+  {
+    "id": 18,
+    "password": "$2b$08$.JvxEI1d8g2ATuuE9DROoeOYoGbZih7cZa6Vt2k9QxjDXNn/A2Gh6",
+    "roles": {"boss":"Руководитель"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 18
+  },
+  {
+    "id": 19,
+    "password": "$2b$08$Z0sCQ7Hzgy3x723ULMb4v.oK/OwnDRLqk3K8jRH58I2zOMpOpWjS6",
+    "roles": {"admin":"Администратор"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 19
+  },
+  {
+    "id": 20,
+    "password": "$2b$08$26HYSqWw33KjMRnd0I4SIeljNYMyM0OIUWH07Ev9nP0dZSWCUCare",
+    "roles": {"tester":"Тестировщик"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 20
+  },
+  {
+    "id": 21,
+    "password": "$2b$08$MUw/HqsShSgYiV/EBEVOle4cOTjsgkri5pm88qdxUTOkTfTYaQyXG",
+    "roles": {"reader":"Только чтение"},
+    "attachment_id": null,
+    "emailVerified": null,
+    "restoreGuid": null,
+    "restoreTime": null,
+    "employee_id": 21
+  }
+]
