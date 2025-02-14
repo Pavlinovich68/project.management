@@ -4,11 +4,12 @@ import ItrCalendarSwitch from "@/components/ItrMonthSwitch";
 import { useSession } from "next-auth/react";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 const ProjectCalendar = () => {
    const {data: session} = useSession()
    const [date, setDate] = useState<Date>(new Date())
+   const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const toast = useRef<Toast>(null)
 
    const monthSwitch = (xdate: Date) => {
@@ -21,7 +22,30 @@ const ProjectCalendar = () => {
 
    if (!session) return;
 
-   console.log(session.user.roles)
+   console.log(session.user);
+
+   const getCalendarData = async () => {
+      if (!session.user.division_id) {
+         toast.current?.show({severity:'error', summary: 'Сессия приложения', detail: 'Идентификатор подразделения недоступен!', life: 3000});
+         return;
+      }
+      setIsLoaded(true);
+      const res = await fetch(`/api/calendar/department/month`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            //@ts-ignore
+            employee_id: session.user.employee_id, 
+            year: new Date(), 
+            month: month}),
+         cache: 'force-cache'
+      });
+      const response = await res.json();
+      setCalendarData(response.data);
+      setIsLoaded(false);
+   }
 
    return (
       <React.Fragment>

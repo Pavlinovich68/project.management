@@ -35,10 +35,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
    const topbarmenubuttonRef = useRef(null);
    const [avatar, setAvatar] = useState(null);
 
-   if (session) {
-      const user = session?.user;
-      console.log(user);
-   }
    //@ts-ignore
    if (session?.user?.avatar && avatar === null) {
       //@ts-ignore
