@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-01-01 00:00:00.000000"
+  },
+  {
+    "id": 2,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-01-02 00:00:00.000000"
+  },
+  {
+    "id": 3,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-01-03 00:00:00.000000"
+  },
+  {
+    "id": 4,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-01-06 00:00:00.000000"
+  },
+  {
+    "id": 5,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-01-07 00:00:00.000000"
+  },
+  {
+    "id": 6,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-01-08 00:00:00.000000"
+  },
+  {
+    "id": 7,
+    "exclusion_type": 1,
+    "production_calendar_id": 2,
+    "date": "2025-03-07 00:00:00.000000"
+  },
+  {
+    "id": 8,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-05-01 00:00:00.000000"
+  },
+  {
+    "id": 9,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-05-02 00:00:00.000000"
+  },
+  {
+    "id": 10,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-05-08 00:00:00.000000"
+  },
+  {
+    "id": 11,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-05-09 00:00:00.000000"
+  },
+  {
+    "id": 12,
+    "exclusion_type": 1,
+    "production_calendar_id": 2,
+    "date": "2025-06-11 00:00:00.000000"
+  },
+  {
+    "id": 13,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-06-12 00:00:00.000000"
+  },
+  {
+    "id": 14,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-06-13 00:00:00.000000"
+  },
+  {
+    "id": 15,
+    "exclusion_type": 1,
+    "production_calendar_id": 2,
+    "date": "2025-11-01 00:00:00.000000"
+  },
+  {
+    "id": 16,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-11-03 00:00:00.000000"
+  },
+  {
+    "id": 17,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-11-04 00:00:00.000000"
+  },
+  {
+    "id": 18,
+    "exclusion_type": 0,
+    "production_calendar_id": 2,
+    "date": "2025-12-31 00:00:00.000000"
+  }
+]

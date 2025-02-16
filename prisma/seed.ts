@@ -8,6 +8,7 @@ import rates from "./data/rate.json";
 import staff from "./data/staff.json";
 import users from "./data/users.json";
 import vacations from "./data/vacation.json";
+import exclusions from "./data/exclusion.json";
 
 // TODO Seed
 async function main() {
@@ -92,6 +93,28 @@ async function main() {
          //@ts-ignore
          const maxId = row[0].max +1;
          await prisma.$queryRaw`SELECT setval('production_calendar_id_seq', ${maxId}, true)`;
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   const seedExclusions = async () => {
+      try {
+         for (const item of exclusions) {
+            await prisma.exclusion.create({
+               data: {
+                  id: item.id,
+                  exclusion_type: item.exclusion_type,
+                  production_calendar_id: item.production_calendar_id,
+                  date: new Date(item.date)
+               }
+            })
+         }
+
+         const row = await prisma.$queryRaw`select max(id) from exclusion`;
+         //@ts-ignore
+         const maxId = row[0].max +1;
+         await prisma.$queryRaw`SELECT setval('exclusion_id_seq', ${maxId}, true)`;
       } catch (error) {
          throw error;
       }
@@ -219,6 +242,7 @@ async function main() {
       await seedEmployee().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
       await seedPost().finally(() => console.log(`\x1b[32mPosts seeded\x1b[0m`));
       await seedProductionCalendar().finally(() => console.log(`\x1b[32mProduction calendars seeded\x1b[0m`));
+      await seedExclusions().finally(() => console.log(`\x1b[32mExclusions seeded\x1b[0m`));
       await seedProject().finally(() => console.log(`\x1b[32mProjects seeded\x1b[0m`));
       await seedRates().finally(() => console.log(`\x1b[32mRates seeded\x1b[0m`));
       await seedStaffs().finally(() => console.log(`\x1b[32mStaffs seeded\x1b[0m`));

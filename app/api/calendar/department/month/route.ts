@@ -5,11 +5,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
    try {
-      const { employee_id, year, month, roles } = await request.json();
+      const { user_id, year, month } = await request.json();
+
+      const user = await prisma.users.findUnique({where: {id: user_id}});
+      if (!user)
+         throw Error("Не удалось найти пользователя");
+      // const employee_id = user?.employee_id;
+      // const roles = user?.roles;
 
       const staff = await prisma.employee.findFirst({
          where: {
-            id: employee_id
+            id: user.employee_id
          },
          select: {
             staff: {
@@ -42,7 +48,8 @@ export const POST = async (request: NextRequest) => {
       });
 
       const staff_id = staff?.staff[0].id;
-      const isMasterRole = Object.keys(roles).indexOf("master") !== -1;
+      //@ts-ignore
+      const isMasterRole = Object.keys(user.roles).indexOf("master") !== -1;
 
       const items = await prisma.staff.findFirst({
          where: {

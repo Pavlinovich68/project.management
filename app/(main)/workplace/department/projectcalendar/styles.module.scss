@@ -1,10 +1,22 @@
-$cellSize: 4rem;
+$cellSize: 2rem;
+.monthContainer {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, 15rem);
+   gap: 1rem;
+}
+.calendarHeader {
+   text-align: center;
+   margin-bottom: 0.3rem;
+   font-weight: 600;
+}
 .dayContainer {
    display: grid;
    grid-template-columns: repeat(7, $cellSize);
-   gap: 2px;
+   gap: 1px;
    .cellItem {
       height:  $cellSize;
       width: $cellSize;
+      font-size: 0.8rem;
+      font-weight: 500;
    }
 }
