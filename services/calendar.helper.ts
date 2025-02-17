@@ -417,14 +417,21 @@ export default class CalendarHelper {
                         ]                        
                      },
                      {
-                        end_date: {
-                           lt: firstMonthDay
-                        }
+                        AND: [
+                           {
+                              begin_date: {
+                                 lt: firstMonthDay
+                              }
+                           },
+                           {
+                              end_date: {
+                                 gt: lastMonthDay
+                              }
+                           }
+                        ]
                      },
                      {
-                        begin_date: {
-                           gt: lastMonthDay
-                        }
+                        end_date: null
                      }
                   ]
                },
