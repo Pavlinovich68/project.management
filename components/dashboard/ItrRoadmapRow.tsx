@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from "react";
 import styles from "@/app/(main)/workplace/department/dashboard/styles.module.scss"
 import { classNames } from "primereact/utils";
-import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
+import { IRoadmapRowSegmentData } from "@/models/IDashboardItemSegment";
 import { Tooltip } from "primereact/tooltip";
-import { IRoadmapItemCRUD } from "@/models/IRoadmapItem";
+import { IRoadmapItemCRUD } from "@/models/IDashboardItem";
 import { itemSignature } from "./roadmap.types";
 import { Badge } from "primereact/badge";
-import { IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
+import { IRoadmapProjectItem } from "@/models/IDashboardProjectItem";
 
 //LINK - https://codepen.io/ciprian/pen/eYbVRKR
 const RoadmapRow = ({roadmap_id, project_id}:

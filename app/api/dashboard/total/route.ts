@@ -2,7 +2,7 @@ import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import CalendarHelper, { IDateHours } from "@/services/calendar.helper";
 import _logger from "next-auth/utils/logger";
-import { IRoadmapDataItem } from "@/models/IRoadmapData";
+import { IDashboardDataItem } from "@/models/IDashboardData";
 
 export const POST = async (request: NextRequest) => {
    try {
@@ -20,9 +20,9 @@ export const POST = async (request: NextRequest) => {
          currentDate.setDate(currentDate.getDate() +1);
       }
 
-      const items = await prisma.roadmap_item.findMany({
+      const items = await prisma.dashboard_item.findMany({
          where: {
-            roadmap: {
+            dashboard: {
                year: year,
                division_id: division_id
             }
@@ -66,7 +66,7 @@ export const POST = async (request: NextRequest) => {
             if (_hours <= 0) break;
          }
 
-         const _item: IRoadmapDataItem = {
+         const _item: IDashboardDataItem = {
             project_code: item.project.code,
             project_name: item.project.name,
             comment: item.comment,

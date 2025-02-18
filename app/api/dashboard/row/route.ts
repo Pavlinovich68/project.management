@@ -1,14 +1,14 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import CalendarHelper from "@/services/calendar.helper";
-import { IRoadmapControlPoint, IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
+import { IDashboardControlPoint, IDashboardProjectItem } from "@/models/IDashboardProjectItem";
 
 export const POST = async (request: NextRequest) => {
    try {
       const { division_id, year } = await request.json();
 
       // Дорожная карта по проекту
-      const roadmap = await prisma.roadmap.findUnique({
+      const dashboard = await prisma.dashboard.findUnique({
          where: {
             year_division_id: {
                year: year,
@@ -18,17 +18,17 @@ export const POST = async (request: NextRequest) => {
       });      
 
       // Выбираем проекты в работе
-      const records = await prisma.roadmap_item.findMany({
+      const records = await prisma.dashboard_item.findMany({
          where: {
-            roadmap_id: 1
+            dashboard_id: 1
          },
          select: {            
             id: true,
             comment: true,
             hours: true,
-            roadmap: true,
+            dashboard: true,
             control_points: true,
-            roadmap_id: true,
+            dashboard_id: true,
             project_id: true,
             project: true,
             is_closed: true,
@@ -50,7 +50,7 @@ export const POST = async (request: NextRequest) => {
       // Количество ставок в подразделении
       const rateCount = (await prisma.rate.aggregate({
          where: {
-            division_id: roadmap?.division_id,
+            division_id: dashboard?.division_id,
             is_work_time: true
          },
          _count: true
@@ -59,10 +59,10 @@ export const POST = async (request: NextRequest) => {
       // Количество плановых рабочих часов по подразделению с вычетом отпускных (отпускные без привязки к конкретному графику отпусков)
       const totalHours: number = (await CalendarHelper.workingHoursBetweenDates(new Date(year, 0, 1), new Date(year, 11, 31)) - 224) * rateCount;      
 
-      const result: IRoadmapProjectItem[] = [];
+      const result: IDashboardProjectItem[] = [];
       for(const record of records) {
          // Контрольные точки по проекту      
-         const item_points: IRoadmapControlPoint[] = record?.control_points.map((i) => {
+         const item_points: IDashboardControlPoint[] = record?.control_points.map((i) => {
             return {
                id: i.id,
                name: i.name,
@@ -75,24 +75,24 @@ export const POST = async (request: NextRequest) => {
          })??[];
 
          for (const item_point of item_points) {
-            const hours = await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), item_point.date);
+            const hours = await CalendarHelper.workingHoursBetweenDates(new Date(record.dashboard.year, 0, 1), item_point.date);
             item_point.width = hours * rateCount / totalHours * 100;
          }
 
-         const start_width = (await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), record.begin_date) * rateCount) / totalHours * 100;
+         const start_width = (await CalendarHelper.workingHoursBetweenDates(new Date(record.dashboard.year, 0, 1), record.begin_date) * rateCount) / totalHours * 100;
 
-         const fact = (await prisma.roadmap_fact_item.aggregate({
+         const fact = (await prisma.dashboard_fact_item.aggregate({
             where: {
-               roadmap_item_id: record.id
+               dashboard_item_id: record.id
             },
             _sum: {
                hours: true
             }
          }))._sum.hours;
 
-         const resuItitem: IRoadmapProjectItem = {
-            roadmap_id: record.roadmap_id,         
-            roadmap_item_id: record.id,   
+         const resuItitem: IDashboardProjectItem = {
+            dashboard_id: record.dashboard_id,         
+            dashboard_item_id: record.id,   
             comment: record.comment??'',
             project_code: record.project.code,
             project_name: record.project.name,

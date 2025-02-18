@@ -1,4 +1,4 @@
-import { IRoadmapItemCRUD } from "@/models/IRoadmapItem"
+import { IRoadmapItemCRUD } from "@/models/IDashboardItem"
 
 export type itemSignature = {
    (item: IRoadmapItemCRUD | undefined): void

@@ -1,15 +1,15 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import CalendarHelper from "@/services/calendar.helper";
-import { IRoadmapControlPoint, IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
+import { IDashboardControlPoint, IDashboardProjectItem } from "@/models/IDashboardProjectItem";
 
 export const POST = async (request: NextRequest) => {
    try {
       const { year, division_id } = await request.json();
 
-      const plan = await prisma.roadmap_item.aggregate({
+      const plan = await prisma.dashboard_item.aggregate({
          where: {
-            roadmap: {
+            dashboard: {
                year: year
             }
          },
@@ -18,10 +18,10 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
-      const fact = await prisma.roadmap_fact_item.aggregate({
+      const fact = await prisma.dashboard_fact_item.aggregate({
          where: {
-            roadmap_item: {
-               roadmap: {
+            dashboard_item: {
+               dashboard: {
                   year: year
                }
             }

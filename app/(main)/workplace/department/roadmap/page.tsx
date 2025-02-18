@@ -1,7 +1,7 @@
 'use client'
 import React, {useRef, useState, useEffect} from "react";
 
-const roadmap = () => {
+const dashboard = () => {
    return (
       <div className="grid">
          <div className="col-12">
@@ -13,4 +13,4 @@ const roadmap = () => {
    );
 };
 
-export default roadmap;
+export default dashboard;
