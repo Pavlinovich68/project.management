@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "@/app/(main)/workplace/department/dashboard/styles.module.scss"
 import { classNames } from "primereact/utils";
-import { IRoadmapDataItem } from "@/models/IRoadmapData";
+import { IDashboardDataItem } from "@/models/IDashboardData";
 import { ColorPicker } from "primereact/colorpicker";
 import { Tooltip } from "primereact/tooltip";
 
@@ -26,7 +26,7 @@ const months: {[Key: number]: string} = {
    11: 'Декабрь',
 }
 const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
-   const [data, setData] = useState<IRoadmapDataItem[]>([]);
+   const [data, setData] = useState<IDashboardDataItem[]>([]);
    const [scale, setScale] = useState<ITimeScaleElement[]>([]);
    const [hours, setHours] = useState<ITimeScaleElement[]>([]);
    
@@ -36,7 +36,7 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
    }, [year, division_id])
 
    const getTotalData = async () => {
-      const res = await fetch(`/api/roadmap/total`, {
+      const res = await fetch(`/api/dashboard/total`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",

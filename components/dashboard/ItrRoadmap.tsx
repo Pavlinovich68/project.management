@@ -2,7 +2,7 @@
 import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 import ItrRoadmapRow from "./ItrRoadmapRow";
-import { IRoadmapItem, IRoadmapItemCRUD } from "@/models/IRoadmapItem";
+import { IRoadmapItem, IRoadmapItemCRUD } from "@/models/IDashboardItem";
 import styles from "@/app/(main)/workplace/department/dashboard/styles.module.scss"
 import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
@@ -22,7 +22,7 @@ import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 import { TabPanel, TabView } from "primereact/tabview";
 import { Chip } from "primereact/chip";
-import { IControlPoint } from "@/models/IRoadmapItemSegment";
+import { IControlPoint } from "@/models/IDashboardItemSegment";
 import { DataView } from "primereact/dataview";
 import { Badge } from "primereact/badge";
 import { Tag } from "primereact/tag";

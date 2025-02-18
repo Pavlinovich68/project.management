@@ -1,12 +1,11 @@
 'use client'
 import React, {useRef, useState, useEffect} from "react";
 import ItrYearSwitsh from "@/components/ItrYearSwitch";
-import ItrRoadmap from "@/components/roadmap/ItrRoadmap";
 import { useSession } from "next-auth/react";
 import styles from "@/app/(main)/workplace/department/dashboard/styles.module.scss"
 import { classNames } from "primereact/utils";
-import ItrTotalRow from "@/components/roadmap/ItrTotalRow";
-import { IRoadmapProjectItem } from "@/models/IRoadmapProjectItem";
+import ItrTotalRow from "@/components/dashboard/ItrTotalRow";
+import { IDashboardProjectItem } from "@/models/IDashboardProjectItem";
 
 interface IBalanceData {
    plan: number,
@@ -19,7 +18,7 @@ interface IBalanceData {
 const Dashboard = () => {
    const [year, setYear] = useState<number>(new Date().getFullYear());
    const [balanceData, setBalanceData] = useState<IBalanceData>()
-   const [projectsData, setProjectsData] = useState<IRoadmapProjectItem[]>()
+   const [projectsData, setProjectsData] = useState<IDashboardProjectItem[]>()
    const {data: session} = useSession();
 
    useEffect(() => {
@@ -33,7 +32,7 @@ const Dashboard = () => {
    }
 
    const getBalanceData = async (_year: number): Promise<IBalanceData> => {
-      const res = await fetch(`/api/roadmap/balance`, {
+      const res = await fetch(`/api/dashboard/balance`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",
@@ -48,8 +47,8 @@ const Dashboard = () => {
       return response.data;      
    }
 
-   const getProjectsData = async (): Promise<IRoadmapProjectItem[]> => {
-      const res = await fetch(`/api/roadmap/row`, {
+   const getProjectsData = async (): Promise<IDashboardProjectItem[]> => {
+      const res = await fetch(`/api/dashboard/row`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",
@@ -59,7 +58,7 @@ const Dashboard = () => {
             division: session?.user.division_id
          }),
          cache: 'force-cache'
-      });
+      });      
       const response = await res.json();
       return response.data;
    }
@@ -84,17 +83,17 @@ const Dashboard = () => {
                      <span className="block text-500 font-medium mb-3">Рабочее время</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue)}>{balanceData?.total.toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue)}>{balanceData?.total?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>человеко/часов всего</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue)}>{balanceData?.available.toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue)}>{balanceData?.available?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>доступно</span>
                   </div>
                   {
                      (balanceData?.lack??0) > 0 ?
                         <div className={classNames(styles.indicator)}>
-                           <span className={classNames(styles.indicatorValueBad)}>{balanceData?.lack.toLocaleString()}</span>
+                           <span className={classNames(styles.indicatorValueBad)}>{balanceData?.lack?.toLocaleString()}</span>
                            <span className={classNames(styles.indicatorCaption)}>дефицит (вакансии)</span>
                         </div> :
                         <></>
@@ -107,11 +106,11 @@ const Dashboard = () => {
                      <span className="block text-500 font-medium mb-3">Спланировано</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{balanceData?.plan.toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{balanceData?.plan?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>человеко/часов</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{percentPlan().toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{percentPlan()?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>%</span>
                   </div>
                </div>
@@ -122,11 +121,11 @@ const Dashboard = () => {
                      <span className="block text-500 font-medium mb-3">Исполнение плана</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{balanceData?.fact.toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{balanceData?.fact?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>человеко/часов</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{percentFact().toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValue, styles.fontLarge)}>{percentFact()?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>%</span>
                   </div>
                </div>               
@@ -137,11 +136,11 @@ const Dashboard = () => {
                      <span className="block text-500 font-medium mb-3">Неспланировано</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValueBad, styles.fontLarge)}>{((balanceData?.total??0) - (balanceData?.plan??0)).toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValueBad, styles.fontLarge)}>{((balanceData?.total??0) - (balanceData?.plan??0))?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>человеко/часов</span>
                   </div>
                   <div className={classNames(styles.indicator)}>
-                     <span className={classNames(styles.indicatorValueBad, styles.fontLarge)}>{(Math.round((100 - ((balanceData?.plan??0) / (balanceData?.total??0) * 100)) * 100) / 100).toLocaleString()}</span>
+                     <span className={classNames(styles.indicatorValueBad, styles.fontLarge)}>{(Math.round((100 - ((balanceData?.plan??0) / (balanceData?.total??0) * 100)) * 100) / 100)?.toLocaleString()}</span>
                      <span className={classNames(styles.indicatorCaption)}>%</span>
                   </div>
                </div>
@@ -158,7 +157,7 @@ const Dashboard = () => {
             {balanceWidget(year)}
             <ItrTotalRow year={year} division_id={session.user.division_id}/>
             {
-               projectsData?.map((item, i) =>
+               projectsData.map((item, i) =>
                      <div className={classNames("col-4", styles.block)}> 
                         <div className={classNames("card", styles.innerArea)}>
                            <div className="text-left mt-1 text-sm font-semibold text-500">{item?.project_code}: {item?.project_name}</div>

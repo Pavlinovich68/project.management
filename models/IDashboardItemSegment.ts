@@ -1,4 +1,4 @@
-import { IRoadmapItemCRUD } from "./IRoadmapItem"
+import { IRoadmapItemCRUD } from "./IDashboardItem"
 
 export interface IRoadmapRowSegmentData {
    segments: IRoadmapItemSegment[],

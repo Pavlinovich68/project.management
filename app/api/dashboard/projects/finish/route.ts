@@ -5,9 +5,9 @@ export const POST = async (request: NextRequest) => {
    const { id } = await request.json();
    try {
       let result = undefined;
-      const fact = await prisma.roadmap_fact_item.aggregate({
+      const fact = await prisma.dashboard_fact_item.aggregate({
          where: {
-            roadmap_item_id: id
+            dashboard_item_id: id
          },
          _sum: {
             hours: true
@@ -15,7 +15,7 @@ export const POST = async (request: NextRequest) => {
       });
       const factHours = fact._sum.hours??undefined;
       if (factHours) {
-         result = await prisma.roadmap_item.update({
+         result = await prisma.dashboard_item.update({
             where: {
                id: id
             },

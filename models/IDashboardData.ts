@@ -1,4 +1,4 @@
-export interface IRoadmapDataItem {
+export interface IDashboardDataItem {
    project_code: string,
    project_name: string,
    comment: string | undefined | null,

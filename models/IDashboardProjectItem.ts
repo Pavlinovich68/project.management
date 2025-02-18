@@ -1,6 +1,6 @@
-export interface IRoadmapProjectItem {
-   roadmap_id: number,
-   roadmap_item_id: number,   
+export interface IDashboardProjectItem {
+   dashboard_id: number,
+   dashboard_item_id: number,   
    comment: string,
    project_code: string,
    project_name: string,
@@ -11,10 +11,10 @@ export interface IRoadmapProjectItem {
    fact_width: number | undefined | null,
    is_closed: boolean,
    percentage: number,
-   control_points: IRoadmapControlPoint[]
+   control_points: IDashboardControlPoint[]
 }
 
-export interface IRoadmapControlPoint {
+export interface IDashboardControlPoint {
    id: number | undefined | null,
    name: string | undefined | null,
    date: Date | undefined | null,

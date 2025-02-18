@@ -1,13 +1,13 @@
 import prisma from "@/prisma/client";
 import {NextRequest, NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type";
-import { IRoadmapItem, IRoadmapItemCRUD, IRoadmapItemsCollection } from "@/models/IRoadmapItem";
+import { IDashboardItem, IDashboardItemCRUD, IDashboardItemsCollection } from "@/models/IDashboardItem";
 
 export const POST = async (request: NextRequest) => {
-   const create = async (model: IRoadmapItemCRUD) => {
-      const result = await prisma.roadmap_item.create({
+   const create = async (model: IDashboardItemCRUD) => {
+      const result = await prisma.dashboard_item.create({
          data: {
-            roadmap_id: model.roadmap_id,
+            dashboard_id: model.dashboard_id,
             project_id: model.project_id,
             start_date: model.start_date,
             end_date: model.end_date,
@@ -19,15 +19,15 @@ export const POST = async (request: NextRequest) => {
       return result;
    }
 
-   const read = async (year: number, division_id: number): Promise<IRoadmapItemsCollection | undefined> => {
-      const data = await prisma.roadmap.findFirst({
+   const read = async (year: number, division_id: number): Promise<IDashboardItemsCollection | undefined> => {
+      const data = await prisma.dashboard.findFirst({
          where: {
             year: year,
             division_id: division_id
          },
          select: {
             id: true,
-            roadmap_items: {
+            dashboard_items: {
                select: {
                   id: true,
                   project: {
@@ -49,9 +49,9 @@ export const POST = async (request: NextRequest) => {
          return result;
       }
 
-      const items:IRoadmapItem[] | undefined = data?.roadmap_items.map((item) => {
+      const items:IDashboardItem[] | undefined = data?.dashboard_items.map((item) => {
          return {
-            roadmap_id: data?.id,
+            dashboard_id: data?.id,
             id: item.id,
             project_id: item.project.id,
             project_code: item.project.code,
@@ -59,16 +59,16 @@ export const POST = async (request: NextRequest) => {
          }
       }).sort(function(a, b) { return projectCode(a.project_code) - projectCode(b.project_code) })
 
-      return items ? {roadmap_id: items[0].roadmap_id, items: items} : {roadmap_id: 0, items: []};
+      return items ? {dashboard_id: items[0].dashboard_id, items: items} : {dashboard_id: 0, items: []};
    }
 
-   const update = async (model: IRoadmapItemCRUD) => {
-      const result = await prisma.roadmap_item.update({
+   const update = async (model: IDashboardItemCRUD) => {
+      const result = await prisma.dashboard_item.update({
          where: {
             id: model.id
          },
          data: {
-            roadmap_id: model.roadmap_id,
+            dashboard_id: model.dashboard_id,
             project_id: model.project_id,
             start_date: model.start_date,
             end_date: model.end_date,
@@ -81,7 +81,7 @@ export const POST = async (request: NextRequest) => {
    }
 
    const drop = async (id: number) => {
-      const result = await prisma.roadmap_item.delete({
+      const result = await prisma.dashboard_item.delete({
          where: {
             id: id
          }
