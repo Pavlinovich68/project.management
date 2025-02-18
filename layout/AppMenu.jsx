@@ -9,7 +9,7 @@ import { IconAdjustmentsHorizontal, IconAlignLeft2, IconCalendarBolt, IconCalend
 import { IconBooks, IconUsers } from '@tabler/icons-react';
 import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup,
    IconStar, IconStars, IconStackMiddle, IconShare, IconAlignLeft, IconTower, IconChartArrows,
-   IconClock } from '@tabler/icons-react';
+   IconClock, IconDashboard } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -74,7 +74,7 @@ const AppMenu = () => {
                      to: '/workplace/department/calendar',               
                   },
                   {
-                     label: 'Дашборд',
+                     label: 'Дорожная карта',
                      tabler: <IconChartArrows className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['master']),
                      to: '/workplace/department/roadmap',               
@@ -84,6 +84,12 @@ const AppMenu = () => {
                      tabler: <IconClock className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
                      to: '/workplace/department/projectcalendar',               
+                  },
+                  {
+                     label: 'Дашборд',
+                     tabler: <IconDashboard className='mr-1' stroke={1.5}/>,
+                     visible: checkRoles(['master']),
+                     to: '/workplace/department/dashboard',               
                   },
                ]
             },

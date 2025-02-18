@@ -1,0 +1,318 @@
+$color-1: #0d6efd;
+$color-2: #198754;
+$color-3: #ffc107;
+$color-4: #0dcaf0;
+$color-5: #d63384;
+$color-6: #6610f2;
+$color-7: #dc3545;
+$color-8: #7c8ea7;
+
+$color-9: #8dfafb;
+$color-10: #F68383;
+
+.dashboard {
+   padding-top: 1rem;
+   .block {
+      padding: 5px;
+      .innerArea {
+         padding: 0.5rem 1rem 1rem 1rem;
+         .caption {
+            margin-bottom: 0 !important;
+            small {
+               font-size: x-small;
+               margin-left: 0.3rem;
+            }
+         }
+         .indicator {
+            font-size: large;
+            .indicatorValue {
+               font-size: large;
+               font-weight: 700;
+               color: $color-9;
+            }
+            .indicatorValueBad {
+               font-size: large;
+               font-weight: 700;
+               color: $color-10;
+            }
+            .indicatorCaption {
+               margin-left: 0.5rem;
+            }
+         }
+         hr {
+            margin: 0.2rem 0 0.2rem 0;
+         }
+      }
+   }
+}
+
+.roadmap {   
+   .roadmapContainer {
+      margin-top: 5px;
+      display: block;
+      background: #2a323d;
+      border: 1px solid #3f4b5b;
+      padding: 1rem 1.25rem;
+      border-radius: 10px;
+      gap: 0.5rem;   
+   }
+}
+
+.segmentBar * {
+   box-sizing: border-box;
+}
+
+.segmentBar {
+   display: flex;
+   font-size: 12px;
+   flex-wrap: nowrap;
+   width: 100%;
+   height: 30px;
+   position: relative;   
+   z-index: 1;
+   .segmentItemWrapper {
+      display: inline-flex;
+      height: 100%;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      .segmentItemTitle {
+         position: absolute;
+         left: 4px;
+         top: 0px;
+         font-size: 12px;
+         display: inline-block;
+         line-height: 1;
+         white-space: nowrap;
+         color: #000;
+         z-index: 4;
+      }
+      .segmentItemValue {
+         color: #000;
+         position: absolute;
+         bottom: 1px;
+         left: 4px;
+         font-size: 12px;         
+         z-index: 4;
+      }
+      .segmentItemPercentage {
+         color: #000;
+         position: absolute;
+         bottom: 1px;
+         left: 12em;
+         font-size: 12px;
+         z-index: 4;
+      }
+      .segmentItemPlan {
+         position: relative;
+         z-index: 2;
+         background: linear-gradient(to right, #067E23, #043914);
+      }
+      .segmentItemFact {
+         position: absolute;
+         margin: 0;
+         z-index: 3;
+         height: 30px;
+         background: linear-gradient(to right, #AE0623,      #590414);
+      }      
+      .buttonBar {
+         position: absolute;
+         right: 10px;
+         top: 8px;
+         z-index: 4;
+         .button {
+            font-size: 13px;
+            margin-right: 5px;         
+         }
+         .button:last-child{
+            margin-right: 0;
+         }
+      }
+   }
+   .segmentEmpty {
+      width: 100%;
+      background: linear-gradient(
+         to right,
+         #cfd0d1,
+         #7e8288
+      )
+   }
+   .totalRowSegment {
+      position: absolute;
+      z-index: 2;
+      height: 100%;
+      background-color: #067E2377;
+      text-align: center;
+      font-size: 11px;
+      padding-top: 7px;
+   }
+}
+
+.scaleBar {
+   display: flex;
+   font-size: 12px;
+   flex-wrap: nowrap;
+   width: 100%;
+   height: 1rem;
+   position: relative;   
+   z-index: 1;
+   border-left: 1px #A6A8AB solid;
+   .scaleItem {
+      border-right: 1px #A6A8AB solid;
+      color: #A6A8AB;
+      text-align: center;
+      font-weight: 700;
+      sup {
+         font-weight: 300;
+         font-size: 9px;
+         color: #eeeeee;
+      }
+   }
+}
+
+.hoursScale {
+   display: flex;
+   font-size: 12px;
+   flex-wrap: nowrap;
+   width: 100%;
+   height: 0.5rem;
+   position: relative;   
+   z-index: 1;
+   margin-top: 2px;
+   border-left: 1px #A6A8AB solid;
+   .scaleItem {
+      border-right: 1px #A6A8AB solid;
+   }
+}
+
+.scale {
+   position: absolute;
+   margin-top: 30px;
+   width: calc(100% - 40px);
+   z-index: 100;
+   height: calc(100% - 35px);
+   top: 0;
+   .scalePointer {
+      height: 100%; 
+      width: 20%;
+      border-right: solid 1px #ff5555; 
+   }
+}
+
+.card {
+   padding: 0.5rem;
+   border-radius: 0.5rem;
+   label {      
+      font-weight: 600;
+      font-size: .875rem
+   }
+   .fieldValue {
+      color: var(--surface-500);
+      font-style: italic;
+   }
+   .cardToolbar {
+      width: 100%;
+   }
+}
+
+.controlPointsLayear {
+   position: absolute;
+   z-index: 101;
+   height: 40px;
+   width: calc(100% - 40px);
+   pointer-events: none;
+   .controlPoint {
+      top: 0;  
+      z-index: 102;
+      width: 1px; 
+      height: 100%; 
+      border-left: solid 1px;
+      position: inherit;
+      .badge {
+         min-width: 8px;
+         height: 8px;
+         line-height: 8px;
+         margin-top: 34px;
+         margin-left: -4px;
+         background-color: inherit;
+      }
+   }
+   div[data-color="1"] {
+      border-left-color: $color-1;
+      background-color:  $color-1;
+   }
+   div[data-color="2"] {
+      border-left-color:  $color-2;
+      background-color:  $color-2;
+   }
+   div[data-color="3"] {
+      border-left-color:  $color-3;
+      background-color:  $color-3;
+   }
+   div[data-color="4"] {
+      border-left-color:  $color-4;
+      background-color:  $color-4;
+   }
+   div[data-color="5"] {
+      border-left-color:  $color-5;
+      background-color:  $color-5;
+   }
+   div[data-color="6"] {
+      border-left-color:  $color-6;
+      background-color:  $color-6;
+   }
+   div[data-color="7"] {
+      border-left-color: $color-7;
+      background-color:  $color-7;
+   }
+   div[data-color="8"] {
+      border-left-color:  $color-8;
+      background-color:  $color-8;
+   }
+}
+
+.controlPointItem {
+   .itemCard {
+      padding: 1rem;
+      .typeTag {
+         padding-top: 2px;
+         padding-bottom: 2px;
+         span[data-pc-section="value"] {
+            font-size: 10px;
+         }
+      }
+      i {
+         cursor: pointer;
+      }
+   }
+}
+.typeTag[data-color="1"] {
+   background-color: $color-1;
+}
+.typeTag[data-color="2"] {
+   background-color: $color-2;
+}
+.typeTag[data-color="3"] {
+   background-color: $color-3;
+   color: $color-1;
+}
+.typeTag[data-color="4"] {
+   background-color: $color-4;
+   color: $color-6;
+}
+.typeTag[data-color="5"] {
+   background-color: $color-5;
+}
+.typeTag[data-color="6"] {
+   background-color: $color-6;
+}
+.typeTag[data-color="7"] {
+   background-color: $color-7;
+}
+.typeTag[data-color="8"] {
+   background-color: $color-8;
+}
+
+.hidden {
+   display: none;
+}

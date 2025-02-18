@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from "react";
-import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
+import styles from "@/app/(main)/workplace/department/dashboard/styles.module.scss"
 import { classNames } from "primereact/utils";
 import { IRoadmapRowSegmentData } from "@/models/IRoadmapItemSegment";
 import { Tooltip } from "primereact/tooltip";

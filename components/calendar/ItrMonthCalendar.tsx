@@ -3,11 +3,12 @@ import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/ProjectCalendar/styles.module.scss"
 import React, { useEffect, useState } from "react";
 import { ICalendarCell, ICalendarRow } from "@/models/ICalendar";
+import { ICalendarCellExt } from "@/models/ICalendarCellExt";
 
 const ItrMonthCalendar = ({data}:{data: ICalendarRow}) => {
    
-   const onDayClick = (e:  React.MouseEvent<HTMLElement>, item: ICalendarCell) => {
-      if (item.type === 100) return;
+   const onDayClick = (e:  React.MouseEvent<HTMLElement>, item: ICalendarCellExt) => {
+      if (item.cell.type === 100) return;
       if (e.ctrlKey) {
          console.log(item);
       }
@@ -21,9 +22,10 @@ const ItrMonthCalendar = ({data}:{data: ICalendarRow}) => {
                {               
                   data?.cells?.map((item) => <div className={
                      classNames(`flex align-items-center justify-content-center cell-bg-${item.type} cell-text-${item.type}`, styles.cellItem)
-                  } onClick={(e) => onDayClick(e, item)}>{item.day}</div>) 
+                  } onClick={(e) => onDayClick(e, {rate_id: data.rate_id, cell: item})}>{item.day}</div>) 
                }
             </div>
+            <text className={classNames(styles.monthHoursText)}>Рабочих часов: {data.hours}</text>
          </div>
       </React.Fragment>
       

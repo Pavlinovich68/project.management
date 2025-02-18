@@ -28,13 +28,7 @@ const ProjectCalendar = () => {
                <div className="card">
                   <h3>Проекты в работе</h3>               
                   <Toolbar center={centerContent}/>
-                  <ItrDivisionCalendar year={date?.getFullYear()} month={date?.getMonth()+1} user_id={session.user.id}/>
-                  {/* <ItrMonthCalendar 
-                     //@ts-ignore
-                     employee_id={session.user.employee_id}
-                     year={date.getFullYear()}
-                     month={date.getMonth()+1}
-                  /> */}
+                  <ItrDivisionCalendar year={date?.getFullYear()} month={date?.getMonth()+1} user_id={session.user.id}/>                  
                </div>
             </div>
          </div>

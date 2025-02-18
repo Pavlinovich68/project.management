@@ -3,7 +3,7 @@ import { classNames } from "primereact/utils";
 import React, {useRef, useState, useEffect} from "react";
 import ItrRoadmapRow from "./ItrRoadmapRow";
 import { IRoadmapItem, IRoadmapItemCRUD } from "@/models/IRoadmapItem";
-import styles from "@/app/(main)/workplace/department/roadmap/styles.module.scss"
+import styles from "@/app/(main)/workplace/department/dashboard/styles.module.scss"
 import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
 import { Button } from "primereact/button";
@@ -408,10 +408,7 @@ const card = (
                   {
                      roadmapData?.map((item) => <ItrRoadmapRow 
                         roadmap_id={item.roadmap_id} 
-                        project_id={item.project_id} 
-                        update={updateMethod}
-                        drop={deleteMethod}
-                        view={viewMethod}
+                        project_id={item.project_id}
                      />)
                   }
                   <div className={classNames(styles.scale)} style={{pointerEvents: "none"}}>
