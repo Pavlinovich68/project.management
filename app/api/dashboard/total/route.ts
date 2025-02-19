@@ -20,9 +20,9 @@ export const POST = async (request: NextRequest) => {
          currentDate.setDate(currentDate.getDate() +1);
       }
 
-      const items = await prisma.dashboard_item.findMany({
+      const items = await prisma.roadmap_item.findMany({
          where: {
-            dashboard: {
+            roadmap: {
                year: year,
                division_id: division_id
             }

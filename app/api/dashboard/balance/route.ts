@@ -7,9 +7,9 @@ export const POST = async (request: NextRequest) => {
    try {
       const { year, division_id } = await request.json();
 
-      const plan = await prisma.dashboard_item.aggregate({
+      const plan = await prisma.roadmap_item.aggregate({
          where: {
-            dashboard: {
+            roadmap: {
                year: year
             }
          },
@@ -18,10 +18,10 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
-      const fact = await prisma.dashboard_fact_item.aggregate({
+      const fact = await prisma.roadmap_fact_item.aggregate({
          where: {
-            dashboard_item: {
-               dashboard: {
+            roadmap_item: {
+               roadmap: {
                   year: year
                }
             }
