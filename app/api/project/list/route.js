@@ -12,7 +12,7 @@ export const GET = async () => {
       .map((item) => {
          return {
             id: item.id,
-            name: `${item.code} - ${item.short_name}`
+            name: `${item.code} - ${item.name}`
          }
       });
       return await NextResponse.json({status: 'success', data: result});

@@ -74,7 +74,7 @@ const AppMenu = () => {
                      to: '/workplace/department/calendar',               
                   },
                   {
-                     label: 'Дорожная карта',
+                     label: 'Проекты в работе',
                      tabler: <IconChartArrows className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['master']),
                      to: '/workplace/department/roadmap',               
