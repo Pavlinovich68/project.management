@@ -21,11 +21,12 @@ import { Dropdown } from "primereact/dropdown";
 import { IBaseEntity } from "@/models/IBaseEntity";
 import { InputTextarea } from "primereact/inputtextarea";
 import { InputNumber } from "primereact/inputnumber";
+import { IRoadmapItem } from "@/models/IRoadmapItem";
 
 const Roadmap = () => {
    const controllerName = 'roadmap';
-   const [year, setYear] = useState(2024);
-   const model: IRoadmap = {project: undefined, plan_hours: undefined, comment: undefined};
+   const [year, setYear] = useState(new Date().getFullYear());
+   const model: IRoadmapItem = {id: undefined, project: undefined, hours: undefined, comment: undefined, is_closed: false, roadmap_id: undefined};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -61,30 +62,36 @@ const gridColumns = [
       key="roadmapGridColumn1"
       field="project.name"
       header="Проект"
-      style={{ width: '80%' }}>
+      style={{ width: '45%' }}>
+   </Column>,
+   <Column
+      key="roadmapGridColumn1"
+      field="comment"
+      header="Примечание"
+      style={{ width: '45%' }}>
    </Column>,
    <Column
       key="roadmapGridColumn2"
-      field="plan_hours"
+      field="hours"
       header="Плановая трудоемкость"
-      style={{ width: '20%' }}>
+      style={{ width: '10%' }}>
    </Column>
 ];
 //#endregion //!SECTION
 
 //#region //SECTION Card
-const roadmap = useFormik<IRoadmap>({
+const roadmap = useFormik<IRoadmapItem>({
    initialValues: model,
    validate: (data) => {
-      let errors: FormikErrors<IRoadmap> = {};
+      let errors: FormikErrors<IRoadmapItem> = {};
       if (!data.project){
          errors.project = "Проект должен быть указан";
       }
-      if (!data.plan_hours){
-         errors.plan_hours = "Не указано плановое количество часов на реализацию!";
+      if (!data.hours){
+         errors.hours = "Не указано плановое количество часов на реализацию!";
       }
-      if (data.plan_hours === 0){
-         errors.plan_hours = "Количество часов должно быть больше нуля!";
+      if (data.hours === 0){
+         errors.hours = "Количество часов должно быть больше нуля!";
       }
       return errors;
    },
@@ -118,12 +125,22 @@ const card = (
                   />
                </div>
                <div className="field col-12">
-                  <label htmlFor="name">Наименование работ</label>
-                  <InputTextarea value={roadmap.values.comment??''} onChange={(e) => console.log(e.target.value)} rows={2} />
+                  <label htmlFor="comment">Содержание работ</label>
+                  <InputTextarea 
+                     id="comment"  placeholder="Содержание"
+                     className={classNames({"p-invalid": submitted && !roadmap.values.comment})}
+                     value={roadmap.values.comment??''}
+                     onChange={(e) => roadmap.setFieldValue('comment', e.target.value)} 
+                     autoFocus/>
                </div>               
                <div className="field col-12">
                   <label htmlFor="hours">Плановое количество часов</label>
-                  <InputNumber value={roadmap.values.plan_hours} onValueChange={(e) => console.log(e.value)} locale="ru-RU" suffix=" человеко/часов"/>
+                  <InputNumber id="hours"  placeholder="Плановое количество часов"
+                     className={classNames({"p-invalid": submitted && !roadmap.values.hours})}
+                     value={roadmap.values.hours}
+                     onValueChange={(e) => roadmap.setFieldValue('hours', e.value)}
+                     locale="ru-RU" suffix=" ч/ч"
+                     required autoFocus/>
                </div>
             </div>
          </TabPanel> 
@@ -146,7 +163,7 @@ const card = (
       }
    }
 
-const updateMethod = async (data: IRoadmap) => {
+const updateMethod = async (data: IRoadmapItem) => {
    setCardHeader('Изменение проекта находящегося в плане');
    roadmap.setValues(data);
    await readProjects();

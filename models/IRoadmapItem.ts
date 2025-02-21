@@ -1,10 +1,10 @@
 import { IBaseEntity } from "@/models/IBaseEntity"
 
 export interface IRoadmapItem {
-   id: number
-   comment: string | undefined
-   roadmap_id: number
-   project: IBaseEntity
-   hours: number
+   id: number | undefined
+   comment: string | undefined | null
+   roadmap_id: number | undefined
+   project: IBaseEntity | undefined
+   hours: number | undefined
    is_closed: boolean
 }

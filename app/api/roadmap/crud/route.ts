@@ -22,28 +22,36 @@ export const POST = async (request: NextRequest) => {
             }
          });
       }
+      if (!roadmap)
+         throw new Error(`Отсутствует экземпляр дорожной карты на ${params.year} год`);
       const result = await prisma.roadmap_item.create({
          data: {
             comment: model.comment,
-            hours: model.hours,
+            hours: model.hours??0,
             is_closed: false,
-            project_id: model.project.id??0,
+            project_id: model.project?.id??0,
             roadmap_id: roadmap.id
+         },
+         include: {
+            project: true
          }
       });
 
+      if (!result || !result.project_id)
+         throw Error('')
       return {
          id: result.id,
          comment: result.comment,
          hours: result.hours,
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
-         project: {id: result.project.id, name: result.project.name}
+         project: {id: result.project_id, name: result.project.name}
       }
    }
 
    const read = async (model: IDataSourceRequest, params: IParams): Promise<IDataSourceResult> => {
-      let filter: any = {};
+      const roadmap = await prisma.roadmap.findFirst({where: {year: params.year, division_id: params.division_id}});
+      let filter: any = {roadmap: {id: roadmap?.id??-1}};      
       if (model.searchStr) {
          filter['OR'] = prismaHelper.OR(['project.name', 'comment'], model.searchStr);
       }
@@ -53,6 +61,9 @@ export const POST = async (request: NextRequest) => {
          take: model.pageSize,
          where: filter,
          orderBy: model.orderBy,
+         include: {
+            project: true
+         }
       });
 
       let data: IDataSourceResult = {
@@ -75,8 +86,11 @@ export const POST = async (request: NextRequest) => {
             comment: model.comment,
             hours: model.hours,
             is_closed: model.is_closed,
-            project_id: model.project.id??0,
+            project_id: model.project?.id??0,
             roadmap_id: model.roadmap_id
+         },
+         include: {
+            project: true
          }
       });
 
@@ -93,7 +107,7 @@ export const POST = async (request: NextRequest) => {
    const drop = async (id: number): Promise<IRoadmapItem> => {
       const result = await prisma.roadmap_item.delete({
          where: {
-            id: id
+            id: id 
          }
       });
 
@@ -103,7 +117,7 @@ export const POST = async (request: NextRequest) => {
          hours: result.hours,
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
-         project: {id: result.project.id, name: result.project.name}
+         project: undefined
       }
    }
 
@@ -121,11 +135,11 @@ export const POST = async (request: NextRequest) => {
             result = await update(inputData.model as IRoadmapItem);
             break;
          case CRUD.delete:
-            result = await drop(inputData.model as number);
+            result = await drop(inputData.model.id as number);
             break;
       }
       return await NextResponse.json({status: 'success', data: result});
    } catch (error) {
-      return await NextResponse.json({status: 'error', data: (error as Error).stack });
+      return await NextResponse.json({status: 'error', data: (error as Error).message });
    }
 }
