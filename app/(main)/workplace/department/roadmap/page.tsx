@@ -26,7 +26,7 @@ import { IRoadmapItem } from "@/models/IRoadmapItem";
 const Roadmap = () => {
    const controllerName = 'roadmap';
    const [year, setYear] = useState(new Date().getFullYear());
-   const model: IRoadmapItem = {id: undefined, project: undefined, hours: undefined, comment: undefined, is_closed: false, roadmap_id: undefined, fact: 0};
+   const model: IRoadmapItem = {id: undefined, project: undefined, hours: undefined, comment: undefined, is_closed: false, roadmap_id: undefined, fact: 0, plan_str: undefined, fact_str: undefined};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -62,25 +62,25 @@ const gridColumns = [
       key="roadmapGridColumn1"
       field="project.name"
       header="Проект"
-      style={{ width: '45%' }}>
+      style={{ width: '42%' }}>
    </Column>,
    <Column
       key="roadmapGridColumn1"
       field="comment"
       header="Примечание"
-      style={{ width: '45%' }}>
+      style={{ width: '42%' }}>
    </Column>,
    <Column
       key="roadmapGridColumn2"
-      field="hours"
+      field="plan_str"
       header="План"
-      style={{ width: '5%' }}>
+      style={{ width: '8%' }}>
    </Column>,
    <Column
       key="roadmapGridColumn2"
-      field="fact"
+      field="fact_str"
       header="Факт"
-      style={{ width: '5%' }}>
+      style={{ width: '8%' }}>
    </Column>
 ];
 //#endregion //!SECTION

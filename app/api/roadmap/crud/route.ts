@@ -44,8 +44,10 @@ export const POST = async (request: NextRequest) => {
          comment: result.comment,
          hours: result.hours,
          fact: 0,
+         plan_str: result.hours.toLocaleString('ru-RU'),
+         fact_str: undefined,
          is_closed: result.is_closed,
-         roadmap_id: result.roadmap_id,
+         roadmap_id: result.roadmap_id,         
          project: {id: result.project_id, name: result.project.name}
       }
    }
@@ -76,7 +78,11 @@ export const POST = async (request: NextRequest) => {
          for (let fi of item.fact_items)
             fact += fi.hours
          //@ts-ignore
-         item.fact = fact
+         item.fact = fact;
+         //@ts-ignore
+         item.plan_str = `${item.hours.toLocaleString('ru-RU')} ч/ч`;
+         //@ts-ignore
+         item.fact_str = `${fact.toLocaleString('ru-RU')} ч/ч`;
       }
 
       let data: IDataSourceResult = {
@@ -121,6 +127,8 @@ export const POST = async (request: NextRequest) => {
          comment: result.comment,
          hours: result.hours,
          fact: fact._sum.hours??0,
+         plan_str: result.hours.toLocaleString('ru-RU'),
+         fact_str: (fact._sum.hours??0).toLocaleString('ru-RU'),
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
          project: {id: result.project.id, name: result.project.name}
@@ -142,7 +150,9 @@ export const POST = async (request: NextRequest) => {
          hours: result.hours,
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
-         fact: 0,
+         fact: undefined,
+         fact_str: undefined,
+         plan_str: undefined,
          project: undefined
       }
    }

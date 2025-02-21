@@ -7,5 +7,7 @@ export interface IRoadmapItem {
    project: IBaseEntity | undefined
    hours: number | undefined
    fact: number | undefined
+   plan_str: string | undefined
+   fact_str: string | undefined
    is_closed: boolean
 }
