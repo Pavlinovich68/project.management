@@ -126,7 +126,7 @@ const card = (
                   <InputNumber value={roadmap.values.plan_hours} onValueChange={(e) => console.log(e.value)} locale="ru-RU" suffix=" человеко/часов"/>
                </div>
             </div>
-         </TabPanel>
+         </TabPanel> 
          <TabPanel header="Контрольные точки"></TabPanel>
          <TabPanel header="Документы"></TabPanel>
       </TabView>
