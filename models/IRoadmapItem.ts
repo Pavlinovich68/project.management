@@ -6,5 +6,6 @@ export interface IRoadmapItem {
    roadmap_id: number | undefined
    project: IBaseEntity | undefined
    hours: number | undefined
+   fact: number | undefined
    is_closed: boolean
 }

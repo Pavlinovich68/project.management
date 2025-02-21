@@ -26,7 +26,7 @@ import { IRoadmapItem } from "@/models/IRoadmapItem";
 const Roadmap = () => {
    const controllerName = 'roadmap';
    const [year, setYear] = useState(new Date().getFullYear());
-   const model: IRoadmapItem = {id: undefined, project: undefined, hours: undefined, comment: undefined, is_closed: false, roadmap_id: undefined};
+   const model: IRoadmapItem = {id: undefined, project: undefined, hours: undefined, comment: undefined, is_closed: false, roadmap_id: undefined, fact: 0};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -73,8 +73,14 @@ const gridColumns = [
    <Column
       key="roadmapGridColumn2"
       field="hours"
-      header="Плановая трудоемкость"
-      style={{ width: '10%' }}>
+      header="План"
+      style={{ width: '5%' }}>
+   </Column>,
+   <Column
+      key="roadmapGridColumn2"
+      field="fact"
+      header="Факт"
+      style={{ width: '5%' }}>
    </Column>
 ];
 //#endregion //!SECTION

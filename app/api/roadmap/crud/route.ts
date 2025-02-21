@@ -43,6 +43,7 @@ export const POST = async (request: NextRequest) => {
          id: result.id,
          comment: result.comment,
          hours: result.hours,
+         fact: 0,
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
          project: {id: result.project_id, name: result.project.name}
@@ -62,9 +63,21 @@ export const POST = async (request: NextRequest) => {
          where: filter,
          orderBy: model.orderBy,
          include: {
-            project: true
-         }
+            project: true,
+            fact_items: true
+         }         
       });
+
+      for (let item of result) {
+         let fact = 0;
+         if (item.fact_items.length === 0) {
+            continue;
+         }
+         for (let fi of item.fact_items)
+            fact += fi.hours
+         //@ts-ignore
+         item.fact = fact
+      }
 
       let data: IDataSourceResult = {
          recordCount: totalCount,
@@ -94,10 +107,20 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
+      const fact = await prisma.roadmap_fact_item.aggregate({
+         where: {
+            roadmap_item_id: result.id
+         },
+         _sum: {
+            hours: true
+         }
+      });
+
       return {
          id: result.id,
          comment: result.comment,
          hours: result.hours,
+         fact: fact._sum.hours??0,
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
          project: {id: result.project.id, name: result.project.name}
@@ -105,6 +128,8 @@ export const POST = async (request: NextRequest) => {
    }
 
    const drop = async (id: number): Promise<IRoadmapItem> => {
+      await prisma.roadmap_fact_item.deleteMany({where: {roadmap_item_id: id}});
+
       const result = await prisma.roadmap_item.delete({
          where: {
             id: id 
@@ -117,6 +142,7 @@ export const POST = async (request: NextRequest) => {
          hours: result.hours,
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
+         fact: 0,
          project: undefined
       }
    }
