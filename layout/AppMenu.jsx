@@ -76,7 +76,7 @@ const AppMenu = () => {
                   {
                      label: 'Проекты в работе',
                      tabler: <IconChartArrows className='mr-1' stroke={1.5}/>,
-                     visible: checkRoles(['master']),
+                     visible: checkRoles(['developer', 'master']),
                      to: '/workplace/department/roadmap',               
                   },
                   {

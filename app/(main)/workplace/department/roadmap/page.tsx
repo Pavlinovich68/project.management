@@ -12,7 +12,7 @@ import CrudHelper from "@/services/crud.helper";
 import CRUD from "@/models/enums/crud-type";
 import ItrGrid from "@/components/ItrGrid";
 import ItrCard from "@/components/ItrCard";
-import { ConfirmDialog } from "primereact/confirmdialog";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import styles from './styles.module.scss';
 import { useSession } from "next-auth/react";
 import { IRoadmap } from "@/models/IRoadmap";
@@ -24,6 +24,7 @@ import { InputNumber } from "primereact/inputnumber";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
 import ItrControlPoints from "@/components/roadmap/ItrControlPoints";
 import { IControlPoint } from "@/models/IControlPoint";
+import RolesHelper from "@/services/roles.helper";
 
 const Roadmap = () => {
    const controllerName = 'roadmap';
@@ -38,9 +39,11 @@ const Roadmap = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const {data: session} = useSession();
    const [projects, setProjects] = useState<IBaseEntity[]>();
+   const [readOnly, setReadOnly] = useState<boolean>(false);
 
    useEffect(() => {
-      changeYear(year);      
+      changeYear(year);
+      setReadOnly(!RolesHelper.checkRoles(session?.user.roles, ['admin','boss','master','analyst']))
    }, []);
    
    const changeYear = (val: number) => {
@@ -191,44 +194,53 @@ const card = (
             <div className="p-fluid formgrid grid">
                <div className="field col-12">
                   <label htmlFor="name">Проект</label>
-                  <Dropdown
-                     value={roadmap.values.project?.id} 
-                     className={classNames({"p-invalid": submitted && !roadmap.values.project})} 
-                     required 
-                     optionLabel="name" 
-                     optionValue="id" 
-                     filter
-                     options={projects}
-                     onChange={(e) => {
-                        const item = projects?.find(item => item.id === e.value);
-                        if (item) {
-                           roadmap.setFieldValue('project', item)
-                        }
-                     }}
-                  />
+                  {
+                     readOnly ? <h6 className={classNames(styles.hReadOnly)}>{roadmap.values.project?.name}</h6> :
+                     <Dropdown
+                        value={roadmap.values.project?.id} 
+                        className={classNames({"p-invalid": submitted && !roadmap.values.project})} 
+                        required 
+                        optionLabel="name" 
+                        optionValue="id" 
+                        filter
+                        options={projects}
+                        onChange={(e) => {
+                           const item = projects?.find(item => item.id === e.value);
+                           if (item) {
+                              roadmap.setFieldValue('project', item)
+                           }
+                        }}
+                     />
+                  }
                </div>
                <div className="field col-12">
                   <label htmlFor="comment">Содержание работ</label>
-                  <InputTextarea 
-                     id="comment"  placeholder="Содержание"
-                     className={classNames({"p-invalid": submitted && !roadmap.values.comment})}
-                     value={roadmap.values.comment??''}
-                     onChange={(e) => roadmap.setFieldValue('comment', e.target.value)} 
-                     autoFocus/>
+                  {
+                     readOnly ? <h6 className={classNames(styles.hReadOnly)}>{roadmap.values.comment}</h6> :
+                     <InputTextarea 
+                        id="comment"  placeholder="Содержание"
+                        className={classNames({"p-invalid": submitted && !roadmap.values.comment})}
+                        value={roadmap.values.comment??''}
+                        onChange={(e) => roadmap.setFieldValue('comment', e.target.value)} 
+                        autoFocus/>
+                  }                  
                </div>               
                <div className="field col-12">
                   <label htmlFor="hours">Плановое количество часов</label>
-                  <InputNumber id="hours"  placeholder="Плановое количество часов"
-                     className={classNames({"p-invalid": submitted && !roadmap.values.hours})}
-                     value={roadmap.values.hours}
-                     onValueChange={(e) => roadmap.setFieldValue('hours', e.value)}
-                     locale="ru-RU" suffix=" ч/ч"
-                     required autoFocus/>
+                  {
+                     readOnly ? <h6 className={classNames(styles.hReadOnly)}>{roadmap.values.hours} ч/ч</h6> :
+                     <InputNumber id="hours"  placeholder="Плановое количество часов"
+                        className={classNames({"p-invalid": submitted && !roadmap.values.hours})}
+                        value={roadmap.values.hours}
+                        onValueChange={(e) => roadmap.setFieldValue('hours', e.value)}
+                        locale="ru-RU" suffix=" ч/ч"
+                        required autoFocus/>
+                  }                  
                </div>
             </div>
          </TabPanel>         
          <TabPanel header="Контрольные точки">
-            <ItrControlPoints data={_controlPoints}/>
+            <ItrControlPoints data={_controlPoints} state={recordState}/>
          </TabPanel>
          <TabPanel header="Выполненные работы"></TabPanel>
          <TabPanel header="Документы"></TabPanel>
@@ -250,7 +262,7 @@ const card = (
    }
 
 const updateMethod = async (data: IRoadmapItem) => {
-   setCardHeader('Изменение проекта находящегося в плане');
+   setCardHeader(readOnly ? 'Просмотр свойств проекта находящегося в плане' : 'Изменение свойств проекта находящегося в плане');
    roadmap.setValues(data);
    await readProjects();
    setRecordState(RecordState.edit);
@@ -332,12 +344,14 @@ const saveMethod = async () => {
                   tableStyle={{ minWidth: '50rem' }}
                   showClosed={false}
                   columns={gridColumns}
+                  readOnly={readOnly}
+                  view={updateMethod}
                   ref={grid}/>
                <ItrCard
                   header={cardHeader}
                   width={'50vw'}
                   save={saveMethod}
-                  hiddenSave={false}
+                  hiddenSave={readOnly}
                   body={card}
                   ref={editor}
                />
