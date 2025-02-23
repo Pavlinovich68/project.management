@@ -114,6 +114,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 0, 10),
       name: "Тестовая контрольная точка 1",
       type: 0,
+      expired_type: 2,
       roadmap_item_id: 1
    },
    {
@@ -121,6 +122,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 1, 10),
       name: "Тестовая контрольная точка 2",
       type: 1,
+      expired_type: 2,
       roadmap_item_id: 1
    },
    {
@@ -128,6 +130,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 2, 10),
       name: "Тестовая контрольная точка 3",
       type: 2,
+      expired_type: 1,
       roadmap_item_id: 1
    },
    {
@@ -135,6 +138,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 3, 10),
       name: "Тестовая контрольная точка 4",
       type: 4,
+      expired_type: 0,
       roadmap_item_id: 1
    },
    {
@@ -142,6 +146,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 4, 10),
       name: "Тестовая контрольная точка 5",
       type: 5,
+      expired_type: 0,
       roadmap_item_id: 1
    },
    {
@@ -149,6 +154,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 5, 10),
       name: "Тестовая контрольная точка 6",
       type: 6,
+      expired_type: 0,
       roadmap_item_id: 1
    },
    {
@@ -156,6 +162,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 6, 10),
       name: "Тестовая контрольная точка 7",
       type: 7,
+      expired_type: 0,
       roadmap_item_id: 1
    },
    {
@@ -163,6 +170,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 7, 10),
       name: "Тестовая контрольная точка 8",
       type: 8,
+      expired_type: 0,
       roadmap_item_id: 1
    },
    {
@@ -170,6 +178,7 @@ const _controlPoints: IControlPoint[] = [
       date: new Date(2025, 8, 10),
       name: "Тестовая контрольная точка 9",
       type: 9,
+      expired_type: 0,
       roadmap_item_id: 1
    }
 ]

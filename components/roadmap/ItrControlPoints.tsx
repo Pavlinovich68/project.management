@@ -4,7 +4,7 @@ import { IControlPoint } from "@/models/IControlPoint";
 import { Toolbar } from "primereact/toolbar";
 import React, { useState } from "react";
 import { Button } from "primereact/button";
-import { Column } from "primereact/column";
+import { Column, ColumnFilterElementTemplateOptions } from "primereact/column";
 import DateHelper from "@/services/date.helpers";
 
 const ItrControlPoints = ({data}: {data: IControlPoint[]}) => {
@@ -20,6 +20,16 @@ const ItrControlPoints = ({data}: {data: IControlPoint[]}) => {
 
    const dateTemplate = (rowData: IControlPoint) => {
          return DateHelper.formatDate(rowData.date);
+   };
+
+   const stateRowTemplate = (rowData: IControlPoint) => {
+      let color: string | undefined;
+      switch (rowData.expired_type) {
+         case 0: { color = 'green'; break; }
+         case 1: { color = 'yellow'; break; }
+         case 2: { color = 'red'; break; }
+      }
+      return (<i className="pi pi-star-fill" style={{ color: color }}></i>);
    };
    
    const typeTemplate = (rowData: IControlPoint) => {
@@ -41,7 +51,7 @@ const ItrControlPoints = ({data}: {data: IControlPoint[]}) => {
 
    const header = (
       <Toolbar start={startContent}/> 
-   )
+   )  
    
    return (
       <DataTable
@@ -50,6 +60,7 @@ const ItrControlPoints = ({data}: {data: IControlPoint[]}) => {
          showGridlines
          paginator rows={5}
       >
+         <Column field="expired_type" dataType="number" body={stateRowTemplate} style={{width: '20px', paddingLeft: '5px', paddingRight: '5px'}} />
          <Column field="name" header="Наименование" key={1}/>
          <Column field="date" body={dateTemplate} header="Дата"  key={2} style={{ width: '90px' }}/>
          <Column field="date" body={typeTemplate} header="Дата"  key={2} style={{ width: '260px' }}/>
