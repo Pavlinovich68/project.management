@@ -22,6 +22,8 @@ import { IBaseEntity } from "@/models/IBaseEntity";
 import { InputTextarea } from "primereact/inputtextarea";
 import { InputNumber } from "primereact/inputnumber";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
+import ItrControlPoints from "@/components/roadmap/ItrControlPoints";
+import { IControlPoint } from "@/models/IControlPoint";
 
 const Roadmap = () => {
    const controllerName = 'roadmap';
@@ -106,6 +108,72 @@ const roadmap = useFormik<IRoadmapItem>({
    }
 });
 
+const _controlPoints: IControlPoint[] = [
+   {
+      id: 1,
+      date: new Date(2025, 0, 10),
+      name: "Тестовая контрольная точка 1",
+      type: 0,
+      roadmap_item_id: 1
+   },
+   {
+      id: 2,
+      date: new Date(2025, 1, 10),
+      name: "Тестовая контрольная точка 2",
+      type: 1,
+      roadmap_item_id: 1
+   },
+   {
+      id: 3,
+      date: new Date(2025, 2, 10),
+      name: "Тестовая контрольная точка 3",
+      type: 2,
+      roadmap_item_id: 1
+   },
+   {
+      id: 4,
+      date: new Date(2025, 3, 10),
+      name: "Тестовая контрольная точка 4",
+      type: 4,
+      roadmap_item_id: 1
+   },
+   {
+      id: 5,
+      date: new Date(2025, 4, 10),
+      name: "Тестовая контрольная точка 5",
+      type: 5,
+      roadmap_item_id: 1
+   },
+   {
+      id: 6,
+      date: new Date(2025, 5, 10),
+      name: "Тестовая контрольная точка 6",
+      type: 6,
+      roadmap_item_id: 1
+   },
+   {
+      id: 7,
+      date: new Date(2025, 6, 10),
+      name: "Тестовая контрольная точка 7",
+      type: 7,
+      roadmap_item_id: 1
+   },
+   {
+      id: 8,
+      date: new Date(2025, 7, 10),
+      name: "Тестовая контрольная точка 8",
+      type: 8,
+      roadmap_item_id: 1
+   },
+   {
+      id: 9,
+      date: new Date(2025, 8, 10),
+      name: "Тестовая контрольная точка 9",
+      type: 9,
+      roadmap_item_id: 1
+   }
+]
+
 const card = (
    <div className={classNames("card p-fluid", styles.dialogCard)}>
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
@@ -149,8 +217,11 @@ const card = (
                      required autoFocus/>
                </div>
             </div>
-         </TabPanel> 
-         <TabPanel header="Контрольные точки"></TabPanel>
+         </TabPanel>         
+         <TabPanel header="Контрольные точки">
+            <ItrControlPoints data={_controlPoints}/>
+         </TabPanel>
+         <TabPanel header="Выполненные работы"></TabPanel>
          <TabPanel header="Документы"></TabPanel>
       </TabView>
    </div>
@@ -255,7 +326,7 @@ const saveMethod = async () => {
                   ref={grid}/>
                <ItrCard
                   header={cardHeader}
-                  width={'35vw'}
+                  width={'50vw'}
                   save={saveMethod}
                   hiddenSave={false}
                   body={card}
