@@ -77,7 +77,8 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
          date: undefined,
          type: undefined,
          expired_type: undefined,
-         roadmap_item_id: itemId
+         roadmap_item_id: itemId,
+         is_deleted: false
       })
       setEditorVisible(true);
    }
@@ -88,8 +89,8 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
       setEditorVisible(true);
    }
 
-   const deleteMethod = async (data: any) => {
-      //return await CrudHelper.crud(controllerName, CRUD.delete, { id: data.id });
+   const deleteMethod = async (item: IControlPoint) => {
+      item.is_deleted = true;
    }
 
    const confirmDelete = (data: IControlPoint) => {
@@ -125,7 +126,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
 
    const dialogFooter = (
          <div className="itr-dialog-footer">
-            <Button label="Отмена" icon="pi pi-times" className="p-button-text"/>
+            <Button label="Отмена" icon="pi pi-times" className="p-button-text" onClick={() => setEditorVisible(false)}/>
             <Button label="Сохранить" icon="pi pi-check" autoFocus onClick={() => setVisibleConfirm(true)} ref={saveButton}/>
             <ConfirmPopup
                visible={visibleConfirm}
@@ -143,7 +144,16 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
 
    const refreshRecord = (record: IControlPoint | undefined) => {
       if (record && record?.id == undefined) {
-         data.push(record);
+         let _record: IControlPoint = {
+            id: record.id,
+            name: record.name,
+            date: record.date,
+            type: record.type,
+            expired_type: DateHelper.expiredType(record.date),
+            roadmap_item_id: itemId,
+            is_deleted: false
+         }
+         data.push(_record);
          return;
       }
       if (record) {
@@ -152,6 +162,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             _record.name = record.name;
             _record.type = record.type;
             _record.date = record.date;
+            _record.expired_type = DateHelper.expiredType(record.date);
          }
       }
    }
@@ -174,6 +185,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             {
                readOnly ? undefined : <Column key={`controlPointGridRemoveColumn`} header="" body={deleteRecordTemplate}  style={{ width: '1rem' }}/>
             }
+            <Column field="is_deleted" filter hidden={true}/>
          </DataTable>
          <Dialog
             className="itr-dialog"
@@ -194,7 +206,8 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                            date: currentRecord?.date,
                            type: currentRecord?.type,
                            expired_type: currentRecord?.expired_type,
-                           roadmap_item_id: currentRecord?.roadmap_item_id
+                           roadmap_item_id: currentRecord?.roadmap_item_id,
+                           is_deleted: false
                         };
                         setCurrentRecord(_record);
                      }} />
@@ -203,7 +216,6 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                      <label htmlFor="name">Дата</label>
                      <Calendar 
                         id="date" 
-                        className={classNames({"p-invalid": !currentRecord?.date})} 
                         value={new Date(currentRecord?.date as Date)} 
                         onChange={(e) => {
                            let _record: IControlPoint = {
@@ -212,7 +224,8 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                               date: e.target.value,
                               type: currentRecord?.type,
                               expired_type: currentRecord?.expired_type,
-                              roadmap_item_id: currentRecord?.roadmap_item_id
+                              roadmap_item_id: currentRecord?.roadmap_item_id,
+                              is_deleted: false
                            };
                            setCurrentRecord(_record);
                         }} 
@@ -223,8 +236,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                   <div className="field col-12">
                      <label htmlFor="name">Тип</label>
                      <Dropdown
-                        value={currentRecord?.type} 
-                        className={classNames({"p-invalid": !currentRecord?.type})} 
+                        value={currentRecord?.type}
                         required 
                         optionLabel="name" 
                         optionValue="type" 
@@ -237,7 +249,8 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                               date: currentRecord?.date,
                               type: e.value,
                               expired_type: currentRecord?.expired_type,
-                              roadmap_item_id: currentRecord?.roadmap_item_id
+                              roadmap_item_id: currentRecord?.roadmap_item_id,
+                              is_deleted: false
                            };
                            setCurrentRecord(_record);
                         }}

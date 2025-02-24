@@ -99,7 +99,14 @@ export default class DateHelper {
       return utcDate;
    }
 
-   static expiredType = (date: Date): number => {
-      const currentDate = new Date();
+   static expiredType = (date: Date | undefined | null): number => {
+      if (!date) return -1;
+      const current = new Date().getTime();
+      const value = date.getTime();
+      const difference = value - current;
+      const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+      if (days < 0) return 2;
+      if (days <= 7) return 1;
+      return 0;
    }
 }

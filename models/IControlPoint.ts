@@ -5,4 +5,5 @@ export interface IControlPoint {
    type: number | undefined
    expired_type: number | undefined
    roadmap_item_id: number | undefined
+   is_deleted: boolean
 }

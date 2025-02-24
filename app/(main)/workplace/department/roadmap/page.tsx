@@ -118,7 +118,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 1",
       type: 0,
       expired_type: 2,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 2,
@@ -126,7 +127,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 2",
       type: 1,
       expired_type: 2,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 3,
@@ -134,7 +136,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 3",
       type: 2,
       expired_type: 1,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 4,
@@ -142,7 +145,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 4",
       type: 4,
       expired_type: 0,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 5,
@@ -150,7 +154,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 5",
       type: 5,
       expired_type: 0,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 6,
@@ -158,7 +163,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 6",
       type: 6,
       expired_type: 0,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 7,
@@ -166,7 +172,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 7",
       type: 7,
       expired_type: 0,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 8,
@@ -174,7 +181,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 8",
       type: 8,
       expired_type: 0,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    },
    {
       id: 9,
@@ -182,7 +190,8 @@ const _controlPoints: IControlPoint[] = [
       name: "Тестовая контрольная точка 9",
       type: 9,
       expired_type: 0,
-      roadmap_item_id: 1
+      roadmap_item_id: 1,
+      is_deleted: false
    }
 ]
 
@@ -282,7 +291,7 @@ const deleteMethod = async (data: any) => {
 
 const saveMethod = async () => {
    setSubmitted(true);
-   if (!roadmap.isValid) {
+   if (!roadmap.isValid) {      
       const errors = Object.values(roadmap.errors);
       //@ts-ignore
       toast.current.show({
@@ -307,7 +316,7 @@ const saveMethod = async () => {
       });
       return;
    }
-   try {
+   try {      
       setIsLoading(true);
       const res = 
          await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, roadmap.values, {year: year, division_id: session?.user.division_id});
