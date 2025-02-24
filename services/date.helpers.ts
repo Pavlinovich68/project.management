@@ -98,4 +98,8 @@ export default class DateHelper {
       const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0));
       return utcDate;
    }
+
+   static expiredType = (date: Date): number => {
+      const currentDate = new Date();
+   }
 }

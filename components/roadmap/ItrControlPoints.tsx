@@ -9,21 +9,39 @@ import DateHelper from "@/services/date.helpers";
 import { ICardRef } from "@/models/ICardRef";
 import {confirmDialog} from "primereact/confirmdialog";
 import RecordState from "@/models/enums/record-state";
+import { Dialog } from "primereact/dialog";
+import { ConfirmPopup } from "primereact/confirmpopup";
+import styles from '../../app/(main)/workplace/department/dashboard/styles.module.scss';
+import { classNames } from "primereact/utils";
+import { InputText } from "primereact/inputtext";
+import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
 
-const ItrControlPoints = ({data, state}: {data: IControlPoint[], state: RecordState}) => {
+const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], readOnly: boolean, itemId: number | undefined}) => {
    const [cardHeader, setCardHeader] = useState('');
-   const editor = useRef<ICardRef>(null);
-   const [readOnly, setReadOnly] = useState<boolean>(state === RecordState.ready)
+   const [editorVisible, setEditorVisible] = useState<boolean>(false);
+   const [visibleConfirm, setVisibleConfirm] = useState<boolean>(false);
+   const [currentRecord, setCurrentRecord] = useState<IControlPoint | undefined>(undefined)
+   const saveButton = useRef(null);
 
-   useEffect(() => {
-         setReadOnly(state === RecordState.ready)
-      }, []);
-   
+   const types = [
+      { type: 0, name: "Начало работ"},
+      { type: 1, name: "Предоставление требований"},
+      { type: 2, name: "ТЗ подготовлено"},
+      { type: 3, name: "ТЗ согласовано"},
+      { type: 4, name: "Предварительные испытания"},
+      { type: 5, name: "Опытная эксплуатация"},
+      { type: 6, name: "Приемочные испытани"},
+      { type: 7, name: "Ввод в эксплуатацию"},
+      { type: 8, name: "Прочее"},
+      { type: 9, name: "Завершение работ"}
+   ]
+
    const startContent = (
          <React.Fragment>
             <Button icon="pi pi-plus" rounded severity="success" aria-label="Bookmark"
                tooltip="Создать" tooltipOptions={{ position: 'top' }} type="button"
-               //onClick={() => create()}
+               onClick={() => createMethod()}
             />
          </React.Fragment>
       );
@@ -42,39 +60,32 @@ const ItrControlPoints = ({data, state}: {data: IControlPoint[], state: RecordSt
       return (<i className="pi pi-star-fill" style={{ color: color }}></i>);
    };
    
-   const typeTemplate = (rowData: IControlPoint) => {
-      let name: string | undefined = undefined;
-      switch (rowData.type) {
-         case 0: { name = "Начало работ"; break; }
-         case 1: { name = "Предоставление требований"; break; }
-         case 2: { name = "ТЗ подготовлено"; break; }
-         case 3: { name = "ТЗ согласовано"; break; }
-         case 4: { name = "Предварительные испытания"; break; }
-         case 5: { name = "Опытная эксплуатация"; break; }
-         case 6: { name = "Приемочные испытани"; break; }
-         case 7: { name = "Ввод в эксплуатацию"; break; }
-         case 8: { name = "Прочее"; break; }
-         case 9: { name = "Завершение работ"; break; }
-      }
-      return name;
+   const typeTemplate = (rowData: IControlPoint): string | undefined => {
+      let item = types.find(i => i.type === rowData.type);
+      return item?.name;
    };
 
    const header = (
-      readOnly ? <></> : <Toolbar start={startContent}/>
+      readOnly ? undefined : <Toolbar start={startContent}/>
    )
 
    const createMethod = async() => {
-      setCardHeader('Добавление проекта в план работ');
-      if (editor.current) {
-         editor.current.visible(true);
-      }
+      setCardHeader('Добавление контрольной точки');
+      setCurrentRecord({
+         id: undefined,
+         name: undefined,
+         date: undefined,
+         type: undefined,
+         expired_type: undefined,
+         roadmap_item_id: itemId
+      })
+      setEditorVisible(true);
    }
 
    const updateMethod = async (data: IControlPoint) => {
-      setCardHeader('Изменение проекта находящегося в плане');
-      if (editor.current) {
-         editor.current.visible(true);
-      }
+      setCardHeader('Изменение контрольной точки');
+      setCurrentRecord(data);
+      setEditorVisible(true);
    }
 
    const deleteMethod = async (data: any) => {
@@ -106,21 +117,136 @@ const ItrControlPoints = ({data, state}: {data: IControlPoint[], state: RecordSt
                onClick={() => confirmDelete(item)}
       />
    }
+
+   const accept = () => {
+      refreshRecord(currentRecord)
+      setEditorVisible(false);
+   }
+
+   const dialogFooter = (
+         <div className="itr-dialog-footer">
+            <Button label="Отмена" icon="pi pi-times" className="p-button-text"/>
+            <Button label="Сохранить" icon="pi pi-check" autoFocus onClick={() => setVisibleConfirm(true)} ref={saveButton}/>
+            <ConfirmPopup
+               visible={visibleConfirm}
+               onHide={() => setVisibleConfirm(false)}
+               message="Вы действительно хотите сохранить изменения?"
+               icon="pi pi-exclamation-triangle"
+               //@ts-ignore
+               target={saveButton.current}
+               acceptLabel="Да"
+               rejectLabel="Нет"
+               accept={accept}
+         />
+         </div>
+      );
+
+   const refreshRecord = (record: IControlPoint | undefined) => {
+      if (record && record?.id == undefined) {
+         data.push(record);
+         return;
+      }
+      if (record) {
+         let _record = data.find(i => i.id === record.id);
+         if (_record) {
+            _record.name = record.name;
+            _record.type = record.type;
+            _record.date = record.date;
+         }
+      }
+   }
    
    return (
-      <DataTable
-         value={data}
-         header={header}
-         showGridlines
-         paginator rows={5}
-      >
-         <Column key={`controlPointGridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>
-         <Column field="expired_type" dataType="number" body={stateRowTemplate} style={{width: '20px', paddingLeft: '5px', paddingRight: '5px'}} />
-         <Column field="name" header="Наименование" key={1}/>
-         <Column field="date" body={dateTemplate} header="Дата"  key={2} style={{ width: '90px' }}/>
-         <Column field="date" body={typeTemplate} header="Дата"  key={2} style={{ width: '260px' }}/>
-         <Column key={`controlPointGridRemoveColumn`} header="" body={deleteRecordTemplate}  style={{ width: '1rem' }}/>
-      </DataTable>
+      <React.Fragment>
+         <DataTable
+            value={data}
+            header={header}
+            showGridlines
+            paginator rows={5}
+         >
+            {
+               readOnly ? undefined : <Column key={`controlPointGridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>
+            }
+            <Column field="expired_type" dataType="number" body={stateRowTemplate} style={{width: '20px', paddingLeft: '5px', paddingRight: '5px'}} />
+            <Column field="name" header="Наименование" key={1}/>
+            <Column field="date" body={dateTemplate} header="Дата"  key={2} style={{ width: '90px' }}/>
+            <Column field="date" body={typeTemplate} header="Дата"  key={3} style={{ width: '260px' }}/>
+            {
+               readOnly ? undefined : <Column key={`controlPointGridRemoveColumn`} header="" body={deleteRecordTemplate}  style={{ width: '1rem' }}/>
+            }
+         </DataTable>
+         <Dialog
+            className="itr-dialog"
+            header={cardHeader}
+            visible={editorVisible}
+            style={{width: '600px'}}
+            footer={dialogFooter}
+            onHide={()=> setEditorVisible(false)}
+         >
+            <div className={classNames("card p-fluid", styles.dialogCard)}>
+               <div className="p-fluid formgrid grid">
+                  <div className="field col-12">
+                     <label htmlFor="name">Наименование</label>
+                     <InputText value={currentRecord?.name} onChange={(e) => {
+                        let _record: IControlPoint = {
+                           id: currentRecord?.id,
+                           name: e.target.value,
+                           date: currentRecord?.date,
+                           type: currentRecord?.type,
+                           expired_type: currentRecord?.expired_type,
+                           roadmap_item_id: currentRecord?.roadmap_item_id
+                        };
+                        setCurrentRecord(_record);
+                     }} />
+                  </div>
+                  <div className="field col-12">
+                     <label htmlFor="name">Дата</label>
+                     <Calendar 
+                        id="date" 
+                        className={classNames({"p-invalid": !currentRecord?.date})} 
+                        value={new Date(currentRecord?.date as Date)} 
+                        onChange={(e) => {
+                           let _record: IControlPoint = {
+                              id: currentRecord?.id,
+                              name: currentRecord?.name,
+                              date: e.target.value,
+                              type: currentRecord?.type,
+                              expired_type: currentRecord?.expired_type,
+                              roadmap_item_id: currentRecord?.roadmap_item_id
+                           };
+                           setCurrentRecord(_record);
+                        }} 
+                        dateFormat="dd MM yy" 
+                        locale="ru" showIcon required  showButtonBar tooltip="Дата"
+                     />
+                  </div>
+                  <div className="field col-12">
+                     <label htmlFor="name">Тип</label>
+                     <Dropdown
+                        value={currentRecord?.type} 
+                        className={classNames({"p-invalid": !currentRecord?.type})} 
+                        required 
+                        optionLabel="name" 
+                        optionValue="type" 
+                        filter
+                        options={types}
+                        onChange={(e) => {
+                           let _record: IControlPoint = {
+                              id: currentRecord?.id,
+                              name: currentRecord?.name,
+                              date: currentRecord?.date,
+                              type: e.value,
+                              expired_type: currentRecord?.expired_type,
+                              roadmap_item_id: currentRecord?.roadmap_item_id
+                           };
+                           setCurrentRecord(_record);
+                        }}
+                     />
+                  </div>
+               </div>
+            </div>            
+         </Dialog>
+      </React.Fragment>
    );
 };
 

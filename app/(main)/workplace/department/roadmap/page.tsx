@@ -240,7 +240,11 @@ const card = (
             </div>
          </TabPanel>         
          <TabPanel header="Контрольные точки">
-            <ItrControlPoints data={_controlPoints} state={recordState}/>
+            <ItrControlPoints 
+               data={_controlPoints} 
+               readOnly={!RolesHelper.checkRoles(session?.user.roles, ['admin', 'boss', 'master', 'analyst'])}
+               itemId={roadmap.values.id}
+            />
          </TabPanel>
          <TabPanel header="Выполненные работы"></TabPanel>
          <TabPanel header="Документы"></TabPanel>
