@@ -16,6 +16,8 @@ import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
+import { IRoadmapItem } from "@/models/IRoadmapItem";
+import { FormikConfig } from "formik";
 
 const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], readOnly: boolean, itemId: number | undefined}) => {
    const [cardHeader, setCardHeader] = useState('');
@@ -149,7 +151,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             name: record.name,
             date: record.date,
             type: record.type,
-            expired_type: DateHelper.expiredType(record.date),
+            expired_type: record.expired_type,//DateHelper.expiredType(record.date),
             roadmap_item_id: itemId,
             is_deleted: false
          }
@@ -162,7 +164,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             _record.name = record.name;
             _record.type = record.type;
             _record.date = record.date;
-            _record.expired_type = DateHelper.expiredType(record.date);
+            _record.expired_type = record.expired_type//DateHelper.expiredType(record.date);
          }
       }
    }

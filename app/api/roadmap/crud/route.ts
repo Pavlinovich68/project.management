@@ -5,6 +5,7 @@ import { IDataSourceRequest } from "@/types/IDataSourceRequest";
 import { IDataSourceResult } from "@/types/IDataSourceResult";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
 import prismaHelper from "@/services/prisma.helpers";
+import DateHelper from "@/services/date.helpers";
 
 interface IParams {
    year: number
@@ -48,7 +49,8 @@ export const POST = async (request: NextRequest) => {
          fact_str: undefined,
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,         
-         project: {id: result.project_id, name: result.project.name}
+         project: {id: result.project_id, name: result.project.name},
+         control_points: []
       }
    }
 
@@ -59,7 +61,7 @@ export const POST = async (request: NextRequest) => {
          filter['OR'] = prismaHelper.OR(['project.name', 'comment'], model.searchStr);
       }
       const totalCount = await prisma.roadmap_item.count({where: filter});
-      const result = await prisma.roadmap_item.findMany({
+      let result = await prisma.roadmap_item.findMany({
          skip: model.pageSize * (model.pageNo -1),
          take: model.pageSize,
          where: filter,
@@ -70,10 +72,11 @@ export const POST = async (request: NextRequest) => {
             control_points: true
          }         
       });
-
+      
+      result = result.map(item => {return {...item, plan_str: `${item.hours.toLocaleString('ru-RU')} ч/ч`}});
+      
       for (let item of result) {
-         //@ts-ignore
-         item.plan_str = `${item.hours.toLocaleString('ru-RU')} ч/ч`;
+         item.control_points = item.control_points.map(cp => {return {...cp, expired_type: DateHelper.expiredType(cp.date)}});
          let fact = 0;
          if (item.fact_items.length === 0) {
             continue;
@@ -110,7 +113,8 @@ export const POST = async (request: NextRequest) => {
             roadmap_id: model.roadmap_id
          },
          include: {
-            project: true
+            project: true,
+            control_points: true
          }
       });
 
@@ -132,7 +136,8 @@ export const POST = async (request: NextRequest) => {
          fact_str: (fact._sum.hours??0).toLocaleString('ru-RU'),
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
-         project: {id: result.project.id, name: result.project.name}
+         project: {id: result.project.id, name: result.project.name},
+         control_points: []
       }
    }
 
@@ -154,7 +159,8 @@ export const POST = async (request: NextRequest) => {
          fact: undefined,
          fact_str: undefined,
          plan_str: undefined,
-         project: undefined
+         project: undefined,
+         control_points: []
       }
    }
 

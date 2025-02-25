@@ -1,4 +1,5 @@
 import { IBaseEntity } from "@/models/IBaseEntity"
+import { IControlPoint } from "./IControlPoint"
 
 export interface IRoadmapItem {
    id: number | undefined
@@ -10,4 +11,5 @@ export interface IRoadmapItem {
    plan_str: string | undefined
    fact_str: string | undefined
    is_closed: boolean
+   control_points: IControlPoint[]
 }

@@ -29,7 +29,7 @@ import RolesHelper from "@/services/roles.helper";
 const Roadmap = () => {
    const controllerName = 'roadmap';
    const [year, setYear] = useState(new Date().getFullYear());
-   const model: IRoadmapItem = {id: undefined, project: undefined, hours: undefined, comment: undefined, is_closed: false, roadmap_id: undefined, fact: 0, plan_str: undefined, fact_str: undefined};
+   const model: IRoadmapItem = {id: undefined, project: undefined, hours: undefined, comment: undefined, is_closed: false, roadmap_id: undefined, fact: 0, plan_str: undefined, fact_str: undefined, control_points: []};
    const grid = useRef<IGridRef>(null);
    const toast = useRef<Toast>(null);
    const editor = useRef<ICardRef>(null);
@@ -111,90 +111,6 @@ const roadmap = useFormik<IRoadmapItem>({
    }
 });
 
-const _controlPoints: IControlPoint[] = [
-   {
-      id: 1,
-      date: new Date(2025, 0, 10),
-      name: "Тестовая контрольная точка 1",
-      type: 0,
-      expired_type: 2,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 2,
-      date: new Date(2025, 1, 10),
-      name: "Тестовая контрольная точка 2",
-      type: 1,
-      expired_type: 2,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 3,
-      date: new Date(2025, 2, 10),
-      name: "Тестовая контрольная точка 3",
-      type: 2,
-      expired_type: 1,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 4,
-      date: new Date(2025, 3, 10),
-      name: "Тестовая контрольная точка 4",
-      type: 4,
-      expired_type: 0,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 5,
-      date: new Date(2025, 4, 10),
-      name: "Тестовая контрольная точка 5",
-      type: 5,
-      expired_type: 0,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 6,
-      date: new Date(2025, 5, 10),
-      name: "Тестовая контрольная точка 6",
-      type: 6,
-      expired_type: 0,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 7,
-      date: new Date(2025, 6, 10),
-      name: "Тестовая контрольная точка 7",
-      type: 7,
-      expired_type: 0,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 8,
-      date: new Date(2025, 7, 10),
-      name: "Тестовая контрольная точка 8",
-      type: 8,
-      expired_type: 0,
-      roadmap_item_id: 1,
-      is_deleted: false
-   },
-   {
-      id: 9,
-      date: new Date(2025, 8, 10),
-      name: "Тестовая контрольная точка 9",
-      type: 9,
-      expired_type: 0,
-      roadmap_item_id: 1,
-      is_deleted: false
-   }
-]
-
 const card = (
    <div className={classNames("card p-fluid", styles.dialogCard)}>
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
@@ -250,7 +166,7 @@ const card = (
          </TabPanel>         
          <TabPanel header="Контрольные точки">
             <ItrControlPoints 
-               data={_controlPoints} 
+               data={roadmap.values.control_points} 
                readOnly={!RolesHelper.checkRoles(session?.user.roles, ['admin', 'boss', 'master', 'analyst'])}
                itemId={roadmap.values.id}
             />
