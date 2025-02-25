@@ -66,11 +66,14 @@ export const POST = async (request: NextRequest) => {
          orderBy: model.orderBy,
          include: {
             project: true,
-            fact_items: true
+            fact_items: true,
+            control_points: true
          }         
       });
 
       for (let item of result) {
+         //@ts-ignore
+         item.plan_str = `${item.hours.toLocaleString('ru-RU')} ч/ч`;
          let fact = 0;
          if (item.fact_items.length === 0) {
             continue;
@@ -78,9 +81,7 @@ export const POST = async (request: NextRequest) => {
          for (let fi of item.fact_items)
             fact += fi.hours
          //@ts-ignore
-         item.fact = fact;
-         //@ts-ignore
-         item.plan_str = `${item.hours.toLocaleString('ru-RU')} ч/ч`;
+         item.fact = fact;         
          //@ts-ignore
          item.fact_str = `${fact.toLocaleString('ru-RU')} ч/ч`;
       }
