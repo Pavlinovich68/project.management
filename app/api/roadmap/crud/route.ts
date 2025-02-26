@@ -6,6 +6,7 @@ import { IDataSourceResult } from "@/types/IDataSourceResult";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
 import prismaHelper from "@/services/prisma.helpers";
 import DateHelper from "@/services/date.helpers";
+import { IControlPoint } from "@/models/IControlPoint";
 
 interface IParams {
    year: number
@@ -13,6 +14,37 @@ interface IParams {
 }
 
 export const POST = async (request: NextRequest) => {
+   const upsertControlPoints = async (item_id: number, rows: IControlPoint[]): Promise<IControlPoint[]> => {
+      const result: IControlPoint[] = []
+      for (const item of rows) {
+         if (item.id) {
+            const _item = await prisma.control_point.update({
+               where: {
+                  id: item.id
+               },
+               data: {
+                  date: item.date ? new Date(item.date) : new Date(),
+                  name: item.name,
+                  type: item.type
+               }
+            })
+
+            result.push({..._item, is_deleted: false, expired_type: DateHelper.expiredType(_item.date)});
+         } else {
+            const _item = await prisma.control_point.create({
+               data: {
+                  date: item.date ? new Date(item.date) : new Date(),
+                  name: (item.name)??'',
+                  type: item.type,
+                  roadmap_item_id: item_id
+               }
+            })
+
+            result.push({..._item, is_deleted: false, expired_type: DateHelper.expiredType(_item.date)});
+         }
+      }
+      return result;
+   }
    const create = async (model: IRoadmapItem, params: IParams): Promise<IRoadmapItem> => {
       let roadmap = await prisma.roadmap.findFirst({where: {year: params.year, division_id: params.division_id}});
       if (!roadmap) {
@@ -38,6 +70,8 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
+      const controlPoints = await upsertControlPoints(result.id ,model.control_points);
+
       if (!result || !result.project_id)
          throw Error('')
       return {
@@ -50,7 +84,7 @@ export const POST = async (request: NextRequest) => {
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,         
          project: {id: result.project_id, name: result.project.name},
-         control_points: []
+         control_points: controlPoints
       }
    }
 
@@ -127,6 +161,8 @@ export const POST = async (request: NextRequest) => {
          }
       });
 
+      const controlPoints = await upsertControlPoints(model.id??-1, model.control_points);
+
       return {
          id: result.id,
          comment: result.comment,
@@ -137,12 +173,13 @@ export const POST = async (request: NextRequest) => {
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
          project: {id: result.project.id, name: result.project.name},
-         control_points: []
+         control_points: controlPoints
       }
    }
 
    const drop = async (id: number): Promise<IRoadmapItem> => {
       await prisma.roadmap_fact_item.deleteMany({where: {roadmap_item_id: id}});
+      await prisma.control_point.deleteMany({where: {roadmap_item_id: id}});
 
       const result = await prisma.roadmap_item.delete({
          where: {

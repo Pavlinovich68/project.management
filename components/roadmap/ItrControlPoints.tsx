@@ -176,18 +176,19 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             header={header}
             showGridlines
             paginator rows={5}
+            filters={}
          >
             {
                readOnly ? undefined : <Column key={`controlPointGridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>
             }
             <Column field="expired_type" dataType="number" body={stateRowTemplate} style={{width: '20px', paddingLeft: '5px', paddingRight: '5px'}} />
-            <Column field="name" header="Наименование" key={1}/>
-            <Column field="date" body={dateTemplate} header="Дата"  key={2} style={{ width: '90px' }}/>
-            <Column field="date" body={typeTemplate} header="Дата"  key={3} style={{ width: '260px' }}/>
+            <Column field="date" body={typeTemplate} header="Тип КТ"  key={3} style={{ width: '260px' }}/>
+            <Column field="date" body={dateTemplate} header="Дата"  key={2} style={{ width: '90px' }}/>            
+            <Column field="name" header="Комментарий" key={1}/>
             {
                readOnly ? undefined : <Column key={`controlPointGridRemoveColumn`} header="" body={deleteRecordTemplate}  style={{ width: '1rem' }}/>
             }
-            <Column field="is_deleted" filter hidden={true}/>
+            <Column field="is_deleted" hidden={true} filter={true}/>
          </DataTable>
          <Dialog
             className="itr-dialog"
@@ -223,7 +224,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                            let _record: IControlPoint = {
                               id: currentRecord?.id,
                               name: currentRecord?.name,
-                              date: e.target.value,
+                              date: (e.target.value)??undefined,
                               type: currentRecord?.type,
                               expired_type: currentRecord?.expired_type,
                               roadmap_item_id: currentRecord?.roadmap_item_id,
