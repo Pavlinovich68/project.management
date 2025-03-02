@@ -176,7 +176,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             header={header}
             showGridlines
             paginator rows={5}
-            filters={}
+            filters={''}
          >
             {
                readOnly ? undefined : <Column key={`controlPointGridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>
