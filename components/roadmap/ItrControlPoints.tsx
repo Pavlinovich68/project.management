@@ -18,6 +18,7 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
 import { FormikConfig } from "formik";
+import { FilterMatchMode } from 'primereact/api';
 
 const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], readOnly: boolean, itemId: number | undefined}) => {
    const [cardHeader, setCardHeader] = useState('');
@@ -176,7 +177,7 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             header={header}
             showGridlines
             paginator rows={5}
-            filters={''}
+            filters={{global: {value: false, matchMode: FilterMatchMode.EQUALS}}}
          >
             {
                readOnly ? undefined : <Column key={`controlPointGridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>
