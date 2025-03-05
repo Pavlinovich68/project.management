@@ -7,6 +7,7 @@ import { IRoadmapItem } from "@/models/IRoadmapItem";
 import prismaHelper from "@/services/prisma.helpers";
 import DateHelper from "@/services/date.helpers";
 import { IControlPoint } from "@/models/IControlPoint";
+const { v4: uuidv4 } = require('uuid');
 
 interface IParams {
    year: number
@@ -29,7 +30,7 @@ export const POST = async (request: NextRequest) => {
                }
             })
 
-            result.push({..._item, is_deleted: false, expired_type: DateHelper.expiredType(_item.date)});
+            result.push({..._item, expired_type: DateHelper.expiredType(_item.date), uuid: uuidv4()});
          } else {
             const _item = await prisma.control_point.create({
                data: {
@@ -40,7 +41,7 @@ export const POST = async (request: NextRequest) => {
                }
             })
 
-            result.push({..._item, is_deleted: false, expired_type: DateHelper.expiredType(_item.date)});
+            result.push({..._item, expired_type: DateHelper.expiredType(_item.date), uuid: uuidv4()});
          }
       }
       return result;
@@ -89,7 +90,7 @@ export const POST = async (request: NextRequest) => {
    }
 
    const read = async (model: IDataSourceRequest, params: IParams): Promise<IDataSourceResult> => {
-      const roadmap = await prisma.roadmap.findFirst({where: {year: params.year, division_id: params.division_id}});
+      const roadmap =  await prisma.roadmap.findFirst({where: {year: params.year, division_id: params.division_id}});
       let filter: any = {roadmap: {id: roadmap?.id??-1}};      
       if (model.searchStr) {
          filter['OR'] = prismaHelper.OR(['project.name', 'comment'], model.searchStr);
@@ -110,7 +111,7 @@ export const POST = async (request: NextRequest) => {
       result = result.map(item => {return {...item, plan_str: `${item.hours.toLocaleString('ru-RU')} ч/ч`}});
       
       for (let item of result) {
-         item.control_points = item.control_points.map(cp => {return {...cp, expired_type: DateHelper.expiredType(cp.date)}});
+         item.control_points = item.control_points.map(cp => {return {...cp, expired_type: DateHelper.expiredType(cp.date), is_deleted: false, uuid: uuidv4()}});
          let fact = 0;
          if (item.fact_items.length === 0) {
             continue;

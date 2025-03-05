@@ -19,13 +19,19 @@ import { Dropdown } from "primereact/dropdown";
 import { IRoadmapItem } from "@/models/IRoadmapItem";
 import { FormikConfig } from "formik";
 import { FilterMatchMode } from 'primereact/api';
+const { v4: uuidv4 } = require('uuid');
 
 const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], readOnly: boolean, itemId: number | undefined}) => {
    const [cardHeader, setCardHeader] = useState('');
    const [editorVisible, setEditorVisible] = useState<boolean>(false);
    const [visibleConfirm, setVisibleConfirm] = useState<boolean>(false);
    const [currentRecord, setCurrentRecord] = useState<IControlPoint | undefined>(undefined)
+   const [items, setItems] = useState<IControlPoint[]>([]);
    const saveButton = useRef(null);
+
+   useEffect(() => {
+      setItems(data);
+   }, [itemId]);
 
    const types = [
       { type: 0, name: "Начало работ"},
@@ -55,6 +61,23 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
 
    const stateRowTemplate = (rowData: IControlPoint) => {
       let color: string | undefined;
+      if (!rowData.date) {
+         rowData.expired_type = 2;
+      } else
+      if (!rowData.expired_type) {
+         let now = new Date();
+         now.setHours(0, 0, 0, 0);
+         if (now > rowData.date) {
+            rowData.expired_type = 2;
+         } else {
+            let diff = now.getTime() - new Date(rowData.date).getTime();
+            diff = Math.floor(Math.abs(diff) / (1000 * 60 * 60 * 24));
+            if (diff <= 7) {
+               rowData.expired_type = 1;
+            } else
+               rowData.expired_type = 0; 
+         }
+      }
       switch (rowData.expired_type) {
          case 0: { color = 'green'; break; }
          case 1: { color = 'yellow'; break; }
@@ -75,13 +98,13 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
    const createMethod = async() => {
       setCardHeader('Добавление контрольной точки');
       setCurrentRecord({
+         uuid: uuidv4(),
          id: undefined,
          name: undefined,
          date: undefined,
          type: undefined,
          expired_type: undefined,
-         roadmap_item_id: itemId,
-         is_deleted: false
+         roadmap_item_id: itemId
       })
       setEditorVisible(true);
    }
@@ -93,7 +116,13 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
    }
 
    const deleteMethod = async (item: IControlPoint) => {
-      item.is_deleted = true;
+      console.clear();
+      console.table(data);
+      const index = data.findIndex(i => i.uuid === item.uuid);
+      if (index !== -1) {
+         data.splice(index, 1);
+         console.table(data);
+      }
    }
 
    const confirmDelete = (data: IControlPoint) => {
@@ -148,13 +177,13 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
    const refreshRecord = (record: IControlPoint | undefined) => {
       if (record && record?.id == undefined) {
          let _record: IControlPoint = {
+            uuid: record.uuid,
             id: record.id,
             name: record.name,
             date: record.date,
             type: record.type,
             expired_type: record.expired_type,//DateHelper.expiredType(record.date),
-            roadmap_item_id: itemId,
-            is_deleted: false
+            roadmap_item_id: itemId
          }
          data.push(_record);
          return;
@@ -173,11 +202,11 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
    return (
       <React.Fragment>
          <DataTable
-            value={data}
+            value={items}
             header={header}
             showGridlines
             paginator rows={5}
-            filters={{f_deleted: {value: true, matchMode: FilterMatchMode.EQUALS}}}
+            //filters={{'is_deleted': {value: false, matchMode: FilterMatchMode.EQUALS}}}
          >
             {
                readOnly ? undefined : <Column key={`controlPointGridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>
@@ -205,13 +234,13 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                      <label htmlFor="name">Наименование</label>
                      <InputText value={currentRecord?.name} onChange={(e) => {
                         let _record: IControlPoint = {
+                           uuid: currentRecord?.uuid,
                            id: currentRecord?.id,
                            name: e.target.value,
                            date: currentRecord?.date,
                            type: currentRecord?.type,
                            expired_type: currentRecord?.expired_type,
-                           roadmap_item_id: currentRecord?.roadmap_item_id,
-                           is_deleted: false
+                           roadmap_item_id: currentRecord?.roadmap_item_id
                         };
                         setCurrentRecord(_record);
                      }} />
@@ -223,13 +252,13 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                         value={new Date(currentRecord?.date as Date)} 
                         onChange={(e) => {
                            let _record: IControlPoint = {
+                              uuid: currentRecord?.uuid,
                               id: currentRecord?.id,
                               name: currentRecord?.name,
                               date: (e.target.value)??undefined,
                               type: currentRecord?.type,
                               expired_type: currentRecord?.expired_type,
-                              roadmap_item_id: currentRecord?.roadmap_item_id,
-                              is_deleted: false
+                              roadmap_item_id: currentRecord?.roadmap_item_id
                            };
                            setCurrentRecord(_record);
                         }} 
@@ -248,13 +277,13 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
                         options={types}
                         onChange={(e) => {
                            let _record: IControlPoint = {
+                              uuid: currentRecord?.uuid,
                               id: currentRecord?.id,
                               name: currentRecord?.name,
                               date: currentRecord?.date,
                               type: e.value,
                               expired_type: currentRecord?.expired_type,
-                              roadmap_item_id: currentRecord?.roadmap_item_id,
-                              is_deleted: false
+                              roadmap_item_id: currentRecord?.roadmap_item_id
                            };
                            setCurrentRecord(_record);
                         }}
