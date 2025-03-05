@@ -111,6 +111,12 @@ const roadmap = useFormik<IRoadmapItem>({
    }
 });
 
+const handleItems = (items: IControlPoint[]) => {
+   console.clear();
+   console.table(items);
+   roadmap.setFieldValue('control_points', items);
+}
+
 const card = (
    <div className={classNames("card p-fluid", styles.dialogCard)}>
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
@@ -165,10 +171,11 @@ const card = (
             </div>
          </TabPanel>         
          <TabPanel header="Контрольные точки">
-            <ItrControlPoints 
+            <ItrControlPoints
                data={roadmap.values.control_points} 
                readOnly={!RolesHelper.checkRoles(session?.user.roles, ['admin', 'boss', 'master', 'analyst'])}
                itemId={roadmap.values.id}
+               onData={handleItems}
             />
          </TabPanel>
          <TabPanel header="Выполненные работы"></TabPanel>
@@ -234,6 +241,7 @@ const saveMethod = async () => {
    }
    try {      
       setIsLoading(true);
+      console.table(roadmap.values.control_points);
       const res = 
          await CrudHelper.crud(controllerName, recordState === RecordState.new ? CRUD.create : CRUD.update, roadmap.values, {year: year, division_id: session?.user.division_id});
 

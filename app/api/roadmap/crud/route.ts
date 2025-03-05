@@ -111,7 +111,7 @@ export const POST = async (request: NextRequest) => {
       result = result.map(item => {return {...item, plan_str: `${item.hours.toLocaleString('ru-RU')} ч/ч`}});
       
       for (let item of result) {
-         item.control_points = item.control_points.map(cp => {return {...cp, expired_type: DateHelper.expiredType(cp.date), is_deleted: false, uuid: uuidv4()}});
+         item.control_points = item.control_points.map(cp => {return {...cp, expired_type: DateHelper.expiredType(cp.date), uuid: uuidv4()}});
          let fact = 0;
          if (item.fact_items.length === 0) {
             continue;

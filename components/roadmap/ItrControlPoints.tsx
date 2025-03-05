@@ -4,11 +4,9 @@ import { IControlPoint } from "@/models/IControlPoint";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
-import { Column, ColumnFilterElementTemplateOptions } from "primereact/column";
+import { Column } from "primereact/column";
 import DateHelper from "@/services/date.helpers";
-import { ICardRef } from "@/models/ICardRef";
 import {confirmDialog} from "primereact/confirmdialog";
-import RecordState from "@/models/enums/record-state";
 import { Dialog } from "primereact/dialog";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import styles from '../../app/(main)/workplace/department/dashboard/styles.module.scss';
@@ -16,12 +14,11 @@ import { classNames } from "primereact/utils";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
-import { IRoadmapItem } from "@/models/IRoadmapItem";
-import { FormikConfig } from "formik";
-import { FilterMatchMode } from 'primereact/api';
 const { v4: uuidv4 } = require('uuid');
 
-const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], readOnly: boolean, itemId: number | undefined}) => {
+type RoadmapCallback = (data: IControlPoint[]) => void;
+
+const ItrControlPoints = ({data, readOnly, itemId, onData}: {data: IControlPoint[], readOnly: boolean, itemId: number | undefined, onData: RoadmapCallback}) => {
    const [cardHeader, setCardHeader] = useState('');
    const [editorVisible, setEditorVisible] = useState<boolean>(false);
    const [visibleConfirm, setVisibleConfirm] = useState<boolean>(false);
@@ -116,12 +113,12 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
    }
 
    const deleteMethod = async (item: IControlPoint) => {
-      console.clear();
-      console.table(data);
-      const index = data.findIndex(i => i.uuid === item.uuid);
+      const index = items.findIndex(i => i.uuid === item.uuid);
       if (index !== -1) {
-         data.splice(index, 1);
-         console.table(data);
+         items.splice(index, 1);
+         let _items = [...items];
+         setItems(_items);
+         onData(_items);
       }
    }
 
@@ -175,28 +172,20 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
       );
 
    const refreshRecord = (record: IControlPoint | undefined) => {
-      if (record && record?.id == undefined) {
-         let _record: IControlPoint = {
-            uuid: record.uuid,
-            id: record.id,
-            name: record.name,
-            date: record.date,
-            type: record.type,
-            expired_type: record.expired_type,//DateHelper.expiredType(record.date),
-            roadmap_item_id: itemId
-         }
-         data.push(_record);
-         return;
+      if (!record) return;
+      let _items = [...items];
+      const index = _items.findIndex(i => i.uuid === record?.uuid);
+      if (index > -1) {
+         _items[index].name = record.name,
+         _items[index].type = record.type,
+         _items[index].date = record.date,
+         _items[index].expired_type = DateHelper.expiredType(record.date);
+      } else {         
+         record.expired_type = DateHelper.expiredType(record.date);
+         _items.push(record);         
       }
-      if (record) {
-         let _record = data.find(i => i.id === record.id);
-         if (_record) {
-            _record.name = record.name;
-            _record.type = record.type;
-            _record.date = record.date;
-            _record.expired_type = record.expired_type//DateHelper.expiredType(record.date);
-         }
-      }
+      setItems(_items);
+      onData(_items)
    }
    
    return (
@@ -206,7 +195,6 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             header={header}
             showGridlines
             paginator rows={5}
-            //filters={{'is_deleted': {value: false, matchMode: FilterMatchMode.EQUALS}}}
          >
             {
                readOnly ? undefined : <Column key={`controlPointGridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>
@@ -218,7 +206,6 @@ const ItrControlPoints = ({data, readOnly, itemId}: {data: IControlPoint[], read
             {
                readOnly ? undefined : <Column key={`controlPointGridRemoveColumn`} header="" body={deleteRecordTemplate}  style={{ width: '1rem' }}/>
             }
-            <Column field="is_deleted" hidden={true} filter={true}/>
          </DataTable>
          <Dialog
             className="itr-dialog"
