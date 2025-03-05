@@ -39,11 +39,13 @@ const Roadmap = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const {data: session} = useSession();
    const [projects, setProjects] = useState<IBaseEntity[]>();
-   const [readOnly, setReadOnly] = useState<boolean>(false);
+   const [readOnly, setReadOnly] = useState<boolean>(true);
+   const [stateOk, setStateOk] = useState<boolean>(false);
 
    useEffect(() => {
       changeYear(year);
-      setReadOnly(!RolesHelper.checkRoles(session?.user.roles, ['admin','boss','master','analyst']))
+      // if (session?.user)
+      //    setReadOnly(!RolesHelper.checkRoles(session?.user.roles, ['admin','boss','master','analyst']))
    }, []);
    
    const changeYear = (val: number) => {
@@ -262,6 +264,11 @@ const saveMethod = async () => {
    }
 }
 //#endregion
+
+   if (session?.user && !stateOk) {
+      setReadOnly(!RolesHelper.checkRoles(session?.user.roles, ['admin','boss','master','analyst']))
+      setStateOk(true);
+   }
 
    return (
       session ?
