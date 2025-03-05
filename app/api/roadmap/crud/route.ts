@@ -17,7 +17,19 @@ interface IParams {
 export const POST = async (request: NextRequest) => {
    const upsertControlPoints = async (item_id: number, rows: IControlPoint[]): Promise<IControlPoint[]> => {
       const result: IControlPoint[] = []
-      for (const item of rows) {
+      // Удаляем те которые удалили на клиенте
+      const stored = (await prisma.control_point.findMany({
+         where: {
+            roadmap_item_id: item_id
+         }
+      })).map(i => i.id);
+      const exists = rows.filter(i => i.id).map(i => i.id);
+      const difference = stored.filter(i => !exists.includes(i));
+      for (const item of difference) {
+         await prisma.control_point.delete({where: {id: item}});
+      }
+      // остальные либо вставляем либо изменяем
+      for (const item of rows) {         
          if (item.id) {
             const _item = await prisma.control_point.update({
                where: {
@@ -96,7 +108,7 @@ export const POST = async (request: NextRequest) => {
          filter['OR'] = prismaHelper.OR(['project.name', 'comment'], model.searchStr);
       }
       const totalCount = await prisma.roadmap_item.count({where: filter});
-      let result = await prisma.roadmap_item.findMany({
+      let resultData = await prisma.roadmap_item.findMany({
          skip: model.pageSize * (model.pageNo -1),
          take: model.pageSize,
          where: filter,
@@ -104,23 +116,22 @@ export const POST = async (request: NextRequest) => {
          include: {
             project: true,
             fact_items: true,
-            control_points: true
+            control_points: {
+               orderBy: {
+                  date: 'asc'
+               }
+            }
          }         
       });
       
-      result = result.map(item => {return {...item, plan_str: `${item.hours.toLocaleString('ru-RU')} ч/ч`}});
+      let result  = resultData.map(item => {return {...item, plan_str: `${item.hours.toLocaleString('ru-RU')} ч/ч`, fact: 0, fact_str: ''}});
       
       for (let item of result) {
          item.control_points = item.control_points.map(cp => {return {...cp, expired_type: DateHelper.expiredType(cp.date), uuid: uuidv4()}});
          let fact = 0;
-         if (item.fact_items.length === 0) {
-            continue;
-         }
          for (let fi of item.fact_items)
             fact += fi.hours
-         //@ts-ignore
          item.fact = fact;         
-         //@ts-ignore
          item.fact_str = `${fact.toLocaleString('ru-RU')} ч/ч`;
       }
 

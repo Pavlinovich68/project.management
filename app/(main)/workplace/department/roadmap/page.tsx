@@ -178,7 +178,6 @@ const card = (
                onData={handleItems}
             />
          </TabPanel>
-         <TabPanel header="Выполненные работы"></TabPanel>
          <TabPanel header="Документы"></TabPanel>
       </TabView>
    </div>
