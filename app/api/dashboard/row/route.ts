@@ -8,7 +8,7 @@ export const POST = async (request: NextRequest) => {
       const { division_id, year } = await request.json();
 
       // Дорожная карта по проекту
-      const dashboard = await prisma.dashboard.findUnique({
+      const dashboard = await prisma.roadmap.findUnique({
          where: {
             year_division_id: {
                year: year,
@@ -18,17 +18,17 @@ export const POST = async (request: NextRequest) => {
       });      
 
       // Выбираем проекты в работе
-      const records = await prisma.dashboard_item.findMany({
+      const records = await prisma.roadmap_item.findMany({
          where: {
-            dashboard_id: 1
+            roadmap_id: 1
          },
          select: {            
             id: true,
             comment: true,
             hours: true,
-            dashboard: true,
+            roadmap: true,
             control_points: true,
-            dashboard_id: true,
+            roadmap_id: true,
             project_id: true,
             project: true,
             is_closed: true,
@@ -75,15 +75,15 @@ export const POST = async (request: NextRequest) => {
          })??[];
 
          for (const item_point of item_points) {
-            const hours = await CalendarHelper.workingHoursBetweenDates(new Date(record.dashboard.year, 0, 1), item_point.date);
+            const hours = await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), item_point.date);
             item_point.width = hours * rateCount / totalHours * 100;
          }
 
-         const start_width = (await CalendarHelper.workingHoursBetweenDates(new Date(record.dashboard.year, 0, 1), record.begin_date) * rateCount) / totalHours * 100;
+         const start_width = (await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), record.begin_date) * rateCount) / totalHours * 100;
 
-         const fact = (await prisma.dashboard_fact_item.aggregate({
+         const fact = (await prisma.roadmap_fact_item.aggregate({
             where: {
-               dashboard_item_id: record.id
+               roadmap_item_id: record.id
             },
             _sum: {
                hours: true
@@ -91,7 +91,7 @@ export const POST = async (request: NextRequest) => {
          }))._sum.hours;
 
          const resuItitem: IDashboardProjectItem = {
-            dashboard_id: record.dashboard_id,         
+            dashboard_id: record.roadmap_id,         
             dashboard_item_id: record.id,   
             comment: record.comment??'',
             project_code: record.project.code,

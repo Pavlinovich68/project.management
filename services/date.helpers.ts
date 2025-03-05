@@ -98,4 +98,15 @@ export default class DateHelper {
       const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0));
       return utcDate;
    }
+
+   static expiredType = (date: Date | undefined | null): number => {
+      if (!date) return -1;
+      const current = new Date().getTime();
+      const value = new Date(date).getTime();
+      const difference = value - current;
+      const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+      if (days < 0) return 2;
+      if (days <= 7) return 1;
+      return 0;
+   }
 }

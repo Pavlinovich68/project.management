@@ -9,6 +9,9 @@ import staff from "./data/staff.json";
 import users from "./data/users.json";
 import vacations from "./data/vacation.json";
 import exclusions from "./data/exclusion.json";
+import control_points from "./data/control_point.json";
+import roadmaps from "./data/roadmap.json";
+import roadmap_items from "./data/roadmap_item.json";
 
 // TODO Seed
 async function main() {
@@ -237,6 +240,74 @@ async function main() {
       }
    }
 
+   const seedRoadmaps = async () => {
+      try {
+         for (const item of roadmaps) {
+            await prisma.roadmap.create({
+               data: {
+                  id: item.id,
+                  year: item.year,
+                  division_id: item.division_id
+               }
+            })
+         }
+
+         const row = await prisma.$queryRaw`select max(id) from roadmap`;
+         //@ts-ignore
+         const maxId = row[0].max +1;
+         await prisma.$queryRaw`SELECT setval('roadmap_id_seq', ${maxId}, true)`;
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   const seedRoadmapItems = async () => {
+      try {
+         for (const item of roadmap_items) {
+            await prisma.roadmap_item.create({
+               data: {
+                  id: item.id,
+                  comment: item.comment,
+                  roadmap_id: item.roadmap_id,
+                  project_id: item.project_id,
+                  hours: item.hours,
+                  is_closed: item.is_closed
+               }
+            })
+         }
+
+         const row = await prisma.$queryRaw`select max(id) from roadmap_item`;
+         //@ts-ignore
+         const maxId = row[0].max +1;
+         await prisma.$queryRaw`SELECT setval('roadmap_item_id_seq', ${maxId}, true)`;
+      } catch (error) {
+         throw error;
+      }
+   }
+
+   const seedControlPoints = async () => {
+      try {
+         for (const item of control_points) {
+            await prisma.control_point.create({
+               data: {
+                  id: item.id,
+                  date: new Date(item.date),
+                  name: item.name,
+                  type: item.type,
+                  roadmap_item_id: item.roadmap_item_id
+               }
+            })
+         }
+
+         const row = await prisma.$queryRaw`select max(id) from control_point`;
+         //@ts-ignore
+         const maxId = row[0].max +1;
+         await prisma.$queryRaw`SELECT setval('control_point_id_seq', ${maxId}, true)`;
+      } catch (error) {
+         throw error;
+      }
+   }
+
    try {
       await seedDivision().finally(() => console.log(`\x1b[32mDivisions seeded\x1b[0m`));
       await seedEmployee().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
@@ -248,6 +319,9 @@ async function main() {
       await seedStaffs().finally(() => console.log(`\x1b[32mStaffs seeded\x1b[0m`));
       await seedUsers().finally(() => console.log(`\x1b[32mUsers seeded\x1b[0m`));
       await seedVacations().finally(() => console.log(`\x1b[32mVacations seeded\x1b[0m`));
+      await seedRoadmaps().finally(() => console.log(`\x1b[32mRoadmaps seeded\x1b[0m`));
+      await seedRoadmapItems().finally(() => console.log(`\x1b[32mRoadmap items seeded\x1b[0m`));
+      await seedControlPoints().finally(() => console.log(`\x1b[32mControl points seeded\x1b[0m`));      
    } catch (error) {
       throw error;
    }

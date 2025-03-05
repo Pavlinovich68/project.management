@@ -4,5 +4,4 @@ export interface IDataSourceResult {
    pageNo: number;
    pageSize: number;
    result: any[];
-   aggregation: any;
 }

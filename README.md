@@ -29,6 +29,10 @@ npx prisma db seed
 ```bash
 npm i --save-dev prisma@latest @prisma/client@latest
 ```
+***Запуск локального MinIO***
+```
+.\minio.exe server D:\MinIO\
+```
 
  Для работы с датами используется библиотека [Luxon](https://moment.github.io/luxon/#/)
  ```bash

@@ -40,7 +40,7 @@ model division {
    childrens      division[]  @relation("divisionTodivision")
    rate           rate[]
    dept_calendar  dept_calendar[]
-   dashboard       dashboard[]
+   roadmap       roadmap[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -67,7 +67,7 @@ model attachment {
    type           String         @db.VarChar(100)
    md5            String         @db.VarChar(32)
    users          users[]
-   dashboard_items  dashboard_item[]
+   roadmap_items  roadmap_item[]
 }
 //NOTE - Проекты
 model project {
@@ -77,7 +77,7 @@ model project {
    parent_id      Int?
    parent         project?   @relation("projectToProject", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    childrens      project[]  @relation("projectToProject")   
-   dashboard_items     dashboard_item[]
+   roadmap_items     roadmap_item[]
 }
 //NOTE - Рабочий календарь
 model production_calendar {
@@ -118,7 +118,7 @@ model employee {
    end_date       DateTime?   @db.Timestamp(6)
    staff          staff[]
    users          users[]
-   dashboard_items  dashboard_fact_item[]
+   roadmap_items  roadmap_fact_item[]
 }
 //NOTE - График отпусков
 model vacation {
@@ -130,41 +130,44 @@ model vacation {
    staff       staff?   @relation(fields: [staff_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 //NOTE - Дорожная карта
-model dashboard {
+model roadmap {
    id             Int      @id @default(autoincrement())
    year           Int
    division_id    Int         
    division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   dashboard_items  dashboard_item[]
+   roadmap_items  roadmap_item[]
    @@unique([year,  division_id])
 }
 //NOTE - Элемент дорожной карты
-model dashboard_item {
+/*
+Дата начала работ и дата окончания в контрольных точках
+*/
+model roadmap_item {
    id             Int            @id @default(autoincrement())
    comment        String?        @db.VarChar(250)
-   dashboard_id     Int
-   dashboard        dashboard        @relation(fields: [dashboard_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   roadmap_id     Int
+   roadmap        roadmap        @relation(fields: [roadmap_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    project_id     Int
    project        project        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    hours          Int
    is_closed      Boolean        @default(false)
-   begin_date     DateTime      @db.Timestamp(6)
    documents      attachment[]
    control_points control_point[]
-   fact_items     dashboard_fact_item[]
-   @@unique([dashboard_id,  project_id])
+   fact_items     roadmap_fact_item[]
+   @@unique([roadmap_id,  project_id])
 }
 //NOTE - Фактически затраченное время
-model dashboard_fact_item {
+model roadmap_fact_item {
    id             Int         @id @default(autoincrement())
    date           DateTime    @db.Timestamp(6)
    hours          Int
    employee_id    Int
    employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   dashboard_item_id   Int
-   dashboard_item   dashboard_item @relation(fields: [dashboard_item_id], references: [id])
+   roadmap_item_id   Int
+   roadmap_item   roadmap_item @relation(fields: [roadmap_item_id], references: [id])
 }
 //NOTE - Контрольная точка
+// 0 - Плановая дата начала работ
 // 1 - Предоставление требований
 // 2 - Подготовка ТЗ
 // 3 - Согласование ТЗ
@@ -173,13 +176,14 @@ model dashboard_fact_item {
 // 6 - Приемочные испытания
 // 7 - Ввод в эксплуатацию
 // 8 - Прочее
+// 9 - Плановая дата завершения работ
 model control_point {
    id                Int            @id @default(autoincrement())
    date              DateTime       @db.Timestamp(6)
    name              String         @db.VarChar(250)
    type              Int            @default(8)
-   dashboard_item_id   Int
-   dashboard_item      dashboard_item   @relation(fields: [dashboard_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   roadmap_item_id   Int
+   roadmap_item      roadmap_item   @relation(fields: [roadmap_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 //NOTE Должности
 model post {
