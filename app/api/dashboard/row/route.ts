@@ -8,19 +8,19 @@ export const POST = async (request: NextRequest) => {
       const { division_id, year } = await request.json();
 
       // Дорожная карта по проекту
-      const dashboard = await prisma.roadmap.findUnique({
+      const dashboard = await prisma.roadmap.findFirst({
          where: {
-            year_division_id: {
-               year: year,
-               division_id: division_id
-            }
+            year: year,
+            division_id: division_id
          }
       });      
+
+      if (!dashboard) return await NextResponse.json({status: 'success', data: []});
 
       // Выбираем проекты в работе
       let records = await prisma.roadmap_item.findMany({
          where: {
-            roadmap_id: dashboard?.id
+            roadmap_id: dashboard.id
          },
          select: {            
             id: true,
@@ -38,11 +38,9 @@ export const POST = async (request: NextRequest) => {
                code: 'asc'
             }
          }
-      });
+      });     
 
-      //return await NextResponse.json({status: 'success', data: records});      
-
-      if (!records) return undefined;
+      if (!records)  return await NextResponse.json({status: 'success', data: []});
       records = records.map(rec => {return {...rec, begin_date: rec.control_points.find(cp => cp.type === 0)?.date}});      
 
       // Начинаем обогощать

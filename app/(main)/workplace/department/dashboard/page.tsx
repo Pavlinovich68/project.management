@@ -28,7 +28,7 @@ const Dashboard = () => {
    const changeYear = (val: number) => {
       setYear(val);
       getBalanceData(val).then((i) => setBalanceData(i));
-      getProjectsData().then((i) => setProjectsData(i))
+      getProjectsData(val).then((i) => setProjectsData(i))
    }
 
    const getBalanceData = async (_year: number): Promise<IBalanceData> => {
@@ -47,14 +47,14 @@ const Dashboard = () => {
       return response.data;      
    }
 
-   const getProjectsData = async (): Promise<IDashboardProjectItem[]> => {
+   const getProjectsData = async (val: number): Promise<IDashboardProjectItem[]> => {
       const res = await fetch(`/api/dashboard/row`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",
          },
          body: JSON.stringify({
-            year: year,
+            year: val,
             division: session?.user.division_id
          }),
          cache: 'force-cache'
