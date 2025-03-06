@@ -20,7 +20,7 @@ export const POST = async (request: NextRequest) => {
          currentDate.setDate(currentDate.getDate() +1);
       }
 
-      const items = await prisma.roadmap_item.findMany({
+      let items = await prisma.roadmap_item.findMany({
          where: {
             roadmap: {
                year: year,
@@ -31,12 +31,13 @@ export const POST = async (request: NextRequest) => {
             id: true,    
             comment: true,
             hours: true,
-            begin_date: true,
-            project: true
+            project: true,
+            control_points: true
          }
       });
 
       if (!items) return undefined;
+      items = items.map(item => {return {...item, begin_date: item.control_points.find(cp => cp.type === 0)?.date}})
 
       const totalHours = dateHours.map(i => i.hours).reduce((accumulator, currentValue) => {return accumulator + currentValue}, 0);
       
@@ -52,14 +53,17 @@ export const POST = async (request: NextRequest) => {
       
       const result = [];
       for (const item of items) {
+         //@ts-ignore
          const left = dateHours.filter((i) => i.date >= new Date(year, 0, 1) && i.date <= item.begin_date)
             .map(i => i.hours)
             .reduce((accumulator, currentValue) => {return accumulator + currentValue}, 0) / totalHours * 100;
 
+         //@ts-ignore
          let end_date = item.begin_date;
          let _hours = item.hours;
          for (const _date of dateHours) {
             end_date = _date.date;
+            //@ts-ignore
             if (_date.date >= item.begin_date) {               
                _hours -= _date.hours;
             }
@@ -70,6 +74,7 @@ export const POST = async (request: NextRequest) => {
             project_code: item.project.code,
             project_name: item.project.name,
             comment: item.comment,
+            //@ts-ignore
             begin_date: item.begin_date,
             hours: item.hours,
             left: left,

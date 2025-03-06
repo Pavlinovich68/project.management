@@ -18,9 +18,9 @@ export const POST = async (request: NextRequest) => {
       });      
 
       // Выбираем проекты в работе
-      const records = await prisma.roadmap_item.findMany({
+      let records = await prisma.roadmap_item.findMany({
          where: {
-            roadmap_id: 1
+            roadmap_id: dashboard?.id
          },
          select: {            
             id: true,
@@ -31,8 +31,7 @@ export const POST = async (request: NextRequest) => {
             roadmap_id: true,
             project_id: true,
             project: true,
-            is_closed: true,
-            begin_date: true
+            is_closed: true
          },
          orderBy: {
             project: {
@@ -44,6 +43,7 @@ export const POST = async (request: NextRequest) => {
       //return await NextResponse.json({status: 'success', data: records});      
 
       if (!records) return undefined;
+      records = records.map(rec => {return {...rec, begin_date: rec.control_points.find(cp => cp.type === 0)?.date}});      
 
       // Начинаем обогощать
       
@@ -79,7 +79,10 @@ export const POST = async (request: NextRequest) => {
             item_point.width = hours * rateCount / totalHours * 100;
          }
 
-         const start_width = (await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), record.begin_date) * rateCount) / totalHours * 100;
+         const start_width = (await CalendarHelper.workingHoursBetweenDates(new Date(record.roadmap.year, 0, 1), 
+            //@ts-ignore
+            record.begin_date
+         ) * rateCount) / totalHours * 100;
 
          const fact = (await prisma.roadmap_fact_item.aggregate({
             where: {

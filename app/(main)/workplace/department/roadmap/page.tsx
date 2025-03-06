@@ -213,12 +213,17 @@ const deleteMethod = async (data: any) => {
    return await CrudHelper.crud(controllerName, CRUD.delete, { id: data.id });
 }
 
+const checkPointsIsOk = (points: IControlPoint[]) => {
+   const begin_date = points.find(i => i.type === 0);
+   const end_date = points.find(i => i.type === 9);
+   return begin_date && end_date;
+}
+
 const saveMethod = async () => {
-   setSubmitted(true);
+   setSubmitted(true);   
    if (!roadmap.isValid) {      
-      const errors = Object.values(roadmap.errors);
-      //@ts-ignore
-      toast.current.show({
+      const errors = Object.values(roadmap.errors);      
+      toast.current?.show({
          severity:'error',
          summary: 'Ошибка сохранения',
          content: (<div className="flex flex-column">
@@ -240,6 +245,24 @@ const saveMethod = async () => {
       });
       return;
    }
+
+   const datesOk = checkPointsIsOk(roadmap.values.control_points);
+   if (!datesOk) {
+      toast.current?.show({
+         severity:'error',
+         summary: 'Ошибка сохранения',
+         content: (<div className="flex flex-column">
+                     <div className="text-center mb-2">
+                        <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem' }}></i>
+                        <h3 className="text-red-500">Ошибка сохранения</h3>
+                     </div>
+                     <p className="flex align-items-left m-0">Работы должны содержать дату начала и дату окончания!</p>
+                  </div>),
+         life: 5000
+      });
+      return;
+   }
+
    try {      
       setIsLoading(true);
       console.table(roadmap.values.control_points);

@@ -60,6 +60,7 @@ const Dashboard = () => {
          cache: 'force-cache'
       });      
       const response = await res.json();
+      console.log(response.data);
       return response.data;
    }
 
@@ -157,21 +158,21 @@ const Dashboard = () => {
             {balanceWidget(year)}
             <ItrTotalRow year={year} division_id={session.user.division_id}/>
             {
-               projectsData.map((item, i) =>
-                     <div className={classNames("col-4", styles.block)}> 
-                        <div className={classNames("card", styles.innerArea)}>
-                           <div className="text-left mt-1 text-sm font-semibold text-500">{item?.project_code}: {item?.project_name}</div>
-                           <div className="text-left mb-2 text-sm text-400">{item?.comment}</div>
-                           <div className={classNames(styles.segmentBar)}>
-                              <div className={classNames(styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `100%`}}>
-                                 {/* <span className={classNames(styles.segmentItemValue)}>{item?.hours} рабочих часов</span>
-                                 <span className={classNames(styles.segmentItemPercentage)}>Исполнено на {item?.percentage}%</span> */}
-                                 <div className={classNames(styles.segmentItemPlan)} style={{left: `${item?.start_width}%`, width: `${item?.plan_width}%`}}></div>
-                                 <div className={classNames(styles.segmentItemFact)} style={{left: `${item?.start_width}%`, width: `${item?.fact_width}%`}}></div>
-                              </div>
-                           </div>                           
-                        </div>
+               projectsData.map((item, i) => 
+                  <div key={`dshb-${i}`}className={classNames("col-4", styles.block)}> 
+                     <div className={classNames("card", styles.innerArea)}>
+                        <div className="text-left mt-1 text-sm font-semibold text-500">{item?.project_code}: {item?.project_name}</div>
+                        <div className="text-left mb-2 text-sm text-400">{item?.comment}</div>
+                        <div className={classNames(styles.segmentBar)}>
+                           <div className={classNames(styles.segmentEmpty, styles.segmentItemWrapper)} style={{width: `100%`}}>
+                              {/* <span className={classNames(styles.segmentItemValue)}>{item?.hours} рабочих часов</span>
+                              <span className={classNames(styles.segmentItemPercentage)}>Исполнено на {item?.percentage}%</span> */}
+                              <div className={classNames(styles.segmentItemPlan)} style={{left: `${item?.start_width}%`, width: `${item?.plan_width}%`}}></div>
+                              <div className={classNames(styles.segmentItemFact)} style={{left: `${item?.start_width}%`, width: `${item?.fact_width}%`}}></div>
+                           </div>
+                        </div>                           
                      </div>
+                  </div>
                )
             }
          </div>         

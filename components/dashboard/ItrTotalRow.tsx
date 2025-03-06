@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styles from "@/app/(main)/workplace/department/dashboard/styles.module.scss"
 import { classNames } from "primereact/utils";
 import { IDashboardDataItem } from "@/models/IDashboardData";
-import { ColorPicker } from "primereact/colorpicker";
 import { Tooltip } from "primereact/tooltip";
 
 interface ITimeScaleElement {
@@ -80,8 +79,8 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
                <div className={classNames(styles.segmentBar)}>
                   <div className={classNames(styles.segmentEmpty)}>
                      {
-                        data?.map((segment) => 
-                           <div className={classNames('total-row-segment', styles.totalRowSegment)} style={{zIndex: 2, left: `${segment?.left}%`, width: `${segment?.length}%`}}>
+                        data?.map((segment, i) => 
+                           <div key={i} className={classNames('total-row-segment', styles.totalRowSegment)} style={{zIndex: 2, left: `${segment?.left}%`, width: `${segment?.length}%`}}>
                               {segment.project_code}
                            </div>
                         )
@@ -90,12 +89,12 @@ const TotalRow = ({year, division_id}:{year: number, division_id: number}) => {
                </div>
                <div className={classNames(styles.hoursScale)}>
                   {
-                     hours.map((i) => <div className={classNames(styles.scaleItem)} style={{left: `${i.left}%`, width: `${i.length}%`}}></div>)
+                     hours.map((i, j) => <div key={j} className={classNames(styles.scaleItem)} style={{left: `${i.left}%`, width: `${i.length}%`}}></div>)
                   }
                </div>
                <div className={classNames(styles.scaleBar)}>
                   {
-                     scale?.map((i) => <div className={classNames(styles.scaleItem)} style={{left: `${i.left}%`, width: `${i.length}%`}}>{months[i.month]} <sup>{i.value}</sup></div>)
+                     scale?.map((i, j) => <div key={j} className={classNames(styles.scaleItem)} style={{left: `${i.left}%`, width: `${i.length}%`}}>{months[i.month]} <sup>{i.value}</sup></div>)
                   }
                </div>
             </div>
