@@ -2,10 +2,39 @@ import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import CalendarHelper from "@/services/calendar.helper";
 import { IDashboardControlPoint, IDashboardProjectItem } from "@/models/IDashboardProjectItem";
+import minioClient from "@/lib/minio-client";
 
 export const POST = async (request: NextRequest) => {
    try {
       const { division_id, year } = await request.json();
+
+      const sourceFile = 'd:/Temp/Список систем по ГК.xlsx';
+      const bucket = 'project-management';
+      const destinationObject = 'Список систем по ГК.xlsx'
+
+      const exists = await minioClient.bucketExists(bucket)
+      if (exists) {
+      console.log('Bucket ' + bucket + ' exists.')
+      } else {
+      await minioClient.makeBucket(bucket, 'project-management')
+      console.log('Bucket ' + bucket + ' created in "project-management".')
+      }
+
+      // Set the object metadata
+      var metaData = {
+         'Content-Type': 'text/plain',
+         'X-Amz-Meta-Testing': 1234,
+         example: 5678,
+      }
+
+      // Upload the file with fPutObject
+      // If an object with the same name exists,
+      // it is updated with new data
+      await minioClient.fPutObject(bucket, destinationObject, sourceFile, metaData)
+      console.log('File ' + sourceFile + ' uploaded as object ' + destinationObject + ' in bucket ' + bucket)
+
+
+      await NextResponse.json({status: 'success', data: []});
 
       // Дорожная карта по проекту
       const dashboard = await prisma.roadmap.findFirst({
