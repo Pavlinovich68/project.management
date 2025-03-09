@@ -61,7 +61,7 @@ model users {
 model attachment {
    id             Int            @id @default(autoincrement())
    filename       String         @db.VarChar(100)
-   body           Bytes
+   bucket_name    String         @db.VarChar(100)
    date           DateTime       @db.Timestamp(6)
    size           Int
    type           String         @db.VarChar(100)
