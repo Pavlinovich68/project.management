@@ -25,6 +25,7 @@ import { IRoadmapItem } from "@/models/IRoadmapItem";
 import ItrControlPoints from "@/components/roadmap/ItrControlPoints";
 import { IControlPoint } from "@/models/IControlPoint";
 import RolesHelper from "@/services/roles.helper";
+import ItrFileList from "@/components/ItrFileList";
 
 const Roadmap = () => {
    const controllerName = 'roadmap';
@@ -180,7 +181,9 @@ const card = (
                onData={handleItems}
             />
          </TabPanel>
-         <TabPanel header="Документы"></TabPanel>
+         <TabPanel header="Документы">
+            <ItrFileList bucketName={'roadmapProjects'}/>
+         </TabPanel>
       </TabView>
    </div>
 )
