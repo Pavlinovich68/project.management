@@ -182,7 +182,7 @@ const card = (
             />
          </TabPanel>
          <TabPanel header="Документы">
-            <ItrFileList bucketName={'roadmapProjects'}/>
+            <ItrFileList bucketName={`roadmap_item/docs/${roadmap.values.id}`}/>
          </TabPanel>
       </TabView>
    </div>

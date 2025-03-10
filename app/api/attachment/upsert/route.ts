@@ -37,7 +37,8 @@ export const POST = async (request: NextRequest) => {
             type: model.type,
             size: model.size,
             date: fileDate,
-            body: buffer,
+            bucket_name: '',
+            //body: buffer,
             md5: hash
          }
       });
