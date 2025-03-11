@@ -61,11 +61,12 @@ model users {
 model attachment {
    id             Int            @id @default(autoincrement())
    filename       String         @db.VarChar(100)
+   object_name    String         @db.VarChar(500)
    bucket_name    String         @db.VarChar(100)
    date           DateTime       @db.Timestamp(6)
    size           Int
    type           String         @db.VarChar(100)
-   md5            String         @db.VarChar(32)
+   etag           String         @db.VarChar(32)
    users          users[]
    roadmap_items  roadmap_item[]
 }

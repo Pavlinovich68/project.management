@@ -75,7 +75,7 @@ export const POST = async (request) => {
             avatar: {
                select: {
                   id: true,
-                  body: true
+                  //body: true
                }
             },
             employee: {

@@ -26,6 +26,8 @@ import ItrControlPoints from "@/components/roadmap/ItrControlPoints";
 import { IControlPoint } from "@/models/IControlPoint";
 import RolesHelper from "@/services/roles.helper";
 import ItrFileList from "@/components/ItrFileList";
+import { Button } from "primereact/button";
+import { FileUpload, FileUploadSelectEvent } from "primereact/fileupload";
 
 const Roadmap = () => {
    const controllerName = 'roadmap';
@@ -65,7 +67,58 @@ const Roadmap = () => {
    }
 
 //#region //SECTION - GRID
+const attachSelect = async (e: FileUploadSelectEvent, id: number | undefined) => {
+   if (!id) return;
+   const file = e.files[0];
+   const formData = new FormData();
+   formData.append('file', file);
+   formData.append('path', `roadmap_item/docs/${id}`);
+
+   const response = await fetch('/api/attachment/new', {
+      method: 'POST',
+      body: formData
+   });
+
+   const isOk = response.ok;
+
+   toast.current?.show({
+      severity: isOk ? "success" : "error",
+      summary: "Прикрепление документа",
+      content: (<div className="flex flex-column">
+                  <div className="text-center mb-2">
+                     <h5 className="text-gray-800">{isOk ? "Успех" : "Ошибка"}</h5>
+                  </div>
+                  <p className="flex align-items-left m-0">{isOk ? `Документ ${file.name} успешно прикреплен к проекту!` : `${response.text}`}</p>
+               </div>),
+      life: 5000
+   });
+   return await response.json();
+}
+
+const uploadDocTemplate = (rowData: IRoadmapItem) => {
+   return readOnly ? <></> :   
+      <FileUpload 
+         accept="image/*" maxFileSize={1000000}
+         mode="basic"
+         auto
+         chooseLabel=""
+         url=''
+         chooseOptions={{ icon: 'pi pi-fw pi-upload', iconOnly: true, className: 'custom-choose-btn p-button-rounded', style: {width:"37px", paddingLeft: "10px", backgroundColor: "#7FD8E6"} }} 
+         uploadOptions={{style: {display:"none"}}} 
+         cancelOptions={{style: {display:"none"}}}
+         contentStyle={{display:"none"}}            
+         onSelect={(e) => attachSelect(e, rowData.id)}
+      />
+}
+
 const gridColumns = [
+   <Column 
+      key="roadmapGridColumn0" 
+      header="" 
+      body={uploadDocTemplate}
+      hidden={readOnly} 
+      style={{ width: 'auto', padding: "0 10px 0 10px" }}>      
+   </Column>,
    <Column
       key="roadmapGridColumn1"
       field="project.name"
@@ -123,7 +176,7 @@ const handleItems = (items: IControlPoint[]) => {
 const card = (
    <div className={classNames("card p-fluid", styles.dialogCard)}>
       <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1', zIndex: "1000", position: "absolute", left: "calc(50% - 5rem)", top: "calc(50% - 5rem)", display: `${isLoading ? 'block' : 'none'}`}} hidden={!isLoading}></i>
-      <TabView>
+      <TabView className="tv-padding-0">
          <TabPanel header="Проект">
             <div className="p-fluid formgrid grid">
                <div className="field col-12">
@@ -180,10 +233,14 @@ const card = (
                itemId={roadmap.values.id}
                onData={handleItems}
             />
-         </TabPanel>
-         <TabPanel header="Документы">
-            <ItrFileList bucketName={`roadmap_item/docs/${roadmap.values.id}`}/>
-         </TabPanel>
+         </TabPanel> 
+         {
+            roadmap.values.id ? 
+               <TabPanel header="Документы" style={{padding: "0"}}>
+                  <ItrFileList bucketName={`roadmap_item/docs/${roadmap.values.id}`}/>
+               </TabPanel> :
+               <></>
+         }
       </TabView>
    </div>
 )

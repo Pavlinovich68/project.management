@@ -33,3 +33,28 @@
 .uploadToolbar {
    width: 100%;
 }
+
+.fileList {
+   border: none;
+   padding: 0;
+   div {
+      border-top: none;
+   }
+   .toolBar {
+      border-top: 1px solid var(--surface-border);
+   }
+   .rowContainer {
+      border-bottom-color: #3F4B5B;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      display: grid;
+      grid-template-columns: 58px auto 100px 58px;
+      height: auto;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      small {
+         font-size: 11px;
+         color: var(--surface-400);
+      }
+   }
+}

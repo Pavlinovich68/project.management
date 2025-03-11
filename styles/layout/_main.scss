@@ -484,3 +484,21 @@ $color-100: #b7b7b7;
 .p-progressbar {
    display: none;
 }
+
+.file-list-container {
+   .p-datascroller-content {
+      border: rgb(63, 75, 91) solid 1px;
+      margin-left: 0;
+      margin-right: 0;
+      border-radius: 4px;
+   }
+}
+
+.tv-padding-0 {
+   .p-tabview-panels {
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-bottom: 0;
+      padding-top: 5px;
+   }
+}
