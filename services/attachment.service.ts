@@ -1,70 +1,22 @@
+import minioClient from "@/lib/minio-client";
 import CRUD from "@/models/enums/crud-type";
+import prisma from "@/prisma/client";
 
 class AttachService {
-   toBase64 = (file: File): Promise<string> =>
-      new Promise((resolve, reject) => {
-         const reader = new FileReader();
-         reader.readAsDataURL(file);
-         reader.onload = () => resolve(reader.result as string);
-         reader.onerror = (error) => reject(error);
-   });
-
-   read = async (id: number | undefined | null) => {
+   drop = async (id: number | undefined | null) => {
       if (!id){
          return;
       }
-      const res = await fetch(`/api/attachment/read?id=${id}`, {
-         method: "GET",
-         headers: {
-            "Content-Type": "application/json",
-         }
-      });
-      const data = await res.json();
-      return data.status === 'success' ? data.data.body : '';
-   }
 
-   save = async(file: File, bucket_name: string) => {
-      const base64 = await this.toBase64(file);
-      const model = {
-         type: file.type,
-         filename: file.name,
-         size: file.size,         
-         body: base64
-      }
-      const res = await fetch(`/api/attachment/crud`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-            operation: CRUD.create,
-            params: {
-               bucket_name: bucket_name,
-               model: model
-            }
-         })
-      });
-      return await res.json();
-   }
-
-   download = async (id: number | undefined | null) => {
-      if (id) {
-         const res = await fetch(`/api/attachment/read?id=${id}`, {
-            method: "GET",
-            headers: {
-               "Content-Type": "application/json",
-            }
-         });
-         const data = await res.json();
-         if (data.status === 'success' && data.data.filename) {
-            const link = document.createElement('a');
-            link.href = data.data.body;
-            link.download = data.data.filename;
-            document?.body?.appendChild(link);
-            link.click();
-            document?.body?.removeChild(link);
-         }
-      }
+      try {
+         const record = await prisma.attachment.findFirst({where: {id: id}});
+         if (!record)
+            throw new Error("Не удалось найти запись в таблице вложений");
+         await minioClient.removeObject(process.env.ROOT_BUCKET as string, `${record?.object_name}/${record?.filename}`);
+         await prisma.attachment.delete({where: {id: record.id}});
+      } catch (error) {
+         throw error;
+      }      
    }
 }
 

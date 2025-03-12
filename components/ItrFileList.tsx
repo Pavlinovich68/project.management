@@ -52,6 +52,33 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
       }
    };
 
+   const drop = async (id: number | undefined) => {
+      if (!id) return;
+      try {
+         const response = await fetch('/api/attachment/drop', {
+            method: 'POST',
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+               id: id
+            })
+         });
+         if (!response.ok) {
+            throw new Error('Ошибка удаления файла');
+         }
+         
+         const _items:IAttachment[] = [];
+         for (const item of items) {
+            if (item.id !== id)
+               _items.push(item);
+         }
+         setItems(_items);
+      } catch (error: any) {
+         toast.current?.show({ severity: "error", summary: "Удаление документа", detail: error.stack, sticky: true });
+      }
+   };
+
    const itemTemplate = (data: IAttachment) => {
       return (
          <div className={classNames(styles.rowContainer)}>
@@ -64,7 +91,7 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
                <div>{DateHelper.formatDate(data.date)}</div>
             </div>
             <div className={classNames("flex align-items-center justify-content-center flex-wrap")}>
-               <Button icon="pi pi-trash" tooltip="Удалить документ" tooltipOptions={{ position: 'top' }} type="button" rounded severity="danger"/>
+               <Button icon="pi pi-trash" tooltip="Удалить документ" tooltipOptions={{ position: 'top' }} type="button" rounded severity="danger" onClick={() => drop(data.id)}/>
             </div>
          </div>
       )

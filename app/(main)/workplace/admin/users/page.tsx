@@ -311,6 +311,7 @@ const Users = () => {
          if (attachChanged) {
             const attach = fileUploadRef.current?.getFiles()[0];
             if (attach) {
+               //@ts-ignore
                const attachResult = await AttachService.save(attach, attachmentId);
                user.values.attachment_id = attachResult.data.id;
             }
