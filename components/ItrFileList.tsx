@@ -10,9 +10,11 @@ import styles from './styles.module.scss';
 import DateHelper from "@/services/date.helpers";
 import CRUD from "@/models/enums/crud-type";
 import attachmentService from "@/services/attachment.service";
+import { Toast } from "primereact/toast";
 
 const ItrFileList = ({bucketName}:{bucketName: string}) => {
    const [items, setItems] = useState<IAttachment[]>([]);
+   const toast = useRef<Toast>(null);
 
    useEffect(() => {
       readFiles();
@@ -45,8 +47,8 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
          link.click();
          document.body.removeChild(link);
          window.URL.revokeObjectURL(url);
-      } catch (error) {
-         console.error('Ошибка:', error);
+      } catch (error: any) {
+         toast.current?.show({ severity: "error", summary: "Скачивание документа", detail: error.stack, sticky: true });
       }
    };
 
@@ -84,7 +86,10 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
    }
 
    return (      
-      <DataScroller value={items} itemTemplate={itemTemplate} rows={items.length} inline scrollHeight="20rem" className={classNames(styles.fileList, "border-round file-list-container")}/>
+      <React.Fragment>
+         <DataScroller value={items} itemTemplate={itemTemplate} rows={items.length} inline scrollHeight="20rem" className={classNames(styles.fileList, "border-round file-list-container")}/>
+         <Toast ref={toast} />
+      </React.Fragment>      
    );
 };
 

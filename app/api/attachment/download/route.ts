@@ -8,7 +8,7 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
       const stream = await minioClient.getObject(process.env.ROOT_BUCKET as string, `${model.objectName}/${model.fileName}`);
       const readableStream = new ReadableStream({
          start(controller) {
-            stream.on('data', (chunk) => {
+            stream.on('data', (chunk) => {               
                controller.enqueue(chunk);
             });
 
@@ -24,13 +24,12 @@ export const POST = async (request: NextRequest, response: NextResponse) => {
 
       return new NextResponse(readableStream, {
          headers: {
-            'Content-Type': 'application/octet-stream',
-            'Content-Disposition': `attachment; filename="${model.fileName}"`,
+            'Content-Type': 'application/octet-stream'
          },
       });
    } catch (error: any) {
       return NextResponse.json(
-         { error: 'Failed to fetch object' },
+         { error: error.message },
          { status: 500 }
       );
    }
