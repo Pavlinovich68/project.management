@@ -92,6 +92,10 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
                <div>{DateHelper.formatDate(data.date)}</div>
             </div>
             <div className={classNames("flex align-items-center justify-content-center flex-wrap")}>
+               <small>Размер файла</small>
+               <div>{data.size/1000} kb.</div>
+            </div>
+            <div className={classNames("flex align-items-center justify-content-center flex-wrap")}>
                <Button icon="pi pi-trash" tooltip="Удалить документ" tooltipOptions={{ position: 'top' }} type="button" rounded severity="danger" onClick={() => confirmDelete(data)}/>
             </div>
          </div>
