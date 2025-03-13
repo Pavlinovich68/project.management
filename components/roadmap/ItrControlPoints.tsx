@@ -217,20 +217,28 @@ const ItrControlPoints = ({data, readOnly, itemId, onData}: {data: IControlPoint
          >
             <div className={classNames("card p-fluid", styles.dialogCard)}>
                <div className="p-fluid formgrid grid">
-                  <div className="field col-12">
-                     <label htmlFor="name">Наименование</label>
-                     <InputText value={currentRecord?.name} onChange={(e) => {
-                        let _record: IControlPoint = {
-                           uuid: currentRecord?.uuid,
-                           id: currentRecord?.id,
-                           name: e.target.value,
-                           date: currentRecord?.date,
-                           type: currentRecord?.type,
-                           expired_type: currentRecord?.expired_type,
-                           roadmap_item_id: currentRecord?.roadmap_item_id
-                        };
-                        setCurrentRecord(_record);
-                     }} />
+               <div className="field col-12">
+                     <label htmlFor="name">Тип</label>
+                     <Dropdown
+                        value={currentRecord?.type}
+                        required 
+                        optionLabel="name" 
+                        optionValue="type" 
+                        filter
+                        options={types}
+                        onChange={(e) => {
+                           let _record: IControlPoint = {
+                              uuid: currentRecord?.uuid,
+                              id: currentRecord?.id,
+                              name: currentRecord?.name,
+                              date: currentRecord?.date,
+                              type: e.value,
+                              expired_type: currentRecord?.expired_type,
+                              roadmap_item_id: currentRecord?.roadmap_item_id
+                           };
+                           setCurrentRecord(_record);
+                        }}
+                     />
                   </div>
                   <div className="field col-12">
                      <label htmlFor="name">Дата</label>
@@ -254,27 +262,19 @@ const ItrControlPoints = ({data, readOnly, itemId, onData}: {data: IControlPoint
                      />
                   </div>
                   <div className="field col-12">
-                     <label htmlFor="name">Тип</label>
-                     <Dropdown
-                        value={currentRecord?.type}
-                        required 
-                        optionLabel="name" 
-                        optionValue="type" 
-                        filter
-                        options={types}
-                        onChange={(e) => {
-                           let _record: IControlPoint = {
-                              uuid: currentRecord?.uuid,
-                              id: currentRecord?.id,
-                              name: currentRecord?.name,
-                              date: currentRecord?.date,
-                              type: e.value,
-                              expired_type: currentRecord?.expired_type,
-                              roadmap_item_id: currentRecord?.roadmap_item_id
-                           };
-                           setCurrentRecord(_record);
-                        }}
-                     />
+                     <label htmlFor="name">Примечание</label>
+                     <InputText value={currentRecord?.name} onChange={(e) => {
+                        let _record: IControlPoint = {
+                           uuid: currentRecord?.uuid,
+                           id: currentRecord?.id,
+                           name: e.target.value,
+                           date: currentRecord?.date,
+                           type: currentRecord?.type,
+                           expired_type: currentRecord?.expired_type,
+                           roadmap_item_id: currentRecord?.roadmap_item_id
+                        };
+                        setCurrentRecord(_record);
+                     }} />
                   </div>
                </div>
             </div>            
