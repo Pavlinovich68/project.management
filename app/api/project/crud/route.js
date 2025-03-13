@@ -38,16 +38,11 @@ export const POST = async (request) => {
    }
 
    const create = async (model) => {
-      let _end_date = null;
-      if (model.end_date)
-         _end_date = model.end_date
       const result = await prisma.project.create({
          data: {
             code: model.code,
             name: model.name,
-            division_id: model.division.id,
-            begin_date: new Date(model.begin_date),
-            end_date: _end_date
+            parent_id: model.parent_id
          }
       });
 
@@ -60,20 +55,13 @@ export const POST = async (request) => {
    }
 
    const update = async (model) => {
-      let _end_date = null;
-      if (model.end_date)
-         _end_date = model.end_date
-
       const result = await prisma.project.update({
          where: {
             id: model.id
          },
          data: {
             code: model.code,
-            name: model.name,
-            division_id: model.division.id,
-            begin_date: new Date(model.begin_date),
-            end_date: _end_date
+            name: model.name
          }
       });
 

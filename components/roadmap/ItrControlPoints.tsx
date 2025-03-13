@@ -98,7 +98,7 @@ const ItrControlPoints = ({data, readOnly, itemId, onData}: {data: IControlPoint
          uuid: uuidv4(),
          id: undefined,
          name: undefined,
-         date: undefined,
+         date: new Date(),
          type: undefined,
          expired_type: undefined,
          roadmap_item_id: itemId
