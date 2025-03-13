@@ -98,7 +98,7 @@ const attachSelect = async (e: FileUploadSelectEvent, id: number | undefined) =>
 const uploadDocTemplate = (rowData: IRoadmapItem) => {
    return readOnly ? <></> :   
       <FileUpload 
-         accept="image/*" maxFileSize={1000000}
+         maxFileSize={1000000}
          mode="basic"
          auto
          chooseLabel=""

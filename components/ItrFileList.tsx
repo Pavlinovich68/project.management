@@ -11,6 +11,7 @@ import DateHelper from "@/services/date.helpers";
 import CRUD from "@/models/enums/crud-type";
 import attachmentService from "@/services/attachment.service";
 import { Toast } from "primereact/toast";
+import { confirmDialog } from "primereact/confirmdialog";
 
 const ItrFileList = ({bucketName}:{bucketName: string}) => {
    const [items, setItems] = useState<IAttachment[]>([]);
@@ -91,7 +92,7 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
                <div>{DateHelper.formatDate(data.date)}</div>
             </div>
             <div className={classNames("flex align-items-center justify-content-center flex-wrap")}>
-               <Button icon="pi pi-trash" tooltip="Удалить документ" tooltipOptions={{ position: 'top' }} type="button" rounded severity="danger" onClick={() => drop(data.id)}/>
+               <Button icon="pi pi-trash" tooltip="Удалить документ" tooltipOptions={{ position: 'top' }} type="button" rounded severity="danger" onClick={() => confirmDelete(data)}/>
             </div>
          </div>
       )
@@ -111,6 +112,18 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
       const data = await res.json();
       setItems(data.data);
    }
+
+   const confirmDelete = (data: IAttachment) => {
+      confirmDialog({
+         message: `Вы уверены что хотите удалить документ?`,
+         header: 'Удаление документа',
+         icon: 'pi pi-exclamation-triangle text-red-500',
+         acceptLabel: 'Да',
+         rejectLabel: 'Нет',
+         showHeader: true,
+         accept: () => drop(data.id)
+      });
+   };
 
    return (      
       <React.Fragment>
