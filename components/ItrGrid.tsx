@@ -353,16 +353,16 @@ const ItrGrid = ({
    const fillColumns = (ro: boolean) => {
       const result = [];
       if (!ro && (editVisible??=true)) {
-         result.push(<Column key={`${controller}GridEditColumn`} header="" body={editRecordTemplate} style={{ width: '1rem' }}/>);
+         result.push(<Column key={`${controller}GridEditColumn`} header="" body={editRecordTemplate} style={{ width: 'auto', padding: "0 10px 0 0" }}/>);
       } else {
          if (view)
-            result.push(<Column key={`${controller}GridEditColumn`} header="" body={viewRecordTemplate} style={{ width: '1rem' }}/>);
+            result.push(<Column key={`${controller}GridEditColumn`} header="" body={viewRecordTemplate} style={{ width: 'auto', padding: "0 10px 0 0" }}/>);
       }
       for(const item of columns) {
          result.push(item);
       }
       if (!ro && (deleteVisible??=true)) {
-         result.push(<Column key={`${controller}GridRemoveColumn`} header="" body={deleteRecordTemplate}  style={{ width: '1rem' }}/>);
+         result.push(<Column key={`${controller}GridRemoveColumn`} header="" body={deleteRecordTemplate}  style={{ width: 'auto', padding: "0 10px 0 0" }}/>);
       }
       return result;
    }
