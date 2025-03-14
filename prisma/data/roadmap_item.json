@@ -1,10 +1,74 @@
 [
    {
-      "id": 1,
-      "comment": "Работы в рамках цифровой трансформации",
-      "roadmap_id": 1,
-      "project_id": 1,
-      "hours": 2000,
-      "is_closed": false
+     "id": 1,
+     "comment": "Работы в рамках доработок по ЦТ за 2024 год",
+     "roadmap_id": 1,
+     "project_id": 1,
+     "hours": 1000,
+     "is_closed": false
+   },
+   {
+     "id": 4,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 30,
+     "hours": 437,
+     "is_closed": false
+   },
+   {
+     "id": 3,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 29,
+     "hours": 320,
+     "is_closed": false
+   },
+   {
+     "id": 5,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 34,
+     "hours": 160,
+     "is_closed": false
+   },
+   {
+     "id": 6,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 38,
+     "hours": 700,
+     "is_closed": false
+   },
+   {
+     "id": 7,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 39,
+     "hours": 640,
+     "is_closed": false
+   },
+   {
+     "id": 8,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 36,
+     "hours": 200,
+     "is_closed": false
+   },
+   {
+     "id": 9,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 35,
+     "hours": 100,
+     "is_closed": false
+   },
+   {
+     "id": 12,
+     "comment": null,
+     "roadmap_id": 1,
+     "project_id": 37,
+     "hours": 320,
+     "is_closed": false
    }
-]
+ ]

@@ -1,0 +1,102 @@
+[
+  {
+    "id": 8,
+    "filename": "Протокол рабочей встречи 26.02.2025 (2).docx",
+    "date": "2025-03-13 01:38:20.244000",
+    "size": 29687,
+    "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "bucket_name": "projectman",
+    "etag": "258cb18e65dd1ddcb1437ec6b6dbfb8a",
+    "object_name": "roadmap_item/docs/1"
+  },
+  {
+    "id": 9,
+    "filename": "Проверка орфографии 1.docx",
+    "date": "2025-03-13 02:15:44.384000",
+    "size": 24491,
+    "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "bucket_name": "projectman",
+    "etag": "90604b4a78a063b063feec4459453f91",
+    "object_name": "roadmap_item/docs/1"
+  },
+  {
+    "id": 10,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:51:47.067000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/3"
+  },
+  {
+    "id": 11,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:51:55.041000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/4"
+  },
+  {
+    "id": 12,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:51:59.499000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/5"
+  },
+  {
+    "id": 13,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:52:42.358000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/6"
+  },
+  {
+    "id": 14,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:52:48.752000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/7"
+  },
+  {
+    "id": 15,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:52:54.998000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/8"
+  },
+  {
+    "id": 16,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:52:59.668000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/9"
+  },
+  {
+    "id": 17,
+    "filename": "ДК_ЦТ_ГКУ_ЧО_2025_проект_24_01_25_А3_формат_stamp.pdf",
+    "date": "2025-03-13 07:53:04.757000",
+    "size": 236174,
+    "type": "application/pdf",
+    "bucket_name": "projectman",
+    "etag": "154d39c0c747cade5a07d108e56c11e4",
+    "object_name": "roadmap_item/docs/12"
+  }
+]
