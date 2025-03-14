@@ -12,6 +12,7 @@ import exclusions from "./data/exclusion.json";
 import control_points from "./data/control_point.json";
 import roadmaps from "./data/roadmap.json";
 import roadmap_items from "./data/roadmap_item.json";
+import attachment from "./data/attachment.json";
 
 // TODO Seed
 async function main() {
@@ -308,6 +309,32 @@ async function main() {
       }
    }
 
+   const seedAttachments = async () => {
+      try {
+         for (const item of attachment) {
+            await prisma.attachment.create({
+               data: {
+                  id: item.id,
+                  filename: item.filename,
+                  object_name: item.object_name,
+                  bucket_name: item.bucket_name,
+                  date: new Date(item.date),
+                  size: item.size,
+                  type: item.type,
+                  etag: item.etag
+               }
+            })
+         }
+
+         const row = await prisma.$queryRaw`select max(id) from control_point`;
+         //@ts-ignore
+         const maxId = row[0].max +1;
+         await prisma.$queryRaw`SELECT setval('control_point_id_seq', ${maxId}, true)`;
+      } catch (error) {
+         throw error;
+      }
+   }
+
    try {
       await seedDivision().finally(() => console.log(`\x1b[32mDivisions seeded\x1b[0m`));
       await seedEmployee().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
@@ -322,6 +349,7 @@ async function main() {
       await seedRoadmaps().finally(() => console.log(`\x1b[32mRoadmaps seeded\x1b[0m`));
       await seedRoadmapItems().finally(() => console.log(`\x1b[32mRoadmap items seeded\x1b[0m`));
       await seedControlPoints().finally(() => console.log(`\x1b[32mControl points seeded\x1b[0m`));      
+      await seedAttachments().finally(() => console.log(`\x1b[32mAttackments\x1b[0m`));      
    } catch (error) {
       throw error;
    }

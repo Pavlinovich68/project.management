@@ -13,7 +13,7 @@ import attachmentService from "@/services/attachment.service";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
 
-const ItrFileList = ({bucketName}:{bucketName: string}) => {
+const ItrFileList = ({bucketName, readOnly}:{bucketName: string, readOnly: boolean}) => {
    const [items, setItems] = useState<IAttachment[]>([]);
    const toast = useRef<Toast>(null);
 
@@ -94,10 +94,13 @@ const ItrFileList = ({bucketName}:{bucketName: string}) => {
             <div className={classNames("flex align-items-center justify-content-center flex-wrap")}>
                <small>Размер файла</small>
                <div>{data.size/1000} kb.</div>
-            </div>
-            <div className={classNames("flex align-items-center justify-content-center flex-wrap")}>
-               <Button icon="pi pi-trash" tooltip="Удалить документ" tooltipOptions={{ position: 'top' }} type="button" rounded severity="danger" onClick={() => confirmDelete(data)}/>
-            </div>
+            </div> 
+            {
+               readOnly ? <></> :
+               <div className={classNames("flex align-items-center justify-content-center flex-wrap")}>
+                  <Button icon="pi pi-trash" tooltip="Удалить документ" tooltipOptions={{ position: 'top' }} type="button" rounded severity="danger" onClick={() => confirmDelete(data)}/>
+               </div>
+            }            
          </div>
       )
    }

@@ -237,7 +237,10 @@ const card = (
          {
             roadmap.values.id ? 
                <TabPanel header="Документы" style={{padding: "0"}}>
-                  <ItrFileList bucketName={`roadmap_item/docs/${roadmap.values.id}`}/>
+                  <ItrFileList 
+                     bucketName={`roadmap_item/docs/${roadmap.values.id}`}
+                     readOnly={!RolesHelper.checkRoles(session?.user.roles, ['admin', 'boss', 'master', 'analyst'])}
+                  />
                </TabPanel> :
                <></>
          }
