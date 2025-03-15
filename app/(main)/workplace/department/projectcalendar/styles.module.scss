@@ -1,4 +1,14 @@
 $cellSize: 2rem;
+.workerWorkPlace {
+   display: grid;
+   grid-template-columns: 50em auto;
+}
+.masterWorkPlace {
+   width: 100%;
+   .projectsList {
+      display: none;
+   }
+}
 .monthContainer {
    display: grid;
    grid-template-columns: repeat(auto-fit, 15rem);

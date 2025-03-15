@@ -4,8 +4,9 @@ import React, {useRef, useState, useEffect} from "react";
 import ItrMonthCalendar from "./calendar/ItrMonthCalendar";
 import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/ProjectCalendar/styles.module.scss"
+import { NumberEventCallback } from "@/types/numberEvent";
 
-const ItrStaffCalendar = ({year, month, user_id}:{year: number, month: number, user_id: number}) => {
+const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month: number, user_id: number, dayClick: NumberEventCallback}) => {
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const [data, setData] = useState<ICalendarRow[]>([]);
 
@@ -54,9 +55,9 @@ const ItrStaffCalendar = ({year, month, user_id}:{year: number, month: number, u
    }
 
    return (
-      <div className={classNames("card justify-content-center flex-wrap container mt-2", styles.monthContainer)}>
+      <div className={classNames("justify-content-center flex-wrap container", styles.monthContainer)}>
          {
-            data.map((calendar) => <ItrMonthCalendar data={calendar}/>)
+            data.map((calendar) => <ItrMonthCalendar key={`rate-id-${calendar.rate_id}`} data={calendar} dayClick={dayClick}/>)
          }                     
       </div>
    );

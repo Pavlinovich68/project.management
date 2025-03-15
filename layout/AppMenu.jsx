@@ -80,7 +80,7 @@ const AppMenu = () => {
                      to: '/workplace/department/roadmap',               
                   },
                   {
-                     label: 'Мое рабочее время',
+                     label: 'Рабочее время',
                      tabler: <IconClock className='mr-1' stroke={1.5}/>,
                      visible: checkRoles(['developer', 'master']),
                      to: '/workplace/department/projectcalendar',               
