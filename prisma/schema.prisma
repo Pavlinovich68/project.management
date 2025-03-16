@@ -160,8 +160,9 @@ model roadmap_item {
 //NOTE - Фактически затраченное время
 model roadmap_fact_item {
    id             Int         @id @default(autoincrement())
-   date           DateTime    @db.Timestamp(6)
-   hours          Int
+   month          Int
+   day            Int
+   ratio          Int
    employee_id    Int
    employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    roadmap_item_id   Int
