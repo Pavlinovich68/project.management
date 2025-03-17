@@ -10,10 +10,10 @@ export const POST = async (request: NextRequest) => {
             roadmap_item_id: id
          },
          _sum: {
-            hours: true
+            ratio: true
          }
       });
-      const factHours = fact._sum.hours??undefined;
+      const factHours = fact._sum.ratio??undefined;
       if (factHours) {
          result = await prisma.roadmap_item.update({
             where: {

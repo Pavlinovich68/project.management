@@ -27,7 +27,7 @@ export const POST = async (request: NextRequest) => {
             }
          },
          _sum: {
-            hours: true
+            ratio: true
          }
       })
 
@@ -45,7 +45,7 @@ export const POST = async (request: NextRequest) => {
 
       return await NextResponse.json({status: 'success', data: {
          plan: plan._sum.hours??0, 
-         fact: fact._sum.hours??0, 
+         fact: fact._sum.ratio??0, 
          total: (total * rateCount) -224, 
          available: available * rateCount,
          lack: lack

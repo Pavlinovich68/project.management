@@ -2,7 +2,6 @@
 import ItrDivisionCalendar from "@/components/ItrDivisionCalendar";
 import ItrCalendarSwitch from "@/components/ItrMonthSwitch";
 import { useSession } from "next-auth/react";
-import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
 import { classNames } from "primereact/utils";
 import React, {useEffect, useRef, useState} from "react";

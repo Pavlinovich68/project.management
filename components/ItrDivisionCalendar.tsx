@@ -3,7 +3,7 @@ import { ICalendarRow } from "@/models/ICalendar";
 import React, {useRef, useState, useEffect} from "react";
 import ItrMonthCalendar from "./calendar/ItrMonthCalendar";
 import { classNames } from "primereact/utils";
-import styles from "@/app/(main)/workplace/department/ProjectCalendar/styles.module.scss"
+import styles from "@/app/(main)/workplace/department/projectcalendar/styles.module.scss"
 import { NumberEventCallback } from "@/types/numberEvent";
 
 const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month: number, user_id: number, dayClick: NumberEventCallback}) => {

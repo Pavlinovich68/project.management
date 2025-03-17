@@ -1,6 +1,6 @@
 'use client'
 import { classNames } from "primereact/utils";
-import styles from "@/app/(main)/workplace/department/ProjectCalendar/styles.module.scss"
+import styles from "@/app/(main)/workplace/department/projectcalendar/styles.module.scss"
 import React, { useEffect, useState } from "react";
 import { ICalendarCell, ICalendarRow } from "@/models/ICalendar";
 import { ICalendarCellExt } from "@/models/ICalendarCellExt";
