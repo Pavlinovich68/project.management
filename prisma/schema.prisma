@@ -163,6 +163,7 @@ model roadmap_fact_item {
    month          Int
    day            Int
    ratio          Int
+   note           String
    employee_id    Int
    employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    roadmap_item_id   Int
@@ -197,11 +198,11 @@ model post {
 //NOTE - Ставки
 model rate {
    id             Int         @id @default(autoincrement())
-   no             Int         
+   no             Int
    post_id        Int
    is_work_time   Boolean     @default(true)
    post           post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division_id    Int         
+   division_id    Int
    division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    staff          staff[]
    calendar_rows  dept_calendar_row[]

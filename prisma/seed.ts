@@ -12,6 +12,7 @@ import exclusions from "./data/exclusion.json";
 import control_points from "./data/control_point.json";
 import roadmaps from "./data/roadmap.json";
 import roadmap_items from "./data/roadmap_item.json";
+import roadmap_fact_items from './data/roadmap_fact_item.json';
 import attachment from "./data/attachment.json";
 
 // TODO Seed
@@ -335,6 +336,31 @@ async function main() {
       }
    }
 
+   const seedRoadmapFactItem = async () => {
+      try {
+         for (const item of roadmap_fact_items) {
+            await prisma.roadmap_fact_item.create({
+               data: {
+                  id: item.id,
+                  month: item.month,
+                  day: item.day,
+                  ratio: item.ratio,
+                  note: item.note,
+                  employee_id: item.employee_id,
+                  roadmap_item_id: item.roadmap_item_id
+               }
+            })
+         }
+
+         const row = await prisma.$queryRaw`select max(id) from roadmap_fact_item`;
+         //@ts-ignore
+         const maxId = row[0].max +1;
+         await prisma.$queryRaw`SELECT setval('roadmap_fact_item_id_seq', ${maxId}, true)`;
+      } catch (error) {
+         throw error;
+      }
+   }
+
    try {
       await seedDivision().finally(() => console.log(`\x1b[32mDivisions seeded\x1b[0m`));
       await seedEmployee().finally(() => console.log(`\x1b[32mEmployees seeded\x1b[0m`));
@@ -349,7 +375,8 @@ async function main() {
       await seedRoadmaps().finally(() => console.log(`\x1b[32mRoadmaps seeded\x1b[0m`));
       await seedRoadmapItems().finally(() => console.log(`\x1b[32mRoadmap items seeded\x1b[0m`));
       await seedControlPoints().finally(() => console.log(`\x1b[32mControl points seeded\x1b[0m`));      
-      await seedAttachments().finally(() => console.log(`\x1b[32mAttackments\x1b[0m`));      
+      await seedAttachments().finally(() => console.log(`\x1b[32mAttachments seeded\x1b[0m`));      
+      await seedRoadmapFactItem().finally(() => console.log(`\x1b[32mRoadmap Fact Items seeded\x1b[0m`));      
    } catch (error) {
       throw error;
    }

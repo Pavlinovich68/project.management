@@ -44,7 +44,7 @@ const ProjectCalendar = () => {
          <div className="grid">
             <div className="col-12">
                <div className="card">
-                  <h3>{checkRoles(['master']) ? 'Контроль рабочего времени' : 'Распределение работ по проектам'}</h3>               
+                  <h3>{checkRoles(['master']) ? 'Контроль рабочего времени' : 'Распределение работ по проектам'}</h3>
                   <Toolbar center={centerContent}/>
                   <div className={classNames("card mt-2", checkRoles(['developer']) ? styles.workerWorkPlace : styles.masterWorkPlace)}>
                      <div className={classNames(styles.projectsList)}>
@@ -57,7 +57,7 @@ const ProjectCalendar = () => {
                </div>
             </div>
          </div>
-      </React.Fragment>      
+      </React.Fragment>
    );
 };
 
