@@ -22,7 +22,7 @@ const Dashboard = () => {
    const {data: session} = useSession();
 
    useEffect(() => {
-      changeYear(year);      
+      changeYear(year);
    }, []);
 
    const changeYear = (val: number) => {

@@ -5,9 +5,6 @@ import {NextRequest, NextResponse} from "next/server";
 export const POST = async (request: NextRequest) => {
    try {
       const params: { year: number, month: number, day: number, user_id: number } = await request.json();
-      const date = DateHelper.toUTC(new Date(params.year, params.month-1, params.day));
-      console.log(`!!! ${date} !!!`);
-      
       const user = await prisma.users.findUnique({where: {id: params.user_id}});
       if (!user)
          throw Error("Не удалось найти пользователя");
@@ -16,7 +13,7 @@ export const POST = async (request: NextRequest) => {
       if (!roadmap)
          throw Error(`Не удалось найти дорожную карту за ${params.year} год`);
 
-      const rows = await prisma.roadmap_fact_item.findMany({         
+      const rows = await prisma.roadmap_fact_item.findMany({
          include: {
             roadmap_item: {
                include: {
