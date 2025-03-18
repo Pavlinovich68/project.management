@@ -121,17 +121,17 @@ export const POST = async (request: NextRequest) => {
                   date: 'asc'
                }
             }
-         }         
+         }
       });
-      
+
       let result  = resultData.map(item => {return {...item, plan_str: `${item.hours.toLocaleString('ru-RU')} ч/ч`, fact: 0, fact_str: ''}});
-      
+
       for (let item of result) {
          item.control_points = item.control_points.map(cp => {return {...cp, expired_type: DateHelper.expiredType(cp.date), uuid: uuidv4()}});
          let fact = 0;
          for (let fi of item.fact_items)
-            fact += fi.hours
-         item.fact = fact;         
+            fact += fi.ratio
+         item.fact = fact;
          item.fact_str = `${fact.toLocaleString('ru-RU')} ч/ч`;
       }
 
@@ -169,7 +169,7 @@ export const POST = async (request: NextRequest) => {
             roadmap_item_id: result.id
          },
          _sum: {
-            hours: true
+            ratio: true
          }
       });
 
@@ -179,9 +179,9 @@ export const POST = async (request: NextRequest) => {
          id: result.id,
          comment: result.comment,
          hours: result.hours,
-         fact: fact._sum.hours??0,
+         fact: fact._sum.ratio??0,
          plan_str: result.hours.toLocaleString('ru-RU'),
-         fact_str: (fact._sum.hours??0).toLocaleString('ru-RU'),
+         fact_str: (fact._sum.ratio??0).toLocaleString('ru-RU'),
          is_closed: result.is_closed,
          roadmap_id: result.roadmap_id,
          project: {id: result.project.id, name: result.project.name},
