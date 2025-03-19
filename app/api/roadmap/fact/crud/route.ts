@@ -4,6 +4,7 @@ import CRUD from "@/models/enums/crud-type";
 import { IDataSourceRequest } from "@/types/IDataSourceRequest";
 import { IDataSourceResult } from "@/types/IDataSourceResult";
 import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
+import ProjectHelper from "@/services/project.helper";
 
 interface IParams {
    year: number
@@ -21,55 +22,43 @@ export const POST = async (request: NextRequest) => {
    //    return result
    // }
 
-   const read = async (model: IDataSourceRequest, params: IParams): Promise<IDataSourceResult> => {
+   const read = async (params: IParams): Promise<any> => {
       const rows = await prisma.roadmap_fact_item.findMany({
-         include: {
-            roadmap_item: {
-               include: {
-                  project: true,
-                  roadmap: true
-               }
-            },
-            employee: {
-               include: {
-                  staff: true
-               }
-            }
-         },
          where: {
+            month: params.month,
+            day: params.day,
             employee_id: params.employee_id,
             roadmap_item: {
                roadmap_id: params.roadmap_id
             }
+         },
+         include: {
+            roadmap_item: {
+               include: {
+                  roadmap: true
+               }
+            }
          }
       });
 
-      const result: IRoadmapFactItem[] =  rows.map(i => { return {
-         id: i.id,
-         year: i.roadmap_item.roadmap.year,
-         month: i.month,
-         day: i.day,
-         roadmap_item_id: i.roadmap_item_id,
-         ratio: i.ratio,
-         project: {
-            id: i.roadmap_item.project_id,
-            code: i.roadmap_item.project.code,
-            name: i.roadmap_item.project.name
-         },
-         employee: {
-            id: i.employee_id,
-            name: i.employee.name
+      const result: IRoadmapFactItem[] = [];
+      for (let i of rows) {
+         const project_name = await ProjectHelper.fullName(i.roadmap_item.project_id, undefined);
+         const item: IRoadmapFactItem = {
+            id: i.id,
+            year: i.roadmap_item.roadmap.year,
+            month: i.month,
+            day: i.day,
+            ratio: i.ratio,
+            note: i.note,
+            roadmap_item_id: i.roadmap_item_id,
+            project_id: i.roadmap_item.project_id,
+            project_name: project_name,
+            employee_id: i.employee_id
          }
-
-      }})
-      let data: IDataSourceResult = {
-         recordCount: 0,
-         pageCount: 1,
-         pageNo: model.pageNo,
-         pageSize: model.pageSize,
-         result: result
-      };
-      return data;
+         result.push(item);
+      }
+      return result;
    }
 
    // const update = async (model: IModel): Promise<IModel> => {
@@ -103,7 +92,7 @@ export const POST = async (request: NextRequest) => {
       let result = null;
       switch (inputData.operation) {
          case CRUD.read:
-            result = await read(inputData.model as IDataSourceRequest, params);
+            result = await read(params);
             break;
          case CRUD.create:
             //result = await create(inputData.model as IModel, inputData.params);

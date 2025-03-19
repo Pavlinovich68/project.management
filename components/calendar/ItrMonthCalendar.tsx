@@ -7,11 +7,13 @@ import { ICalendarCellExt } from "@/models/ICalendarCellExt";
 import { NumberEventCallback } from "@/types/numberEvent";
 
 const ItrMonthCalendar = ({data, dayClick}:{data: ICalendarRow, dayClick: NumberEventCallback}) => {
+   const [selectedDay, setSelectedDay] = useState<number>(new Date().getDate())
 
    const onDayClick = (e:  React.MouseEvent<HTMLElement>, item: ICalendarCellExt) => {
       if (item.cell.type === 100) return;
       if (e.ctrlKey) {
          dayClick(item.cell.day);
+         setSelectedDay(item.cell.day);
       }
    }
 
@@ -25,7 +27,7 @@ const ItrMonthCalendar = ({data, dayClick}:{data: ICalendarRow, dayClick: Number
                      <div
                         key={`cell-day-${item.day}`}
                         className={classNames(`flex align-items-center justify-content-center cell-bg-${item.type}
-                        cell-text-${item.type}`, styles.cellItem)}
+                        cell-text-${item.type}`, styles.cellItem, (item.day === selectedDay && item.type !== 100) ? styles.selectedDayCell : '' )}
                         onClick={(e) => onDayClick(e, {rate_id: data.rate_id, cell: item})}
                      >
                         {item.day}

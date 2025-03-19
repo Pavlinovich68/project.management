@@ -101,3 +101,7 @@ TCP    [::]:3000              [::]:0                 LISTENING       6616
 ```bash
 tskill 6616
 ```
+### Тестирование
+```
+Playwright Test for VSCode
+```

@@ -210,8 +210,8 @@ const card = (
                         value={roadmap.values.comment??''}
                         onChange={(e) => roadmap.setFieldValue('comment', e.target.value)} 
                         autoFocus/>
-                  }                  
-               </div>               
+                  }
+               </div>
                <div className="field col-12">
                   <label htmlFor="hours">Плановое количество часов</label>
                   {
@@ -222,13 +222,13 @@ const card = (
                         onValueChange={(e) => roadmap.setFieldValue('hours', e.value)}
                         locale="ru-RU" suffix=" ч/ч"
                         required autoFocus/>
-                  }                  
+                  }
                </div>
             </div>
-         </TabPanel>         
+         </TabPanel>
          <TabPanel header="Контрольные точки">
             <ItrControlPoints
-               data={roadmap.values.control_points} 
+               data={roadmap.values.control_points}
                readOnly={!RolesHelper.checkRoles(session?.user.roles, ['admin', 'boss', 'master', 'analyst'])}
                itemId={roadmap.values.id}
                onData={handleItems}
@@ -364,7 +364,7 @@ const saveMethod = async () => {
                <h3>Проекты в работе</h3>
                <ItrYearSwitsh year={year} onChange={changeYear}/>
                <div className={classNames(styles.beforeGrid)}></div>
-               <ItrGrid                  
+               <ItrGrid
                   controller={controllerName}
                   params={{year: year, division_id: session.user.division_id}}
                   create={createMethod}

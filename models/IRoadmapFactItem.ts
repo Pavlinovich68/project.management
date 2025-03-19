@@ -3,15 +3,10 @@ export interface IRoadmapFactItem {
    year: number
    month: number
    day: number
+   note: string
    roadmap_item_id: number
    ratio: number
-   project: {
-      id: number
-      code: string
-      name: string
-   }
-   employee: {
-      id: number
-      name: string
-   }
+   project_id: number
+   employee_id: number
+   project_name: string | undefined
 }

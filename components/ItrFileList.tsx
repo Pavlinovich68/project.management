@@ -1,17 +1,13 @@
 'use client'
-import React, {useRef, useState, useEffect} from "react";
-import { DataScroller } from 'primereact/datascroller';
-import { FileUpload, FileUploadSelectEvent } from "primereact/fileupload";
-import { Button } from "primereact/button";
 import { IAttachment } from "@/models/IAttachment";
-import { Toolbar } from "primereact/toolbar";
-import { classNames } from "primereact/utils";
-import styles from './styles.module.scss';
 import DateHelper from "@/services/date.helpers";
-import CRUD from "@/models/enums/crud-type";
-import attachmentService from "@/services/attachment.service";
-import { Toast } from "primereact/toast";
+import { Button } from "primereact/button";
 import { confirmDialog } from "primereact/confirmdialog";
+import { DataScroller } from 'primereact/datascroller';
+import { Toast } from "primereact/toast";
+import { classNames } from "primereact/utils";
+import React, { useEffect, useRef, useState } from "react";
+import styles from './styles.module.scss';
 
 const ItrFileList = ({bucketName, readOnly}:{bucketName: string, readOnly: boolean}) => {
    const [items, setItems] = useState<IAttachment[]>([]);

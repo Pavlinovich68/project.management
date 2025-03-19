@@ -25,8 +25,8 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
             "Content-Type": "application/json",
          },
          body: JSON.stringify({
-            user_id: user_id, 
-            year: year, 
+            user_id: user_id,
+            year: year,
             month: month}),
          cache: 'force-cache'
       });
@@ -40,10 +40,10 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
       const before = dayOfWeek == 0 ? 6 : dayOfWeek -1;
       const lastDay = new Date(year, month, 0);
       const after = 7 - lastDay.getDay();
-      for (const row of list) {         
-         if (row.cells) {            
+      for (const row of list) {
+         if (row.cells) {
             let n = new Date(year, month-1, 0).getDate();
-            for (let i = 0; i < before; i++) {               
+            for (let i = 0; i < before; i++) {
                row.cells.unshift({day: n, type: 100, hours: 0});
                n--;
             }
@@ -58,7 +58,7 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
       <div className={classNames("justify-content-center flex-wrap container", styles.monthContainer)}>
          {
             data.map((calendar) => <ItrMonthCalendar key={`rate-id-${calendar.rate_id}`} data={calendar} dayClick={dayClick}/>)
-         }                     
+         }
       </div>
    );
 };
