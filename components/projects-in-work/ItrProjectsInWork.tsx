@@ -7,6 +7,7 @@ import CRUD from "@/models/enums/crud-type";
 import { useEffect, useState } from "react";
 import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
 import ItrItemInWork from "./ItrItemInWork";
+import { IProject } from "@/models/IProject";
 
 export interface IProjectsInWork {
    year: number,
@@ -18,9 +19,11 @@ export interface IProjectsInWork {
 
 const ItrProjectsInWork = (params: IProjectsInWork) => {
    const [data, setData] = useState<IRoadmapFactItem[]>([]);
+   const [projects, setProjects] = useState<IProject[]>([]);
 
    useEffect(() => {
       getData();
+      getProjects();
    }, [params.day])
 
    const getData = async () => {
@@ -45,6 +48,21 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
       setData(response.data);
    }
 
+   const getProjects = async () => {
+      const res = await fetch(`/api/roadmap/fact/dropdown`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            year: params.year
+         }),
+         cache: 'force-cache'
+      });
+      const response = await res.json();
+      setProjects(response.data);
+   }
+
    return (
       <div className={classNames('card', styles.workGrid)}>
          {params.readOnly ? <></> : 
@@ -54,7 +72,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
             />}/>
          }
          {
-            data.map((item) => <ItrItemInWork key={`fact_work-item-${item.id}`} params={item}/>)
+            data.map((item) => <ItrItemInWork key={`fact_work-item-${item.id}`} params={item} dropdownList={projects}/>)
          }
       </div>
    );
