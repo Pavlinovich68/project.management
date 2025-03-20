@@ -5,36 +5,34 @@ import { Dropdown } from "primereact/dropdown";
 import { classNames } from "primereact/utils";
 import styles from "./styles.module.scss";
 import { useState } from "react";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
+import { ListBox } from "primereact/listbox";
 
 const ItrItemInWork = ({params, dropdownList}: {params: IRoadmapFactItem, dropdownList: IProject[]}) => {
    const [item, setItem] = useState<IRoadmapFactItem>(params)
 
    const countryOptionTemplate = (option: IProject) => {
       return (
-         <div className={classNames(styles.dropdownItemTemplate)}>
-            <div className={classNames(styles.projectName)}>{option.name}</div>
+         <div className="flex align-items-center">
+            <div>{option.code}</div>
+            <div>{option.name}</div>
          </div>
       );
    };
 
    return (
       <div className={classNames(styles.workGridItem)}>
-         <Dropdown
-            value={item.project_id}
-            className={classNames('project-in-work', styles.projectDropdown)}
-            options={dropdownList}
-            optionValue="id"
-            optionLabel="name"
-            placeholder="Выберите проект"
-            itemTemplate={countryOptionTemplate}
-            onChange={(e) => {
-               const _item = dropdownList?.find(i => i.id === e.value);
-               if (_item && _item.id) {
-                  setItem({...item, project_id: _item.id, project_name: _item.name});
-               }
-            }}
-            filter
-         />
+         <div className={classNames(styles.project)}>            
+            <small style={{color:"#7F8B9B"}}>Проект</small>
+            <Dropdown className={classNames(styles.dropdown)} options={dropdownList} optionLabel="name" optionValue="id" value={params.project_id}/>
+         </div>
+         <small style={{color:"#7F8B9B"}}>Выполненные работы</small>
+         <div className={classNames(styles.workValue)}>
+            <InputText className={classNames(styles.projectNote)} keyfilter="int" placeholder="Выполненные работы" value={item.note} />
+            <InputNumber className={classNames(styles.ratio)} value={item.ratio}/>
+         </div>         
       </div>      
    );
 };
