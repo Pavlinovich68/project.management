@@ -9,11 +9,13 @@ import { classNames } from "primereact/utils";
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import RolesHelper from "@/services/roles.helper";
+import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
 
 const ProjectCalendar = () => {
    const {data: session} = useSession()
    const [date, setDate] = useState<Date>(new Date())
    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+   const [projects, setProjects] = useState<IRoadmapFactItem[]>([]);
    
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);

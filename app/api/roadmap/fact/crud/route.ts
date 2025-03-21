@@ -54,7 +54,8 @@ export const POST = async (request: NextRequest) => {
             roadmap_item_id: i.roadmap_item_id,
             project_id: i.roadmap_item.project_id,
             project_name: project_name,
-            employee_id: i.employee_id
+            employee_id: i.employee_id,
+            is_deleted: false
          }
          result.push(item);
       }

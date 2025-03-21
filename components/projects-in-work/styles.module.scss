@@ -18,6 +18,40 @@
             color: #fff;
             width: 34px;
          }
+         .itemToolbar {
+            display: grid;
+            height: 16px;
+            grid-template-columns: auto 20px;
+            margin-bottom: 5px;
+            .toolButton {               
+               font-size: 10px;
+               padding: 4px 0 0 3px;               
+               margin: 0 2px 0 2px;
+               border-radius: 50%;               
+            }
+            .dropButton {
+               background-color: var(--red-700);
+            }
+            .dropButton:hover {
+               background-color: var(--red-500);
+            }
+            .dropButton:active {
+               background-color: var(--red-600);
+            }
+            .saveButton {
+               background-color: var(--yellow-700);
+            }
+            .saveButton:hover {
+               background-color: var(--yellow-500);
+            }
+            .saveButton:active {
+               background-color: var(--yellow-600);
+            }
+            .disabledButton {
+               background-color: var(--gray-700);
+               color: var(--gray-400);
+            }
+         }
       }
       .workValue {
          display: grid;
