@@ -22,6 +22,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
    const [data, setData] = useState<IRoadmapFactItem[]>([]);
    const [projects, setProjects] = useState<IProject[]>([]);
    const [saveDisabled, setSaveDisabled] = useState<boolean>(true)
+   const [employeeId, setEmployeeId] = useState<number>(0)
 
    useEffect(() => {
       getData();
@@ -48,8 +49,9 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
          cache: 'force-cache'
       });
       const response = await res.json();      
-      const _data:IRoadmapFactItem[] = response.data;
+      const _data:IRoadmapFactItem[] = response.data;      
       setData(_data.map(i => {return {...i, uuid: uuidv4()}}));
+      setEmployeeId(response.employee_id);
    }
 
    const getProjects = async () => {
@@ -94,13 +96,15 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
          roadmap_item_id: undefined,
          ratio: undefined,
          project_id: undefined,
-         employee_id: undefined,
+         employee_id: employeeId,
          project_name: undefined,
          is_deleted: false
       }
       let _data = data.map(i => { return {...i}});
       _data.push(_newItem);
       setData(_data);
+      console.clear();
+      console.table(_data);
    }
 
    return (

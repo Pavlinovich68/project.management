@@ -1,10 +1,8 @@
-import prisma from "@/prisma/client";
-import {NextRequest, NextResponse} from "next/server";
 import CRUD from "@/models/enums/crud-type";
-import { IDataSourceRequest } from "@/types/IDataSourceRequest";
-import { IDataSourceResult } from "@/types/IDataSourceResult";
 import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
+import prisma from "@/prisma/client";
 import ProjectHelper from "@/services/project.helper";
+import { NextRequest, NextResponse } from "next/server";
 
 interface IParams {
    year: number
@@ -16,12 +14,6 @@ interface IParams {
 }
 
 export const POST = async (request: NextRequest) => {
-   // const create = async (model: IModel, params: IParams): Promise<IModel> => {
-   //    const result: IModel = {}
-
-   //    return result
-   // }
-
    const read = async (params: IParams): Promise<any> => {
       const rows = await prisma.roadmap_fact_item.findMany({
          where: {
@@ -55,7 +47,8 @@ export const POST = async (request: NextRequest) => {
             project_id: i.roadmap_item.project_id,
             project_name: project_name,
             employee_id: i.employee_id,
-            is_deleted: false
+            is_deleted: false,
+            uuid: undefined
          }
          result.push(item);
       }
@@ -105,7 +98,7 @@ export const POST = async (request: NextRequest) => {
             //result = await drop(inputData.model as number);
             break;
       }
-      return await NextResponse.json({status: 'success', data: result});
+      return await NextResponse.json({status: 'success', data: result, employee_id: user.employee_id});
    } catch (error) {
       return await NextResponse.json({status: 'error', data: (error as Error).stack });
    }
