@@ -2,7 +2,9 @@ import CRUD from "@/models/enums/crud-type";
 import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
 import prisma from "@/prisma/client";
 import ProjectHelper from "@/services/project.helper";
+import { roadmap_fact_item } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuidv4 } from 'uuid';
 
 interface IParams {
    year: number
@@ -55,11 +57,51 @@ export const POST = async (request: NextRequest) => {
       return result;
    }
 
-   // const update = async (model: IModel): Promise<IModel> => {
-   //    const result: IModel = {};
-
-   //    return result;
-   // }
+   const update = async (model: IRoadmapFactItem[]): Promise<IRoadmapFactItem[]> => {
+      const result: IRoadmapFactItem[] = [];
+      let resultItem: roadmap_fact_item;
+      for(const item of model){
+         if (!item.id) {
+            resultItem = await prisma.roadmap_fact_item.create({
+               data: {
+                  month: item.month,
+                  day: item.day,
+                  ratio: item.ratio??0,
+                  note: item.note??'',
+                  employee_id: item.employee_id??0,
+                  roadmap_item_id: item.roadmap_item_id??0
+            }});
+         } else {
+            resultItem = await prisma.roadmap_fact_item.update({
+               where: {
+                  id: item.id
+               },
+               data: {
+                  month: item.month,
+                  day: item.day,
+                  ratio: item.ratio??0,
+                  note: item.note??'',
+                  employee_id: item.employee_id??0,
+                  roadmap_item_id: item.roadmap_item_id??0
+            }});
+         }
+         result.push({
+            id: resultItem.id,
+            uuid: item.uuid,
+            year: item.year,
+            month: resultItem.month,
+            day: resultItem.day,
+            note: resultItem.note,
+            roadmap_item_id: resultItem.roadmap_item_id,
+            ratio: resultItem.ratio,
+            project_id: item.project_id,
+            employee_id: resultItem.employee_id,
+            project_name: item.project_name,
+            is_deleted: false
+         })
+      }
+      return result;
+   }
 
    // const drop = async (id: number): Promise<IModel> => {
    //    const result: IModel = await prisma.roadmap_fact_item.delete({
