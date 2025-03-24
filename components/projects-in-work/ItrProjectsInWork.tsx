@@ -1,14 +1,13 @@
 'use client'
+import { IProject } from "@/models/IProject";
+import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { classNames } from "primereact/utils";
-import styles from "./styles.module.scss";
-import CRUD from "@/models/enums/crud-type";
 import { useEffect, useState } from "react";
-import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
-import ItrItemInWork from "./ItrItemInWork";
-import { IProject } from "@/models/IProject";
 import { v4 as uuidv4 } from 'uuid';
+import ItrItemInWork from "./ItrItemInWork";
+import styles from "./styles.module.scss";
 
 export interface IProjectsInWork {
    year: number,
@@ -31,14 +30,12 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
    }, [params.day])
 
    const getData = async () => {
-      const res = await fetch(`/api/roadmap/fact/crud`, {
+      const res = await fetch(`/api/roadmap/fact/read`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",
          },
          body: JSON.stringify({
-            operation: CRUD.read,
-            model: {},
             params: {
                year: params.year,
                month: params.month,
@@ -71,18 +68,21 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
 
    
    
-   const changeItems = (item: IRoadmapFactItem) => {
+   const changeItems = (item: IRoadmapFactItem) => {      
       console.clear();
-      console.table(item);
-      setSaveDisabled(false);
-      if (item.is_deleted) {
-         const index = data.findIndex(i => i.uuid === item.uuid);
-         if (index !== -1) {
-            data.splice(index, 1);
-            let _data = [...data];
-            setData(_data)
-         }
+      console.log('До:')
+      console.table(data);
+      setSaveDisabled(false);      
+      let _data = [...data];
+      const index = _data.findIndex(i => i.uuid === item.uuid);
+      if (index !== -1) {
+         _data[index] = {...item}
+      } else {
+         _data.push(item);
       }
+      setData(_data);
+      console.log('После:')
+      console.table(_data);
    }
 
    const appendItem = () => {
@@ -105,6 +105,23 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
       setData(_data);
       console.clear();
       console.table(_data);
+   }
+
+   const save = async () => {      
+      const res = await fetch(`/api/roadmap/fact/update`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            items: data
+         }),
+         cache: 'force-cache'
+      });
+      const response = await res.json();      
+      const _data:IRoadmapFactItem[] = response.data;      
+      setData(_data.map(i => {return {...i, uuid: uuidv4()}}));
+      //setEmployeeId(response.employee_id);
    }
 
    return (
@@ -133,12 +150,13 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
                      tooltip="Сохранить изменения" 
                      tooltipOptions={{ position: 'top' }} 
                      type="button"
+                     onClick={() => save()}
                   />   
                }
             />
          }
          {
-            data.map((item) => <ItrItemInWork key={`fact_work-item-${item.id}`} params={item} dropdownList={projects} onChange={changeItems}/>)
+            data.filter(i => i.is_deleted === false).map((item) => <ItrItemInWork key={`fact_work-item-${item.id}`} params={item} dropdownList={projects} onChange={changeItems}/>)
          }
       </div>
    );
