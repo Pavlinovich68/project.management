@@ -121,6 +121,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
       const response = await res.json();      
       const _data:IRoadmapFactItem[] = response.data;      
       setData(_data.map(i => {return {...i, uuid: uuidv4()}}));
+      setSaveDisabled(true);
       //setEmployeeId(response.employee_id);
    }
 

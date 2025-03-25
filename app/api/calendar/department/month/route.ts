@@ -2,10 +2,13 @@ import prisma from "@/prisma/client";
 import CalendarHelper from "@/services/calendar.helper";
 import DateHelper from "@/services/date.helpers";
 import { NextRequest, NextResponse } from "next/server";
+import { roadmap_fact_item } from '@prisma/client';
 
 export const POST = async (request: NextRequest) => {
    try {
       const { user_id, year, month } = await request.json();
+
+      //const roadmap = await prisma.roadmap.findFirst({where: {year: year}});
 
       const user = await prisma.users.findUnique({where: {id: user_id}});
       if (!user)
@@ -82,14 +85,35 @@ export const POST = async (request: NextRequest) => {
       const staffs = items?.rate.division.rate.map(i => i.staff).filter(i => i.length > 0).map(i => i[0])
          .filter(i => isMasterRole ? true : i.id === staff_id);
 
-      const calendarRows = await CalendarHelper.prepareCalendarData(division_id, year, month);
+      const calendarRows = await CalendarHelper.prepareCalendarData(division_id, year, month);      
+
+      // const fact = (await prisma.roadmap_fact_item.findMany({
+      //    select: {
+      //       day: true,
+      //       roadmap_item: {
+      //          select: {
+      //             roadmap: true
+      //          }
+      //       },
+      //    },
+      //    where: {
+      //       month: month,
+      //       employee_id: user.employee_id,
+      //       roadmap_item: {
+      //          roadmap: {
+      //             year: year
+      //          }
+      //       }
+      //    }
+      // })).map(i => i.day);
 
       let result = [];
       if (staffs) {
-         for (const staff of staffs) {
+         for (const staff of staffs) {            
             const item = calendarRows.filter(i => i.rate_id === staff.rate_id)[0];
-            if (item)
+            if (item) {               
                result.push(item)
+            }
          }
       }
 

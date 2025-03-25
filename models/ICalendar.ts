@@ -1,4 +1,3 @@
-import { IBaseEntity } from "./IBaseEntity";
 
 export interface ICalendar {
    year: number | undefined,
@@ -31,6 +30,7 @@ export interface ICalendarRow {
    cells: ICalendarCell[] | undefined
    hours: number
    total: number | undefined
+   used: boolean
 }
 
 export interface ICalendarCell {

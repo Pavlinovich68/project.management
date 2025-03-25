@@ -57,12 +57,6 @@ export const POST = async (request: NextRequest) => {
       return result;
    }
 
-   // const update = async (model: IRoadmapFactItem[]): Promise<IRoadmapFactItem[]> => {
-   //    const result: IRoadmapFactItem[] = [];
-   
-   //    return result;
-   // }
-   
    const inputData: { params: IParams } = await request.json();
    try {
       const user = await prisma.users.findUnique({where: {id: inputData.params.user_id}});
