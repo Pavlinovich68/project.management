@@ -44,11 +44,11 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
          if (row.cells) {
             let n = new Date(year, month-1, 0).getDate();
             for (let i = 0; i < before; i++) {
-               row.cells.unshift({day: n, type: 100, hours: 0});
+               row.cells.unshift({day: n, type: 100, hours: 0, checked: false});
                n--;
             }
             for (let i = 1; i <= after; i++) {
-               row.cells.push({day: i, type: 100, hours: 0});
+               row.cells.push({day: i, type: 100, hours: 0, checked: false});
             }
          }
       }

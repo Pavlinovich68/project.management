@@ -17,6 +17,7 @@ export interface ICalendarHeader {
 export interface ICalendarBaseRow {
    rate_id: number | undefined | null
    name: string | undefined | null
+   employee_id: number | undefined | null
 }
 
 export interface ICalendarSum {
@@ -30,14 +31,14 @@ export interface ICalendarRow {
    cells: ICalendarCell[] | undefined
    hours: number
    total: number | undefined
-   used: boolean
+   employee_id: number | undefined | null
 }
 
 export interface ICalendarCell {
-   //id: number,
    day: number,
    type: number,
    hours: number
+   checked: boolean
 }
 
 export interface ICalendarFooter {

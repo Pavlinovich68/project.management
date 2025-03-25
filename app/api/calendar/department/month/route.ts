@@ -8,8 +8,6 @@ export const POST = async (request: NextRequest) => {
    try {
       const { user_id, year, month } = await request.json();
 
-      //const roadmap = await prisma.roadmap.findFirst({where: {year: year}});
-
       const user = await prisma.users.findUnique({where: {id: user_id}});
       if (!user)
          throw Error("Не удалось найти пользователя");
@@ -111,7 +109,25 @@ export const POST = async (request: NextRequest) => {
       if (staffs) {
          for (const staff of staffs) {            
             const item = calendarRows.filter(i => i.rate_id === staff.rate_id)[0];
-            if (item) {               
+            if (item) {
+               if (item.cells){
+                  for (const cell of item.cells) {
+                     const fact = await prisma.roadmap_fact_item.findFirst({
+                        where: {                           
+                           roadmap_item: {
+                              roadmap: {
+                                 year: year
+                              }
+                           },
+                           month: month,
+                           day: cell.day,
+                           employee_id: item.employee_id??0
+                        }
+                     })
+
+                     cell.checked = fact ? true : false
+                  }
+               }               
                result.push(item)
             }
          }

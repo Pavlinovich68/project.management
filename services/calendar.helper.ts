@@ -285,7 +285,7 @@ export default class CalendarHelper {
                case 3: hours = 8; break;
                case 10: hours = 8; break;
             }
-            baseCells.push({day: day, type: item.exclusion_type, hours: hours});
+            baseCells.push({day: day, type: item.exclusion_type, hours: hours, checked: false});
             //monthHours[day] = hours;
          }
       }
@@ -293,7 +293,7 @@ export default class CalendarHelper {
       for (let i = 1; i <= lastMonthDay.getDate(); i++) {
          if (baseCells.find((_cell) => _cell.day === i) === undefined) {
             const dayOfWeek = new Date(year, month -1, i).getDay();
-            baseCells.push({day: i, type: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 4, hours: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8});
+            baseCells.push({day: i, type: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 4, hours: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8, checked: false});
          }
       }
       baseCells = baseCells.sort(function(a, b) { return a.day - b.day });
@@ -359,6 +359,7 @@ export default class CalendarHelper {
                select: {
                   employee: {
                      select: {
+                        id: true,
                         name: true
                      }
                   }
@@ -373,7 +374,8 @@ export default class CalendarHelper {
       const rowNames = rates.map((i) => {
          return {
             rate_id: i.id,
-            name: i.staff[0] ? i.staff[0].employee.name : 'Вакансия'
+            name: i.staff[0] ? i.staff[0].employee.name : 'Вакансия',
+            employee_id: i.staff[0] ? i.staff[0].employee.id : -1
          }
       });
 //#endregion      
@@ -556,7 +558,7 @@ export default class CalendarHelper {
             month,
             _row, 
             _baseCells, 
-            personalExclusions?.rows.find(i => i.rate_id === _row.rate_id)?.cells ?? [],
+            personalExclusions?.rows.find(i => i.rate_id === _row.rate_id)?.cells.map(i => { return {...i, checked: false}}) ?? [],
             vacanciesDays[_row.rate_id],
             vacations.find(i => i.rate_id === _row.rate_id)?.days ?? [],
             (accumulator?.find(i => i.rate_id === _row.rate_id))?.sum??0
@@ -611,7 +613,8 @@ export default class CalendarHelper {
          name: StringHelper.fullNameTransform(baseRow.name),
          cells: baseCells,
          hours: rowSum,
-         total: month === 1 ? rowSum : rowSum + total
+         total: month === 1 ? rowSum : rowSum + total,
+         employee_id: baseRow.employee_id
       }
 
       return result;
