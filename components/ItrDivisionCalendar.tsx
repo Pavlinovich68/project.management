@@ -6,16 +6,17 @@ import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/projectcalendar/styles.module.scss"
 import { NumberEventCallback } from "@/types/numberEvent";
 
-const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month: number, user_id: number, dayClick: NumberEventCallback}) => {
+const ItrStaffCalendar = ({year, month, user_id, needReload, dayClick}:{year: number, month: number, user_id: number, needReload: boolean, dayClick: NumberEventCallback}) => {
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const [data, setData] = useState<ICalendarRow[]>([]);
 
    useEffect(() => {
+      setData([]);
       getCalendarData().then(i => {
-         rebase(i);
+         rebase(i);         
          setData(i);
       });
-   }, [year, month])
+   }, [year, month, needReload])
 
    const getCalendarData = async () => {
       setIsLoaded(true);
@@ -56,8 +57,8 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
 
    return (
       <div className={classNames("justify-content-center flex-wrap container", styles.monthContainer)}>
-         {
-            data.map((calendar) => <ItrMonthCalendar key={`rate-id-${calendar.rate_id}`} data={calendar} dayClick={dayClick}/>)
+         {            
+            data.map((calendar) => <ItrMonthCalendar key={`rate-id-${calendar.rate_id}`} month={month} data={calendar} dayClick={dayClick}/>)
          }
       </div>
    );

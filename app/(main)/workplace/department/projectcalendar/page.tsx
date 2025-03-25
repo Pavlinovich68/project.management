@@ -16,6 +16,7 @@ const ProjectCalendar = () => {
    const [date, setDate] = useState<Date>(new Date())
    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
    const [projects, setProjects] = useState<IRoadmapFactItem[]>([]);
+   const [saveWork, setSaveWork] = useState<boolean>(false);
    
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -30,6 +31,10 @@ const ProjectCalendar = () => {
 
    const changeDate = (day: number) => {
       setSelectedDate(new Date(date.getFullYear(), date.getMonth(), day));
+   }
+
+   const saveWorks = (val: boolean) => {
+      setSaveWork(!saveWork);
    }
 
    return (
@@ -48,9 +53,10 @@ const ProjectCalendar = () => {
                            day={selectedDate.getDate()} 
                            user_id={session.user.id} 
                            readOnly={!RolesHelper.checkRoles(session.user.roles, ['master', 'developer'])}
+                           saveEvent={saveWorks}
                         />
                      </div>
-                     <ItrDivisionCalendar year={date?.getFullYear()} month={date?.getMonth()+1} user_id={session.user.id} dayClick={changeDate}/>
+                     <ItrDivisionCalendar year={date?.getFullYear()} month={date?.getMonth()+1} user_id={session.user.id} dayClick={changeDate} needReload={saveWork}/>
                   </div>
                   <small style={RolesHelper.checkRoles(session.user.roles, ['developer']) ? {display: "block"} : {display: "none"}}><sup>*</sup> Для выбора кликните с удерданием клавиши Ctrl в календаре по требуемой дате</small>
                </div>

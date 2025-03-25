@@ -1,0 +1,1 @@
+export type BooleanEventCallback = (e: boolean) => void;

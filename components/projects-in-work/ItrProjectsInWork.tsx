@@ -8,13 +8,15 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import ItrItemInWork from "./ItrItemInWork";
 import styles from "./styles.module.scss";
+import { BooleanEventCallback } from "@/types/booleanEvent";
 
 export interface IProjectsInWork {
    year: number,
    month: number,
    day: number,
    user_id: number,
-   readOnly: boolean
+   readOnly: boolean,
+   saveEvent: BooleanEventCallback
 }
 
 const ItrProjectsInWork = (params: IProjectsInWork) => {
@@ -122,7 +124,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
       const _data:IRoadmapFactItem[] = response.data;      
       setData(_data.map(i => {return {...i, uuid: uuidv4()}}));
       setSaveDisabled(true);
-      //setEmployeeId(response.employee_id);
+      params.saveEvent(true);
    }
 
    return (
