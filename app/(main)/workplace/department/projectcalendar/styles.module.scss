@@ -28,6 +28,14 @@ $cellSize: 2rem;
       width: $cellSize;
       font-size: 0.8rem;
       font-weight: 500;
+      .circle {
+         position: absolute;
+         width: 6px;
+         height: 6px;
+         border-radius: 3px;
+         background: var(--blue-500);
+         margin: 0 0 20px 20px;
+      }
    }
 }
 .monthHoursText {

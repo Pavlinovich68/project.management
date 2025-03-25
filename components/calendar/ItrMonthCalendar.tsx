@@ -31,6 +31,7 @@ const ItrMonthCalendar = ({data, dayClick}:{data: ICalendarRow, dayClick: Number
                         onClick={(e) => onDayClick(e, {rate_id: data.rate_id, cell: item})}
                      >
                         {item.day}
+                        {item.checked ? <div className={classNames(styles.circle)}></div> : <></>}
                      </div>)
                }
             </div>
