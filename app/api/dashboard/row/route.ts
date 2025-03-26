@@ -49,8 +49,7 @@ export const POST = async (request: NextRequest) => {
       // Количество ставок в подразделении
       const rateCount = (await prisma.rate.aggregate({
          where: {
-            division_id: dashboard?.division_id,
-            is_work_time: true
+            division_id: dashboard?.division_id
          },
          _count: true
       }))?._count;

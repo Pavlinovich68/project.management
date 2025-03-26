@@ -4,111 +4,111 @@
     "post_id": 1,
     "division_id": 3,
     "no": 1,
-    "is_work_time": true
+    "is_production_staff": false
   },
   {
     "id": 2,
     "post_id": 2,
     "division_id": 3,
     "no": 2,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 3,
     "post_id": 2,
     "division_id": 3,
     "no": 3,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 4,
     "post_id": 2,
     "division_id": 3,
     "no": 4,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 5,
     "post_id": 2,
     "division_id": 3,
     "no": 5,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 6,
     "post_id": 2,
     "division_id": 3,
     "no": 6,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 7,
     "post_id": 2,
     "division_id": 3,
     "no": 7,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 8,
     "post_id": 2,
     "division_id": 3,
     "no": 8,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 9,
     "post_id": 2,
     "division_id": 3,
     "no": 9,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 10,
     "post_id": 2,
     "division_id": 3,
     "no": 10,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 11,
     "post_id": 2,
     "division_id": 3,
     "no": 11,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 12,
     "post_id": 2,
     "division_id": 3,
     "no": 12,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 13,
     "post_id": 2,
     "division_id": 3,
     "no": 13,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 14,
     "post_id": 2,
     "division_id": 3,
     "no": 14,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 15,
     "post_id": 2,
     "division_id": 3,
     "no": 15,
-    "is_work_time": true
+    "is_production_staff": true
   },
   {
     "id": 16,
     "post_id": 3,
     "division_id": 3,
     "no": 16,
-    "is_work_time": true
+    "is_production_staff": true
   }
 ]

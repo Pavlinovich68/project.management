@@ -33,8 +33,7 @@ export const POST = async (request: NextRequest) => {
 
       const rateCount = (await prisma.rate.aggregate({
          where: {
-            division_id: division_id,
-            is_work_time: true
+            division_id: division_id
          },
          _count: true
       }))?._count;

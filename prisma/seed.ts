@@ -156,7 +156,7 @@ async function main() {
                   post_id: item.post_id,
                   division_id: item.division_id,
                   no: item.no,
-                  is_work_time: item.is_work_time
+                  is_production_staff: item.is_production_staff
                }
             })
          }

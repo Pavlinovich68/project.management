@@ -1,5 +1,6 @@
 import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
 import prisma from "@/prisma/client";
+import DateHelper from "@/services/date.helpers";
 import { roadmap_fact_item } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,7 +9,45 @@ export const POST = async (request: NextRequest) => {
       const model: { items: IRoadmapFactItem[] } = await request.json();
 
       if (model.items.length === 0)
-         return await NextResponse.json({status: 'success', data: []});      
+         return await NextResponse.json({status: 'success', data: []});
+      const firstItem = model.items[0];
+      const roadmap = await prisma.roadmap.findFirst({ where: { year: firstItem.year } });
+      if (!roadmap)
+         throw Error(`Не удалось найти дорожную карту за ${model.items[0].year} год`);
+      const currentDay = DateHelper.toUTC(new Date(firstItem.year, firstItem.month, firstItem.day));
+      const notProductionStaffs = (await prisma.staff.findMany({
+         include: {
+            rate: true,
+            employee: true
+         },
+         where: {
+            AND: [
+               {
+                  begin_date: {
+                     lt: currentDay
+                  },
+                  OR: [
+                     {
+                        end_date: null
+                     },
+                     {
+                        end_date: {
+                           gte: currentDay
+                        }
+                     }
+                  ]
+               },
+               {
+                  rate: {
+                     is_production_staff: false,
+                     division_id: roadmap.division_id
+                  }
+               }
+            ]
+         }
+      })).map(i => i.employee)
+
+      //return await NextResponse.json({status: 'success', data: employee});
 
       const result: IRoadmapFactItem[] = [];
 
@@ -22,10 +61,7 @@ export const POST = async (request: NextRequest) => {
                   }
                })
             }
-         } else {
-            const roadmap = await prisma.roadmap.findFirst({ where: { year: item.year } });
-            if (!roadmap)
-               throw Error(`Не удалось найти дорожную карту за ${item.year} год`);
+         } else {            
             const _item = await prisma.roadmap_item.findFirst({
                where: {
                   roadmap_id: roadmap.id,

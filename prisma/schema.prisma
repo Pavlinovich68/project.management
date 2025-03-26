@@ -159,15 +159,16 @@ model roadmap_item {
 }
 //NOTE - Фактически затраченное время
 model roadmap_fact_item {
-   id             Int         @id @default(autoincrement())
-   month          Int
-   day            Int
-   ratio          Int
-   note           String
-   employee_id    Int
-   employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   id                Int         @id @default(autoincrement())
+   month             Int
+   day               Int
+   ratio             Int
+   note              String
+   employee_id       Int
+   employee          employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    roadmap_item_id   Int
-   roadmap_item   roadmap_item @relation(fields: [roadmap_item_id], references: [id])
+   roadmap_item      roadmap_item @relation(fields: [roadmap_item_id], references: [id])
+   parent_id         Int?  // Идентификатор строки из которой импортированы часы (для непроизводственного персонала)
 }
 //NOTE - Контрольная точка
 // 0 - Плановая дата начала работ
@@ -197,16 +198,16 @@ model post {
 }
 //NOTE - Ставки
 model rate {
-   id             Int         @id @default(autoincrement())
-   no             Int
-   post_id        Int
-   is_work_time   Boolean     @default(true)
-   post           post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division_id    Int
-   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   staff          staff[]
-   calendar_rows  dept_calendar_row[]
-   acc_hours      acc_hours[]
+   id                   Int         @id @default(autoincrement())
+   no                   Int
+   post_id              Int
+   is_production_staff  Boolean     @default(true) // Признак производящего персонала
+   post                 post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division_id          Int
+   division             division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   staff                staff[]
+   calendar_rows        dept_calendar_row[]
+   acc_hours            acc_hours[]
    @@unique([no,  division_id])
 }
 //NOTE - Штатные идиницы
