@@ -26,6 +26,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
    const [employeeId, setEmployeeId] = useState<number>(0)
 
    useEffect(() => {
+      setData([]);
       getData();
       getProjects();
       setSaveDisabled(true);
@@ -48,7 +49,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
          cache: 'force-cache'
       });
       const response = await res.json();      
-      const _data:IRoadmapFactItem[] = response.data;      
+      const _data:IRoadmapFactItem[] = response.data;
       setData(_data.map(i => {return {...i, uuid: uuidv4()}}));
       setEmployeeId(response.employee_id);
    }
@@ -121,7 +122,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
          cache: 'force-cache'
       });
       const response = await res.json();      
-      const _data:IRoadmapFactItem[] = response.data;      
+      const _data:IRoadmapFactItem[] = response.data;
       setData(_data.map(i => {return {...i, uuid: uuidv4()}}));
       setSaveDisabled(true);
       params.saveEvent(true);

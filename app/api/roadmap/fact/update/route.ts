@@ -47,19 +47,30 @@ export const POST = async (request: NextRequest) => {
          }
       })).map(i => i.employee)
 
-      //return await NextResponse.json({status: 'success', data: employee});
+      //return await NextResponse.json({status: 'success', data: notProductionStaffs});
 
       const result: IRoadmapFactItem[] = [];
 
       let resultItem: roadmap_fact_item;
-      for(const item of model.items){
+      for(const item of model.items){         
          if (item.is_deleted) {
             if (item.id) {
                await prisma.roadmap_fact_item.delete({
                   where: {
                      id: item.id
                   }
-               })
+               });
+
+               for (const np of notProductionStaffs) {
+                  const npItems = await prisma.roadmap_fact_item.findMany({
+                     where: {
+                        parent_id: item.id
+                     }
+                  });
+                  for (const _np of npItems) {
+                     await prisma.roadmap_fact_item.delete({where: {id: _np.id}});
+                  }
+               }
             }
          } else {            
             const _item = await prisma.roadmap_item.findFirst({
@@ -79,18 +90,39 @@ export const POST = async (request: NextRequest) => {
                      employee_id: item.employee_id??0,
                      roadmap_item_id: _item?.id??0
                }});
+
+               for (const np of notProductionStaffs) {
+                  await prisma.roadmap_fact_item.create({
+                     data: {
+                        month: resultItem.month,
+                        day: resultItem.day,
+                        ratio: resultItem.ratio,
+                        note: resultItem.note,
+                        employee_id: np.id,
+                        roadmap_item_id: resultItem.roadmap_item_id,
+                        parent_id: resultItem.id
+                     }
+                  })
+               }
             } else {
                resultItem = await prisma.roadmap_fact_item.update({
                   where: {
                      id: item.id
                   },
                   data: {
-                     month: item.month,
-                     day: item.day,
                      ratio: item.ratio??0,
                      note: item.note??'',
-                     employee_id: item.employee_id??0,
                      roadmap_item_id: _item?.id??0
+               }});
+
+               await prisma.roadmap_fact_item.updateMany({
+                  where: {
+                     parent_id: item.id
+                  },
+                  data: {
+                     ratio: resultItem.ratio,
+                     note: resultItem.note,
+                     roadmap_item_id: resultItem.roadmap_item_id
                }});
             }
             result.push({
