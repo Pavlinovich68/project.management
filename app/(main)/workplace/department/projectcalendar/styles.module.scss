@@ -1,7 +1,7 @@
 $cellSize: 2rem;
 .workerWorkPlace {
    display: grid;
-   grid-template-columns: 50em auto;
+   grid-template-columns: auto 50em;
 }
 .masterWorkPlace {
    width: 100%;

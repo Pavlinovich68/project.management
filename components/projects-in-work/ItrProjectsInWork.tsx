@@ -4,16 +4,19 @@ import { IRoadmapFactItem } from "@/models/IRoadmapFactItem";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { classNames } from "primereact/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import ItrItemInWork from "./ItrItemInWork";
 import styles from "./styles.module.scss";
 import { BooleanEventCallback } from "@/types/booleanEvent";
+import { ICalendarCell } from "@/models/ICalendar";
+import { Toast } from "primereact/toast";
+
 
 export interface IProjectsInWork {
    year: number,
    month: number,
-   day: number,
+   cell: ICalendarCell | undefined,
    user_id: number,
    readOnly: boolean,
    saveEvent: BooleanEventCallback
@@ -24,13 +27,14 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
    const [projects, setProjects] = useState<IProject[]>([]);
    const [saveDisabled, setSaveDisabled] = useState<boolean>(true)
    const [employeeId, setEmployeeId] = useState<number>(0)
+   const toast = useRef<Toast>(null);
 
    useEffect(() => {
       setData([]);
       getData();
       getProjects();
       setSaveDisabled(true);
-   }, [params.day])
+   }, [params.cell?.day])
 
    const getData = async () => {
       const res = await fetch(`/api/roadmap/fact/read`, {
@@ -42,7 +46,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
             params: {
                year: params.year,
                month: params.month,
-               day: params.day,
+               day: params.cell?.day,
                user_id: params.user_id
             }
          }),
@@ -94,7 +98,7 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
          uuid: uuidv4(),
          year: params.year,
          month: params.month,
-         day: params.day,
+         day: params.cell?.day??-1,
          note: undefined,
          roadmap_item_id: undefined,
          ratio: undefined,
@@ -110,7 +114,8 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
       console.table(_data);
    }
 
-   const save = async () => {      
+   const save = async () => {
+      if (!check()) return;
       const res = await fetch(`/api/roadmap/fact/update`, {
          method: "POST",
          headers: {
@@ -126,6 +131,30 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
       setData(_data.map(i => {return {...i, uuid: uuidv4()}}));
       setSaveDisabled(true);
       params.saveEvent(true);
+   }
+
+   const check = (): boolean => {
+      const total: number = (params.cell?.hours)??0;
+      try {
+         let hours = 0;
+         for (const item of data) {
+            if (!item.project_id) throw Error('Не указан проект')
+            if (item.note === '' || item.note === undefined) throw Error('Не указанны выполненные работы')
+            if (!item.ratio || item.ratio === 0) throw Error('Не указанно затраченное на выполнение работ время')
+            hours += item.ratio;
+            if (hours > total) throw Error('Превышено рабочее время')
+         }
+      } catch (error) {
+         toast.current?.show({
+            severity: "error",
+            summary: "Ошибка валидации",
+            //@ts-ignore
+            detail: error.message,
+            life: 5000
+         });
+         return false;
+      }
+      return true;
    }
 
    return (
@@ -159,9 +188,15 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
                }
             />
          }
-         {
-            data.filter(i => i.is_deleted === false).map((item) => <ItrItemInWork key={`fact_work-item-${item.id}`} params={item} dropdownList={projects} onChange={changeItems}/>)
-         }
+         <div>
+            {
+               data.filter(i => i.is_deleted === false).map((item) => {
+                  console.log(item);
+                  return <ItrItemInWork key={`fact_work-item-${item.id}`} params={item} dropdownList={projects} onChange={changeItems}/>
+               })
+            }
+         </div>
+         <Toast ref={toast} />       
       </div>
    );
 };

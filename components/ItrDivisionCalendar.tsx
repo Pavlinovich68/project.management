@@ -1,12 +1,12 @@
 'use client'
+import styles from "@/app/(main)/workplace/department/projectcalendar/styles.module.scss";
 import { ICalendarRow } from "@/models/ICalendar";
-import React, {useRef, useState, useEffect} from "react";
-import ItrMonthCalendar from "./calendar/ItrMonthCalendar";
+import { CalendarCellEventCallback } from "@/types/CalendarCellEventCallback";
 import { classNames } from "primereact/utils";
-import styles from "@/app/(main)/workplace/department/projectcalendar/styles.module.scss"
-import { NumberEventCallback } from "@/types/numberEvent";
+import { useEffect, useState } from "react";
+import ItrMonthCalendar from "./calendar/ItrMonthCalendar";
 
-const ItrStaffCalendar = ({year, month, user_id, needReload, dayClick}:{year: number, month: number, user_id: number, needReload: boolean, dayClick: NumberEventCallback}) => {
+const ItrStaffCalendar = ({year, month, user_id, needReload, dayClick}:{year: number, month: number, user_id: number, needReload: boolean, dayClick: CalendarCellEventCallback}) => {
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const [data, setData] = useState<ICalendarRow[]>([]);
 
