@@ -27,7 +27,7 @@ const ProjectCalendar = () => {
    );
 
    if (!session) return;
-   if (!date) return;
+   if (!date) return;     
 
    const changeDate = (cell: ICalendarCell) => {
       setSelectedCell(cell);

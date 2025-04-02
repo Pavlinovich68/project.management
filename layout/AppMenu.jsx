@@ -9,7 +9,7 @@ import { IconAdjustmentsHorizontal, IconAlignLeft2, IconCalendarBolt, IconCalend
 import { IconBooks, IconUsers } from '@tabler/icons-react';
 import { IconCalendarWeek, IconCalendarCog, IconBeach, IconArmchair, IconListCheck, IconUsersGroup,
    IconStar, IconStars, IconStackMiddle, IconShare, IconAlignLeft, IconTower, IconChartArrows,
-   IconClock, IconDashboard } from '@tabler/icons-react';
+   IconClock, IconDashboard, IconInfoCircle  } from '@tabler/icons-react';
 
 const AppMenu = () => {
    const {data: session} = useSession();      
@@ -127,6 +127,12 @@ const AppMenu = () => {
                      to: '/workplace/references/employee'
                   },
                ]
+            },
+            {
+               label: 'Руководство пользователя',
+               icon: 'pi pi-fw pi-info-circle',
+               visible: checkRoles(['admin', 'boss', 'master', 'developer', 'analyst', 'tester', 'reader']),
+               to: '/workplace/wiki',
             }
          ]
       }
