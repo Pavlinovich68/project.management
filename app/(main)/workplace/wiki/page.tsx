@@ -1,7 +1,7 @@
 'use client'
-import React, {useRef, useState, useEffect} from "react";
-import { useSession } from "next-auth/react";
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
 
 const Wiki = () => {
    const {data: session} = useSession();

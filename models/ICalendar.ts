@@ -43,7 +43,7 @@ export interface ICalendarCell {
 
 export interface ICalendarFooter {
    name: string | undefined,
-   hours: number[],//ICalendarFooterItem[] | undefined,
+   hours: ICalendarFooterItem[] | undefined,
    sum: number | undefined,
    total: number | undefined
 }

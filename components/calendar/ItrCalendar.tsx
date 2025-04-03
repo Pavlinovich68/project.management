@@ -3,20 +3,24 @@ import React, {useRef, useState, useEffect} from "react";
 import { classNames } from "primereact/utils";
 import styles from "@/app/(main)/workplace/department/calendar/styles.module.scss"
 import { Toast } from "primereact/toast";
-import { ICalendar } from "@/models/ICalendar";
+import { ICalendar, ICalendarCell } from "@/models/ICalendar";
 import ItrCalendarRow from "./ItrCalendarRow";
 import ItrCalendarHeader from "./ItrCalendarHeader";
 import ItrCalendarFooter from "./ItrCalendarFooter";
+import { CalendarCellEventCallbackExt } from "@/types/CalendarCellEventCallbackExt";
 
 interface Exclusion {
    value: number,
    name: string
 }
 
-const ItrCalendar = ({year, month, division_id, refresh}:{year: number, month: number, division_id: number, refresh: boolean}) => {
+const ItrCalendar = ({year, month, division_id, refresh, callback}:{year: number, month: number, division_id: number, refresh: boolean, callback: CalendarCellEventCallbackExt}) => {
    const toast = useRef<Toast>(null);
    const [calendarData, setCalendarData] = useState<ICalendar>();
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+   const [flag, setFlag] = useState<boolean>(true);
+   const [sumValue, setSumValue] = useState<number>(0);
+   const [totalValue, setTotalValue] = useState<number>(0);   
 
    useEffect(() => {
       getCalendarData();
@@ -41,12 +45,27 @@ const ItrCalendar = ({year, month, division_id, refresh}:{year: number, month: n
       });
       const response = await res.json();
       setCalendarData(response.data);
+      setSumValue(response.data.footer.sum);
+      setTotalValue(response.data.footer.total);
       setIsLoaded(false);
    }
 
    //@ts-ignore
    if (calendarData === 'Календарь не обнаружен!' || isLoaded) 
       return <React.Fragment/>
+
+   const event = (e: ICalendarCell, rate_id: number, val: number) => {
+      if (calendarData?.footer) {
+         setSumValue(sumValue + val);
+         setTotalValue(totalValue + val);
+         const item = calendarData.footer.hours?.find(i => i.day === e.day)
+         if (item){
+            item.hours += val;
+            setFlag(!flag);
+         }
+      }
+      callback(e, rate_id, val);
+   }
 
    return (
       <React.Fragment>         
@@ -55,10 +74,10 @@ const ItrCalendar = ({year, month, division_id, refresh}:{year: number, month: n
                {
                   calendarData?.rows?.map((row, i) => {
                      const key = `calendar-row-${i}`
-                     return <ItrCalendarRow key={key} row={row} index={i}/> 
+                     return <ItrCalendarRow key={key} row={row} index={i} month={month} callback={event}/>
                   })
                }
-               <ItrCalendarFooter footerData={calendarData?.footer}/>
+               <ItrCalendarFooter footerData={calendarData?.footer} flag={flag} sum={sumValue} total={totalValue}/>
             </div>
             <Toast ref={toast} />
       </React.Fragment>

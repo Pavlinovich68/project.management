@@ -1,4 +1,4 @@
-import { ICalendar, ICalendarFooter, ICalendarHeader } from "@/models/ICalendar";
+import { ICalendar, ICalendarFooter, ICalendarFooterItem, ICalendarHeader } from "@/models/ICalendar";
 import { NextRequest, NextResponse } from "next/server";
 import CalendarHelper from "@/services/calendar.helper";
 
@@ -30,13 +30,13 @@ export const POST = async (request: NextRequest) => {
       const daysList = [...CalendarHelper.numberGenerator(lastDayOfMonth)]
       const calendarHeader: ICalendarHeader = { name: 'Фамилия', days: daysList, hours: 'Всего', total: 'От начала' }
       
-      const footerValues: number[] = [];
+      const footerValues: ICalendarFooterItem[] = [];
       for (const day of daysList) {
          let columnValue: number = 0;
          for (const row of calendarRows) {
             columnValue += row.cells?.find(i => i.day === day)?.hours??0;
          }
-         footerValues.push(columnValue);
+         footerValues.push({day: day, hours: columnValue});
       }
 
       let sum: number = 0;

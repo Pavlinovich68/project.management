@@ -49,7 +49,7 @@ const Roadmap = () => {
       changeYear(year);
       // if (session?.user)
       //    setReadOnly(!RolesHelper.checkRoles(session?.user.roles, ['admin','boss','master','analyst']))
-   }, []);
+   }, [year]);
    
    const changeYear = (val: number) => {
       setYear(val);

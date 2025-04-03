@@ -7,13 +7,22 @@ import { Tag } from "primereact/tag";
 import { Toolbar } from "primereact/toolbar";
 import React, {useState} from "react";
 import CellTypes from "@/services/cell.types";
+import { ICalendarCell } from "@/models/ICalendar";
 
-
+interface IRateCalendarCell {
+   year: number,
+   month: number,
+   rate_id: number,
+   cell: ICalendarCell
+}
 //TODO - Пример использования useSession
 const Calendar = () => {
    const [date, setDate] = useState<Date>(new Date())
    const {data: session} = useSession();
    const [refresh, setRefresh] = useState<boolean>(false);
+   const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
+
+   const changedCells: IRateCalendarCell[] = [];
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -21,14 +30,19 @@ const Calendar = () => {
 
    const startContent = (
       <div>
-         <Button icon="pi pi-refresh" severity="secondary" className="mr-2" onClick={() => { 
-               setRefresh(!refresh);
-         }}/>
+         <Button icon="pi pi-refresh" type="button" severity="secondary" className="mr-2" onClick={() => { setRefresh(!refresh); }}/>
+         <Button icon="pi pi-save" type="button" severity="secondary" className="mr-2" onClick={() => { setRefresh(!refresh); }} disabled={!saveEnabled}/>
       </div>
    );
    const centerContent = (
       <ItrCalendarSwitch xdate={date} onClick={monthSwitch}/>
    );
+
+   const changeDayType = (e: ICalendarCell, rate_id: number, val: number) => {
+      setSaveEnabled(true);
+      changedCells.push({year: date.getFullYear(), month: date.getMonth()+1, rate_id: rate_id, cell: e});
+      console.log(changedCells);
+   }
 
    return (
       session ?
@@ -42,6 +56,7 @@ const Calendar = () => {
                   year={date.getFullYear()} 
                   month={date.getMonth()+1} 
                   division_id={session?.user?.division_id}
+                  callback={changeDayType}
                   refresh={refresh}
                />               
             </div>
