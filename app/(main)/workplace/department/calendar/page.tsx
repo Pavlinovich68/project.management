@@ -10,6 +10,7 @@ import CellTypes from "@/services/cell.types";
 import { ICalendarCell } from "@/models/ICalendar";
 
 interface IRateCalendarCell {
+   division_id: number,
    year: number,
    month: number,
    rate_id: number,
@@ -40,7 +41,7 @@ const Calendar = () => {
 
    const changeDayType = (e: ICalendarCell, rate_id: number, val: number) => {
       setSaveEnabled(true);
-      changedCells.push({year: date.getFullYear(), month: date.getMonth()+1, rate_id: rate_id, cell: e});
+      changedCells.push({division_id: session?.user?.division_id??-1, year: date.getFullYear(), month: date.getMonth()+1, rate_id: rate_id, cell: e});
       console.log(changedCells);
    }
 
