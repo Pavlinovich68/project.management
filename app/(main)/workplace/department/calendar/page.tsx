@@ -22,8 +22,7 @@ const Calendar = () => {
    const {data: session} = useSession();
    const [refresh, setRefresh] = useState<boolean>(false);
    const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
-
-   const changedCells: IRateCalendarCell[] = [];
+   const [cells, setCells] = useState<IRateCalendarCell[]>([])
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -41,8 +40,15 @@ const Calendar = () => {
 
    const changeDayType = (e: ICalendarCell, rate_id: number, val: number) => {
       setSaveEnabled(true);
-      changedCells.push({division_id: session?.user?.division_id??-1, year: date.getFullYear(), month: date.getMonth()+1, rate_id: rate_id, cell: e});
-      console.log(changedCells);
+      let _cells = cells.map(i => i);
+      _cells.push({
+         division_id: session?.user?.division_id??-1, 
+         year: date.getFullYear(), 
+         month: date.getMonth()+1, 
+         rate_id: rate_id, 
+         cell: e})
+      setCells(_cells);
+      console.log(_cells);
    }
 
    return (

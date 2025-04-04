@@ -9,11 +9,6 @@ import ItrCalendarHeader from "./ItrCalendarHeader";
 import ItrCalendarFooter from "./ItrCalendarFooter";
 import { CalendarCellEventCallbackExt } from "@/types/CalendarCellEventCallbackExt";
 
-interface Exclusion {
-   value: number,
-   name: string
-}
-
 const ItrCalendar = ({year, month, division_id, refresh, callback}:{year: number, month: number, division_id: number, refresh: boolean, callback: CalendarCellEventCallbackExt}) => {
    const toast = useRef<Toast>(null);
    const [calendarData, setCalendarData] = useState<ICalendar>();

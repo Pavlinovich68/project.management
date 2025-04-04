@@ -33,13 +33,14 @@ model Session {
 }
 //NOTE - Подразделение
 model division {
-   id             Int         @id @default(autoincrement())
-   name           String?     @unique(map: "division_u_ind") @db.VarChar(200)
-   parent_id      Int?
-   parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   childrens      division[]  @relation("divisionTodivision")
-   rate           rate[]
-   roadmap       roadmap[]
+   id                   Int         @id @default(autoincrement())
+   name                 String?     @unique(map: "division_u_ind") @db.VarChar(200)
+   parent_id            Int?
+   parent               division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   childrens            division[]  @relation("divisionTodivision")
+   rate                 rate[]
+   roadmap              roadmap[]
+   personal_exclusions  personal_exclusion[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -100,6 +101,23 @@ model exclusion {
    production_calendar_id  Int
    production_calendar     production_calendar @relation(fields: [production_calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    @@unique([date, production_calendar_id])
+}
+//NOTE - Персональные исключения
+   // division_id: number,
+   // year: number,
+   // month: number,
+   // rate_id: number,
+   // cell: ICalendarCell
+model personal_exclusion {
+   id Int @id @default(autoincrement())
+   year        Int
+   month       Int
+   day         Int
+   type        Int
+   rate_id     Int
+   division_id Int
+   rate        rate     @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division    division @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 //NOTE - Профиль разработчика
 //SECTION
@@ -206,6 +224,7 @@ model rate {
    division             division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    staff                staff[]
    acc_hours            acc_hours[]
+   personal_exclusions  personal_exclusion[]
    @@unique([no,  division_id])
 }
 //NOTE - Штатные идиницы
