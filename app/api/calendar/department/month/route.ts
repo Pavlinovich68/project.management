@@ -85,26 +85,6 @@ export const POST = async (request: NextRequest) => {
 
       const calendarRows = await CalendarHelper.prepareCalendarData(division_id, year, month);      
 
-      // const fact = (await prisma.roadmap_fact_item.findMany({
-      //    select: {
-      //       day: true,
-      //       roadmap_item: {
-      //          select: {
-      //             roadmap: true
-      //          }
-      //       },
-      //    },
-      //    where: {
-      //       month: month,
-      //       employee_id: user.employee_id,
-      //       roadmap_item: {
-      //          roadmap: {
-      //             year: year
-      //          }
-      //       }
-      //    }
-      // })).map(i => i.day);
-
       let result = [];
       if (staffs) {
          for (const staff of staffs) {            

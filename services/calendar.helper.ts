@@ -181,50 +181,6 @@ export default class CalendarHelper {
          currentDate.setDate(currentDate.getDate() +1);
       }
       return hours;
-   }   
-   
-//NOTE - Количество рабочи часов по конкретной штатной еденице
-   static staffHours = async (staffId: number | null | undefined, from: Date, to: Date):Promise<number> => {
-      let currentDate = new Date(from.getFullYear(), from.getMonth(), from.getDate(), 0,0,0,0);      
-      const result: number[] = [];
-      const maxDate = new Date(to.getFullYear(), to.getMonth(), to.getDate(), 0, 0, 0, 0);
-      const _staff = await prisma.staff.findUnique({where: { id: staffId??-1 }});
-      const staffBeginDate = _staff?.begin_date ? new Date(_staff.begin_date.getFullYear(), _staff.begin_date.getMonth(), _staff.begin_date.getDate(), 0,0,0,0) : new Date(0,0,0,0,0,0,0);
-      const staffEndDate = _staff?.end_date ? new Date(_staff.end_date.getFullYear(), _staff.end_date.getMonth(), _staff.end_date.getDate(), 0,0,0,0) : null;
-
-      while (currentDate <= maxDate) {
-         //Проверяем на действительность ставки         
-         let item: number = 0;
-         if (!_staff || staffBeginDate > currentDate || (staffEndDate && staffEndDate < currentDate)) {
-            // Если ставка вакантна
-            item = 0;
-         } else {            
-            const _cellItem = await prisma.dept_calendar_cell.findFirst({
-               where: {
-                  row: {
-                     rate_id: _staff.rate_id,
-                     calendar: {
-                        year: currentDate.getFullYear()
-                     }
-                  },
-                  month: currentDate.getMonth() +1,
-                  day: currentDate.getDate()
-               }
-            });
-            
-            if (_cellItem) {
-               // Если есть исключение - подставляем исключение
-               item = _cellItem.hours
-            } else {
-               // Базовое значение из производственного календаря
-               let _item = await CalendarHelper.hoursOfDayExt(currentDate);
-               item = _item.hours;
-            }
-         }
-         result.push(item);
-         currentDate.setDate(currentDate.getDate() + 1);
-      }
-      return result.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
    }
 //NOTE - Метод возвращающий последовательность
    static *numberGenerator(n: number): Generator<number> {
@@ -300,35 +256,7 @@ export default class CalendarHelper {
 //#endregion
 //NOTE - Персональные исключения из рабочего графика
 //#region
-      const personalExclusions = await prisma.dept_calendar.findFirst({
-         where: {
-            division_id: division_id,
-            year: year
-         },
-         select: {
-            rows: {
-               select: {
-                  rate_id: true,
-                  cells: {
-                     where: {
-                        month: month
-                     },
-                     select: {
-                        day: true,
-                        type: true,
-                        hours: true
-                     },
-                     orderBy: {
-                        day: 'asc'
-                     }
-                  }
-               },
-               orderBy: {
-                  no: 'asc'
-               }
-            }
-         }
-      })
+      const personalExclusions = [];
 //#endregion
 //NOTE - Разработчики по состоянию на текущий день либо на последний день месяца (первая колонка)
 //#region
@@ -390,6 +318,8 @@ export default class CalendarHelper {
             staff: {
                where: {
                   OR: [
+                     
+                     // Дата начала между первым и последним днем месяца
                      {
                         AND: [
                            {
@@ -404,6 +334,7 @@ export default class CalendarHelper {
                            }
                         ]                        
                      },
+                     // Дата окончания между первым и последним днем месяца
                      {
                         AND: [
                            {
@@ -418,6 +349,7 @@ export default class CalendarHelper {
                            }
                         ]                        
                      },
+                     // Дата начала меньше первого дня месяца и дата окончания больше последнего дня
                      {
                         AND: [
                            {
@@ -432,6 +364,22 @@ export default class CalendarHelper {
                            }
                         ]
                      },
+                     // Дата начала и дата окончания меньше первого дня месяца
+                     {
+                        AND: [
+                           {
+                              begin_date: {
+                                 lt: firstMonthDay
+                              }
+                           },
+                           {
+                              end_date: {
+                                 lt: lastMonthDay
+                              }
+                           }
+                        ]
+                     },
+                     // С открытой датой окончания
                      {
                         end_date: null
                      }
@@ -557,8 +505,9 @@ export default class CalendarHelper {
          const row: ICalendarRow = await this.getCalendarRow(
             month,
             _row, 
-            _baseCells, 
-            personalExclusions?.rows.find(i => i.rate_id === _row.rate_id)?.cells.map(i => { return {...i, checked: false}}) ?? [],
+            _baseCells,
+//NOTE - Персональные исключения из рабочего графика
+            [],
             vacanciesDays[_row.rate_id],
             vacations.find(i => i.rate_id === _row.rate_id)?.days ?? [],
             (accumulator?.find(i => i.rate_id === _row.rate_id))?.sum??0

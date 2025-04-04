@@ -39,7 +39,6 @@ model division {
    parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    childrens      division[]  @relation("divisionTodivision")
    rate           rate[]
-   dept_calendar  dept_calendar[]
    roadmap       roadmap[]
 }
 //NOTE - Пользователи системы
@@ -206,7 +205,6 @@ model rate {
    division_id          Int
    division             division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    staff                staff[]
-   calendar_rows        dept_calendar_row[]
    acc_hours            acc_hours[]
    @@unique([no,  division_id])
 }
@@ -222,26 +220,6 @@ model staff {
    vacations         vacation[]
    @@unique([id])
 }
-//NOTE - Рабочий календарь подразделения
-model dept_calendar {
-   id          Int                  @id @default(autoincrement())
-   year        Int
-   division_id Int   
-   division    division             @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   rows        dept_calendar_row[]
-   @@unique([year, division_id])
-}
-//NOTE - Привязка ставки к календарю
-model dept_calendar_row {
-   id          Int            @id @default(autoincrement())
-   no          Int
-   rate_id     Int
-   rate        rate           @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   cells       dept_calendar_cell[]
-   calendar_id Int
-   calendar    dept_calendar  @relation(fields: [calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   @@unique([rate_id, calendar_id])
-}
 //NOTE - Персональные исключения
 //SECTION
 //NOTE - exclusion_type
@@ -256,16 +234,6 @@ model dept_calendar_row {
 // 8 - absense from work
 // 9 - vacancy
 // 10 - work on weekends
-model dept_calendar_cell {
-   id       Int               @id @default(autoincrement())
-   month    Int
-   day      Int
-   hours    Int
-   type     Int
-   row_id   Int
-   row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   @@unique([month, day, row_id])
-}
 
 /*
 Аккумулятор рабочик часов по ставке
