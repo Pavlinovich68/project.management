@@ -1,19 +1,66 @@
+import { IBaseEntity } from "@/models/IBaseEntity";
 import { ICalendarCell } from "@/models/ICalendar";
+import CellTypes from "@/services/cell.types";
+import { CalendarCellEventCallbackExt } from "@/types/CalendarCellEventCallbackExt";
+import { ContextMenu } from "primereact/contextmenu";
 import { classNames } from "primereact/utils";
-import React from "react";
+import React, { SyntheticEvent, useRef, useState } from "react";
 
+const ItrCalendarCell = ({rateId, row, cell, callback}:{rateId: number | undefined | null, row: number, cell: ICalendarCell, callback: CalendarCellEventCallbackExt}) => {
+   const cm = useRef<ContextMenu | null>(null);
+   const [currentCell, setCurrentCell] = useState<ICalendarCell>(cell);
 
-const ItrCalendarCell = ({row, cell}:{row: number, cell: ICalendarCell}) => {
-   return (
-      <div 
-         id={`calendar-cell-id-${cell.day}`} 
-         key={`calendar-cell-id-${cell.day}`}
-         data-col-type={0}
-         data-base-type={cell.type} 
-         data-row={row}
-         data-hours={cell.hours}
-         className={classNames(`flex align-items-center justify-content-center w-4rem font-bold noselect day-cell cell-tc-${cell.type} cell-bg-${cell.type}`)}
-      >{cell.hours}</div>
+   const changeType = (val: number) => {
+      let newHours = val === 10 ? 8 : 0;
+      const oldHours = currentCell.hours;
+      const _cell: ICalendarCell = {...currentCell, type: val, hours: newHours};      
+      // _cell.type = val;
+      // _cell.hours = newHours;
+      setCurrentCell(_cell);
+      callback(_cell, rateId??-1, newHours - oldHours);
+   }
+   const items = [
+      {
+         label: 'Больничный',
+         command: () => changeType(6)
+      },
+      {
+         label: 'Без содержания',
+         command: () => changeType(7)
+      },
+      {
+         label: 'Прогул',
+         command: () => changeType(8)
+      },
+      {
+         label: 'Работа в выходной',
+         command: () => changeType(10)
+      },
+   ];
+
+   const onRightClick = (event: SyntheticEvent, c: ICalendarCell) => {
+      if (cm.current) {
+            setCurrentCell(c);
+            cm.current.show(event);
+      }
+   };
+   return ( 
+      <>
+         <div 
+            id={`calendar-cell-id-${currentCell.day}`} 
+            key={`calendar-cell-id-${currentCell.day}`}
+            data-col-type={0}
+            data-base-type={currentCell.type} 
+            data-row={row}
+            data-hours={currentCell.hours}
+            className={classNames(`flex align-items-center justify-content-center w-4rem font-bold noselect day-cell cell-tc-${currentCell.type} cell-bg-${currentCell.type}`)}
+            onContextMenu={(event) => onRightClick(event, currentCell)}
+         >{currentCell.hours}</div>
+         <ContextMenu 
+            ref={cm} 
+            model={items}
+         />
+      </>
    );
 };
 

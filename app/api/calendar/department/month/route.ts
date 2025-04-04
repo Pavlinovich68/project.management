@@ -2,6 +2,7 @@ import prisma from "@/prisma/client";
 import CalendarHelper from "@/services/calendar.helper";
 import DateHelper from "@/services/date.helpers";
 import { NextRequest, NextResponse } from "next/server";
+import { roadmap_fact_item } from '@prisma/client';
 
 export const POST = async (request: NextRequest) => {
    try {
@@ -82,14 +83,33 @@ export const POST = async (request: NextRequest) => {
       const staffs = items?.rate.division.rate.map(i => i.staff).filter(i => i.length > 0).map(i => i[0])
          .filter(i => isMasterRole ? true : i.id === staff_id);
 
-      const calendarRows = await CalendarHelper.prepareCalendarData(division_id, year, month);
+      const calendarRows = await CalendarHelper.prepareCalendarData(division_id, year, month);      
 
       let result = [];
       if (staffs) {
-         for (const staff of staffs) {
+         for (const staff of staffs) {            
             const item = calendarRows.filter(i => i.rate_id === staff.rate_id)[0];
-            if (item)
+            if (item) {
+               if (item.cells){
+                  for (const cell of item.cells) {
+                     const fact = await prisma.roadmap_fact_item.findFirst({
+                        where: {                           
+                           roadmap_item: {
+                              roadmap: {
+                                 year: year
+                              }
+                           },
+                           month: month,
+                           day: cell.day,
+                           employee_id: item.employee_id??0
+                        }
+                     })
+
+                     cell.checked = fact ? true : false
+                  }
+               }               
                result.push(item)
+            }
          }
       }
 

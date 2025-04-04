@@ -59,8 +59,8 @@ const LoginPage = () => {
          <div className="itr-form-container itr-sign-in-container">
                <form action="#" onSubmit={handleSubmit}>
                   <h1>Вход в систему</h1>
-                  <input type="email" placeholder="Email" value={data.email} onChange={e => setData({...data, email: e.target.value})}/>
-                  <input type="password" placeholder="Password" value={data.password} onChange={e => setData({...data, password: e.target.value})}/>
+                  <input id='loginEmail' type="email" placeholder="Email" value={data.email} onChange={e => setData({...data, email: e.target.value})}/>
+                  <input id='loginPassword' type="password" placeholder="Password" value={data.password} onChange={e => setData({...data, password: e.target.value})}/>
                   <button disabled={!data.email || !data.password} type='submit'>Войти</button>
                </form>
          </div>

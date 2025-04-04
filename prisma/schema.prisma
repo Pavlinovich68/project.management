@@ -33,14 +33,14 @@ model Session {
 }
 //NOTE - Подразделение
 model division {
-   id             Int         @id @default(autoincrement())
-   name           String?     @unique(map: "division_u_ind") @db.VarChar(200)
-   parent_id      Int?
-   parent         division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   childrens      division[]  @relation("divisionTodivision")
-   rate           rate[]
-   dept_calendar  dept_calendar[]
-   roadmap       roadmap[]
+   id                   Int         @id @default(autoincrement())
+   name                 String?     @unique(map: "division_u_ind") @db.VarChar(200)
+   parent_id            Int?
+   parent               division?   @relation("divisionTodivision", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   childrens            division[]  @relation("divisionTodivision")
+   rate                 rate[]
+   roadmap              roadmap[]
+   personal_exclusions  personal_exclusion[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -102,6 +102,23 @@ model exclusion {
    production_calendar     production_calendar @relation(fields: [production_calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    @@unique([date, production_calendar_id])
 }
+//NOTE - Персональные исключения
+   // division_id: number,
+   // year: number,
+   // month: number,
+   // rate_id: number,
+   // cell: ICalendarCell
+model personal_exclusion {
+   id Int @id @default(autoincrement())
+   year        Int
+   month       Int
+   day         Int
+   type        Int
+   rate_id     Int
+   division_id Int
+   rate        rate     @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division    division @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
 //NOTE - Профиль разработчика
 //SECTION
 //NOTE - stack
@@ -159,13 +176,16 @@ model roadmap_item {
 }
 //NOTE - Фактически затраченное время
 model roadmap_fact_item {
-   id             Int         @id @default(autoincrement())
-   date           DateTime    @db.Timestamp(6)
-   hours          Int
-   employee_id    Int
-   employee       employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   id                Int         @id @default(autoincrement())
+   month             Int
+   day               Int
+   ratio             Int
+   note              String
+   employee_id       Int
+   employee          employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    roadmap_item_id   Int
-   roadmap_item   roadmap_item @relation(fields: [roadmap_item_id], references: [id])
+   roadmap_item      roadmap_item @relation(fields: [roadmap_item_id], references: [id])
+   parent_id         Int?  // Идентификатор строки из которой импортированы часы (для непроизводственного персонала)
 }
 //NOTE - Контрольная точка
 // 0 - Плановая дата начала работ
@@ -195,16 +215,16 @@ model post {
 }
 //NOTE - Ставки
 model rate {
-   id             Int         @id @default(autoincrement())
-   no             Int         
-   post_id        Int
-   is_work_time   Boolean     @default(true)
-   post           post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division_id    Int         
-   division       division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   staff          staff[]
-   calendar_rows  dept_calendar_row[]
-   acc_hours      acc_hours[]
+   id                   Int         @id @default(autoincrement())
+   no                   Int
+   post_id              Int
+   is_production_staff  Boolean     @default(true) // Признак производящего персонала
+   post                 post        @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   division_id          Int
+   division             division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   staff                staff[]
+   acc_hours            acc_hours[]
+   personal_exclusions  personal_exclusion[]
    @@unique([no,  division_id])
 }
 //NOTE - Штатные идиницы
@@ -218,26 +238,6 @@ model staff {
    end_date          DateTime?   @db.Timestamp(6)   
    vacations         vacation[]
    @@unique([id])
-}
-//NOTE - Рабочий календарь подразделения
-model dept_calendar {
-   id          Int                  @id @default(autoincrement())
-   year        Int
-   division_id Int   
-   division    division             @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   rows        dept_calendar_row[]
-   @@unique([year, division_id])
-}
-//NOTE - Привязка ставки к календарю
-model dept_calendar_row {
-   id          Int            @id @default(autoincrement())
-   no          Int
-   rate_id     Int
-   rate        rate           @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   cells       dept_calendar_cell[]
-   calendar_id Int
-   calendar    dept_calendar  @relation(fields: [calendar_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   @@unique([rate_id, calendar_id])
 }
 //NOTE - Персональные исключения
 //SECTION
@@ -253,16 +253,6 @@ model dept_calendar_row {
 // 8 - absense from work
 // 9 - vacancy
 // 10 - work on weekends
-model dept_calendar_cell {
-   id       Int               @id @default(autoincrement())
-   month    Int
-   day      Int
-   hours    Int
-   type     Int
-   row_id   Int
-   row      dept_calendar_row @relation(fields: [row_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   @@unique([month, day, row_id])
-}
 
 /*
 Аккумулятор рабочик часов по ставке

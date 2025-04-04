@@ -1,21 +1,22 @@
 'use client'
+import styles from "@/app/(main)/workplace/department/projectcalendar/styles.module.scss";
 import { ICalendarRow } from "@/models/ICalendar";
-import React, {useRef, useState, useEffect} from "react";
-import ItrMonthCalendar from "./calendar/ItrMonthCalendar";
+import { CalendarCellEventCallback } from "@/types/CalendarCellEventCallback";
 import { classNames } from "primereact/utils";
-import styles from "@/app/(main)/workplace/department/ProjectCalendar/styles.module.scss"
-import { NumberEventCallback } from "@/types/numberEvent";
+import { useEffect, useState } from "react";
+import ItrMonthCalendar from "./calendar/ItrMonthCalendar";
 
-const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month: number, user_id: number, dayClick: NumberEventCallback}) => {
+const ItrStaffCalendar = ({year, month, user_id, needReload, dayClick}:{year: number, month: number, user_id: number, needReload: boolean, dayClick: CalendarCellEventCallback}) => {
    const [isLoaded, setIsLoaded] = useState<boolean>(false);
    const [data, setData] = useState<ICalendarRow[]>([]);
 
    useEffect(() => {
+      setData([]);
       getCalendarData().then(i => {
-         rebase(i);
+         rebase(i);         
          setData(i);
       });
-   }, [year, month])
+   }, [year, month, needReload])
 
    const getCalendarData = async () => {
       setIsLoaded(true);
@@ -25,8 +26,8 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
             "Content-Type": "application/json",
          },
          body: JSON.stringify({
-            user_id: user_id, 
-            year: year, 
+            user_id: user_id,
+            year: year,
             month: month}),
          cache: 'force-cache'
       });
@@ -40,15 +41,15 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
       const before = dayOfWeek == 0 ? 6 : dayOfWeek -1;
       const lastDay = new Date(year, month, 0);
       const after = 7 - lastDay.getDay();
-      for (const row of list) {         
-         if (row.cells) {            
+      for (const row of list) {
+         if (row.cells) {
             let n = new Date(year, month-1, 0).getDate();
-            for (let i = 0; i < before; i++) {               
-               row.cells.unshift({day: n, type: 100, hours: 0});
+            for (let i = 0; i < before; i++) {
+               row.cells.unshift({day: n, type: 100, hours: 0, checked: false});
                n--;
             }
             for (let i = 1; i <= after; i++) {
-               row.cells.push({day: i, type: 100, hours: 0});
+               row.cells.push({day: i, type: 100, hours: 0, checked: false});
             }
          }
       }
@@ -56,9 +57,9 @@ const ItrStaffCalendar = ({year, month, user_id, dayClick}:{year: number, month:
 
    return (
       <div className={classNames("justify-content-center flex-wrap container", styles.monthContainer)}>
-         {
-            data.map((calendar) => <ItrMonthCalendar key={`rate-id-${calendar.rate_id}`} data={calendar} dayClick={dayClick}/>)
-         }                     
+         {            
+            data.map((calendar) => <ItrMonthCalendar key={`rate-id-${calendar.rate_id}`} month={month} data={calendar} dayClick={dayClick}/>)
+         }
       </div>
    );
 };

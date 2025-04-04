@@ -1,7 +1,7 @@
 $cellSize: 2rem;
 .workerWorkPlace {
    display: grid;
-   grid-template-columns: 50em auto;
+   grid-template-columns: auto 50em;
 }
 .masterWorkPlace {
    width: 100%;
@@ -28,8 +28,22 @@ $cellSize: 2rem;
       width: $cellSize;
       font-size: 0.8rem;
       font-weight: 500;
+      .circle {
+         position: absolute;
+         width: 6px;
+         height: 6px;
+         border-radius: 3px;
+         background: var(--blue-500);
+         margin: 0 0 20px 20px;
+      }
    }
 }
 .monthHoursText {
    margin-left: 4px;
+}
+
+.selectedDayCell {
+   background-color: #C5DCFF;
+   color: #ff8c42;
+   font-weight: 700 !important;
 }
