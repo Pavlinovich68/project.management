@@ -35,14 +35,6 @@ const ItrCalendarCell = ({rateId, row, cell, callback}:{rateId: number | undefin
          label: 'Работа в выходной',
          command: () => changeType(10)
       },
-      {
-         separator: true
-      },
-      {
-         label: 'Сбросить состояние',
-         command: () => changeType(10),
-         disabled: !isChanged
-      },
    ];
 
    const onRightClick = (event: SyntheticEvent, c: ICalendarCell) => {
