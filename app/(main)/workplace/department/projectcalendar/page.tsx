@@ -1,7 +1,6 @@
 'use client'
 import ItrDivisionCalendar from "@/components/ItrDivisionCalendar";
 import ItrCalendarSwitch from "@/components/ItrMonthSwitch";
-import ItrProjectsInWork from "@/components/projects-in-work/ItrProjectsInWork";
 import { ICalendarCell } from "@/models/ICalendar";
 import DateHelper from "@/services/date.helpers";
 import RolesHelper from "@/services/roles.helper";
@@ -10,6 +9,7 @@ import { Toolbar } from "primereact/toolbar";
 import { classNames } from "primereact/utils";
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
+import { DataTable } from "primereact/datatable";
 
 const ProjectCalendar = () => {
    const {data: session} = useSession()
@@ -48,14 +48,15 @@ const ProjectCalendar = () => {
                      <ItrDivisionCalendar year={date?.getFullYear()} month={date?.getMonth()+1} user_id={session.user.id} dayClick={changeDate} needReload={saveWork}/>
                      <div className={classNames(styles.projectsList)} hidden={!selectedCell}>                        
                         <p>Выполненные работы на дату: <h6 style={{display: "contents"}}>{DateHelper.formatDate(new Date(date.getFullYear(), date.getMonth(), selectedCell?.day))}<sup> *</sup></h6></p>
-                        <ItrProjectsInWork 
+                        {/* <ItrProjectsInWork 
                            year={date.getFullYear()} 
                            month={date.getMonth()+1} 
                            cell={selectedCell} 
                            user_id={session.user.id} 
                            readOnly={!RolesHelper.checkRoles(session.user.roles, ['master', 'developer'])}
                            saveEvent={saveWorks}
-                        />
+                        /> */}
+                        <DataTable/>
                      </div>                     
                   </div>
                   <small style={RolesHelper.checkRoles(session.user.roles, ['developer']) ? {display: "block"} : {display: "none"}}><sup>*</sup> Для выбора кликните с удерданием клавиши Ctrl в календаре по требуемой дате</small>
