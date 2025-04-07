@@ -39,7 +39,6 @@ export interface ICalendarCell {
    type: number
    hours: number
    checked: boolean
-   prev_type: number
 }
 
 export interface ICalendarFooter {

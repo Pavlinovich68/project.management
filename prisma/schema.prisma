@@ -110,6 +110,7 @@ model personal_exclusion {
    type        Int   // Тип исключения
    rate_id     Int   // Ставка
    rate        rate     @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([year, month, day, rate_id])
 }
 //NOTE - Профиль разработчика
 //SECTION

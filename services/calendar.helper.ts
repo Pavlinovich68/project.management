@@ -241,7 +241,7 @@ export default class CalendarHelper {
                case 3: hours = 8; break;
                case 10: hours = 8; break;
             }
-            baseCells.push({day: day, type: item.exclusion_type, hours: hours, checked: false, prev_type: -1});
+            baseCells.push({day: day, type: item.exclusion_type, hours: hours, checked: false});
             //monthHours[day] = hours;
          }
       }
@@ -249,7 +249,7 @@ export default class CalendarHelper {
       for (let i = 1; i <= lastMonthDay.getDate(); i++) {
          if (baseCells.find((_cell) => _cell.day === i) === undefined) {
             const dayOfWeek = new Date(year, month -1, i).getDay();
-            baseCells.push({day: i, type: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 4, hours: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8, checked: false, prev_type: -1});
+            baseCells.push({day: i, type: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 4, hours: (dayOfWeek === 6 || dayOfWeek === 0) ? 0 : 8, checked: false});
          }
       }
       baseCells = baseCells.sort(function(a, b) { return a.day - b.day });
