@@ -35,10 +35,11 @@ export interface ICalendarRow {
 }
 
 export interface ICalendarCell {
-   day: number,
-   type: number,
+   day: number
+   type: number
    hours: number
    checked: boolean
+   prev_type: number
 }
 
 export interface ICalendarFooter {
