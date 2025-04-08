@@ -40,7 +40,6 @@ model division {
    childrens            division[]  @relation("divisionTodivision")
    rate                 rate[]
    roadmap              roadmap[]
-   personal_exclusions  personal_exclusion[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -103,21 +102,15 @@ model exclusion {
    @@unique([date, production_calendar_id])
 }
 //NOTE - Персональные исключения
-   // division_id: number,
-   // year: number,
-   // month: number,
-   // rate_id: number,
-   // cell: ICalendarCell
 model personal_exclusion {
    id Int @id @default(autoincrement())
-   year        Int
-   month       Int
-   day         Int
-   type        Int
-   rate_id     Int
-   division_id Int
+   year        Int   // Год
+   month       Int   // Месяц
+   day         Int   // День
+   type        Int   // Тип исключения
+   rate_id     Int   // Ставка
    rate        rate     @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division    division @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([year, month, day, rate_id])
 }
 //NOTE - Профиль разработчика
 //SECTION
@@ -175,11 +168,17 @@ model roadmap_item {
    @@unique([roadmap_id,  project_id])
 }
 //NOTE - Фактически затраченное время
+//SECTION - Типы работ
+// 0 - develop
+// 1 - support
+// 2 - others
+//!SECTION
 model roadmap_fact_item {
    id                Int         @id @default(autoincrement())
    month             Int
    day               Int
-   ratio             Int
+   hours             Int
+   work_type         Int
    note              String
    employee_id       Int
    employee          employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -223,7 +222,6 @@ model rate {
    division_id          Int
    division             division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    staff                staff[]
-   acc_hours            acc_hours[]
    personal_exclusions  personal_exclusion[]
    @@unique([no,  division_id])
 }
@@ -253,17 +251,3 @@ model staff {
 // 8 - absense from work
 // 9 - vacancy
 // 10 - work on weekends
-
-/*
-Аккумулятор рабочик часов по ставке
-собирает количество рабочих часов за месяц.
-Значение расчитывается после окончания месяца и сохраняется
-*/
-model acc_hours {
-   id       Int   @id @default(autoincrement())
-   year     Int
-   month    Int
-   rate_id  Int
-   value    Int
-   rate     rate  @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}

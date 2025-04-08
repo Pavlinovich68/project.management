@@ -8,13 +8,14 @@ import { Toolbar } from "primereact/toolbar";
 import React, {useState} from "react";
 import CellTypes from "@/services/cell.types";
 import { ICalendarCell } from "@/models/ICalendar";
+import RolesHelper from "@/services/roles.helper";
 
 interface IRateCalendarCell {
-   division_id: number,
    year: number,
    month: number,
+   day: number,
    rate_id: number,
-   cell: ICalendarCell
+   type: number
 }
 //TODO - Пример использования useSession
 const Calendar = () => {
@@ -22,7 +23,8 @@ const Calendar = () => {
    const {data: session} = useSession();
    const [refresh, setRefresh] = useState<boolean>(false);
    const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
-   const [cells, setCells] = useState<IRateCalendarCell[]>([])
+   const [cells, setCells] = useState<IRateCalendarCell[]>([]);
+   const [readOnly, setReadOnly] = useState<boolean>(true);
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -30,8 +32,8 @@ const Calendar = () => {
 
    const startContent = (
       <div>
-         <Button icon="pi pi-refresh" type="button" severity="secondary" className="mr-2" onClick={() => { setRefresh(!refresh); }}/>
-         <Button icon="pi pi-save" type="button" severity="secondary" className="mr-2" onClick={() => { setRefresh(!refresh); }} disabled={!saveEnabled}/>
+         <Button icon="pi pi-refresh" type="button" severity="secondary" className="mr-2" onClick={() => { setCells([]); setRefresh(!refresh); }}/>
+         <Button icon="pi pi-save" type="button" severity="secondary" className="mr-2" onClick={() => { saveCells(); }} disabled={!saveEnabled}/>
       </div>
    );
    const centerContent = (
@@ -42,14 +44,32 @@ const Calendar = () => {
       setSaveEnabled(true);
       let _cells = cells.map(i => i);
       _cells.push({
-         division_id: session?.user?.division_id??-1, 
          year: date.getFullYear(), 
          month: date.getMonth()+1, 
+         day: e.day,
          rate_id: rate_id, 
-         cell: e})
+         type: e.type})
       setCells(_cells);
       console.log(_cells);
    }
+
+   const saveCells = async () => {
+      await fetch('/api/calendar/department/personal_exclusion', {
+         method: 'POST',
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify({
+            cells: cells
+         })
+      });
+      setCells([]);
+      setRefresh(!refresh);
+      setSaveEnabled(false);
+   }
+
+   if (!session) return <></>;
+   //setReadOnly(!RolesHelper.checkRoles(session.user.roles, ['master']));
 
    return (
       session ?
