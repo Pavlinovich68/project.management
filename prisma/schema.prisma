@@ -216,7 +216,6 @@ model rate {
    division_id          Int
    division             division    @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
    staff                staff[]
-   acc_hours            acc_hours[]
    personal_exclusions  personal_exclusion[]
    @@unique([no,  division_id])
 }
@@ -246,17 +245,3 @@ model staff {
 // 8 - absense from work
 // 9 - vacancy
 // 10 - work on weekends
-
-/*
-Аккумулятор рабочик часов по ставке
-собирает количество рабочих часов за месяц.
-Значение расчитывается после окончания месяца и сохраняется
-*/
-model acc_hours {
-   id       Int   @id @default(autoincrement())
-   year     Int
-   month    Int
-   rate_id  Int
-   value    Int
-   rate     rate  @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}

@@ -463,54 +463,14 @@ export default class CalendarHelper {
 //#region
       let accumulator: ICalendarSum[] = []
       if (month !== 1) {
-// Итлги для января не нужны
-// Считываем ранее сохраненные итоги за предыдущий месяц 
-         const accumulatorData = await prisma.acc_hours.groupBy({
-            by: ['rate_id'],
-            where: {
-               year: year,
-               month: month -1,
-               rate: {
-                  division_id: division_id
-               }
-            },
-            _sum: {
-               value: true
+         const prevData = await this.prepareCalendarData(division_id, year, month-1);
+         accumulator = prevData.map(i => {
+            return {
+               rate_id: i.rate_id,
+               sum: i.total
             }
-         })
-         if (accumulatorData.length === 0) {
-// Если итоги не обнаружены то получаем массив данных за предыдущий месяц
-            const prevData = await this.prepareCalendarData(division_id, year, month-1);
-            if (month < new Date().getMonth()+2) {
-// Если мецяц уже прошел сохраняем его в аккумуляторе
-               for (let item of prevData) {
-                  await prisma.acc_hours.create({
-                     data: {
-                        rate_id: item.rate_id??0,
-                        year: year,
-                        month: month-1,
-                        value: item.total??0
-                     }
-                  })
-               }
-            }
-// Возвращаем значение аккумулятора
-            accumulator = prevData.map(i => {
-               return {
-                  rate_id: i.rate_id,
-                  sum: i.total
-               }
-            });
-         } else {
-// Если данные уже были просто возвращаем значения аккумулятора
-            accumulator = accumulatorData.map(i => {
-               return {
-                  rate_id: i.rate_id,
-                  sum: i._sum.value
-               }
-            });
-         }
-      }      
+         });
+      }
 //#endregion
 //NOTE - Выходная модель
 //#region
