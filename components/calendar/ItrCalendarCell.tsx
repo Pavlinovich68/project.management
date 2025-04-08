@@ -9,13 +9,12 @@ import React, { SyntheticEvent, useRef, useState } from "react";
 const ItrCalendarCell = ({rateId, row, cell, callback}:{rateId: number | undefined | null, row: number, cell: ICalendarCell, callback: CalendarCellEventCallbackExt}) => {
    const cm = useRef<ContextMenu | null>(null);
    const [currentCell, setCurrentCell] = useState<ICalendarCell>(cell);
+   const [isChanged, setIsChanged] = useState<boolean>(false);
 
    const changeType = (val: number) => {
       let newHours = val === 10 ? 8 : 0;
       const oldHours = currentCell.hours;
-      const _cell: ICalendarCell = {...currentCell, type: val, hours: newHours};      
-      // _cell.type = val;
-      // _cell.hours = newHours;
+      const _cell: ICalendarCell = {...currentCell, type: val, hours: newHours};
       setCurrentCell(_cell);
       callback(_cell, rateId??-1, newHours - oldHours);
    }
@@ -58,7 +57,7 @@ const ItrCalendarCell = ({rateId, row, cell, callback}:{rateId: number | undefin
          >{currentCell.hours}</div>
          <ContextMenu 
             ref={cm} 
-            model={items}
+            model={items}            
          />
       </>
    );

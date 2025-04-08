@@ -40,7 +40,6 @@ model division {
    childrens            division[]  @relation("divisionTodivision")
    rate                 rate[]
    roadmap              roadmap[]
-   personal_exclusions  personal_exclusion[]
 }
 //NOTE - Пользователи системы
 model users {
@@ -103,21 +102,15 @@ model exclusion {
    @@unique([date, production_calendar_id])
 }
 //NOTE - Персональные исключения
-   // division_id: number,
-   // year: number,
-   // month: number,
-   // rate_id: number,
-   // cell: ICalendarCell
 model personal_exclusion {
    id Int @id @default(autoincrement())
-   year        Int
-   month       Int
-   day         Int
-   type        Int
-   rate_id     Int
-   division_id Int
+   year        Int   // Год
+   month       Int   // Месяц
+   day         Int   // День
+   type        Int   // Тип исключения
+   rate_id     Int   // Ставка
    rate        rate     @relation(fields: [rate_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   division    division @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+   @@unique([year, month, day, rate_id])
 }
 //NOTE - Профиль разработчика
 //SECTION
