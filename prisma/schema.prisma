@@ -168,11 +168,17 @@ model roadmap_item {
    @@unique([roadmap_id,  project_id])
 }
 //NOTE - Фактически затраченное время
+//SECTION - Типы работ
+// 0 - develop
+// 1 - support
+// 2 - others
+//!SECTION
 model roadmap_fact_item {
    id                Int         @id @default(autoincrement())
    month             Int
    day               Int
-   ratio             Int
+   hours             Int
+   work_type         Int
    note              String
    employee_id       Int
    employee          employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
