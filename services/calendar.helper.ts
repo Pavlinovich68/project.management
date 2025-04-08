@@ -1,3 +1,4 @@
+import { division } from './../node_modules/.prisma/client/index.d';
 import Vacations from "@/app/(main)/workplace/department/vacations/page";
 import { ICalendarBaseRow, ICalendarCell, ICalendarRow, ICalendarSum } from "@/models/ICalendar";
 import prisma from "@/prisma/client";
@@ -230,7 +231,7 @@ export default class CalendarHelper {
             }
          }
       });
-
+//NOTE - Исключения на основе производственного календаря
       let baseCells: ICalendarCell[] = [];
       if (monthCalendarExclusionsQuery?.exclusions) {
          for (let item of monthCalendarExclusionsQuery?.exclusions) {
@@ -242,10 +243,9 @@ export default class CalendarHelper {
                case 10: hours = 8; break;
             }
             baseCells.push({day: day, type: item.exclusion_type, hours: hours, checked: false});
-            //monthHours[day] = hours;
          }
       }
-
+//NOTE - Создание базовой строки календаря
       for (let i = 1; i <= lastMonthDay.getDate(); i++) {
          if (baseCells.find((_cell) => _cell.day === i) === undefined) {
             const dayOfWeek = new Date(year, month -1, i).getDay();
@@ -253,10 +253,6 @@ export default class CalendarHelper {
          }
       }
       baseCells = baseCells.sort(function(a, b) { return a.day - b.day });
-//#endregion
-//NOTE - Персональные исключения из рабочего графика
-//#region
-      const personalExclusions = [];
 //#endregion
 //NOTE - Разработчики по состоянию на текущий день либо на последний день месяца (первая колонка)
 //#region
@@ -306,6 +302,25 @@ export default class CalendarHelper {
             employee_id: i.staff[0] ? i.staff[0].employee.id : -1
          }
       });
+
+//#endregion
+//NOTE - Персональные исключения из рабочего графика
+//#region
+   const personalExclusions = (await prisma.personal_exclusion.findMany({
+      where: {
+         year: year,
+         month: month,
+         rate: {
+            division_id: division_id
+         }
+      },
+      select: {
+         day: true,
+         type: true,
+         rate: true
+      }
+   })).map(i => { return {rate_id: i.rate.id, day: i.day, type: i.type, hours: i.type === 10 ? 8 : 0}});
+
 //#endregion      
 //NOTE - Вакансии
 //#region
@@ -507,7 +522,7 @@ export default class CalendarHelper {
             _row, 
             _baseCells,
 //NOTE - Персональные исключения из рабочего графика
-            [],
+            personalExclusions.filter(i => i.rate_id === _row.rate_id).map(i => {return {day: i.day, type: i.type, hours: i.hours, checked: false}}),
             vacanciesDays[_row.rate_id],
             vacations.find(i => i.rate_id === _row.rate_id)?.days ?? [],
             (accumulator?.find(i => i.rate_id === _row.rate_id))?.sum??0

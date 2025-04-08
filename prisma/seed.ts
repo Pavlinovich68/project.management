@@ -46,7 +46,7 @@ async function main() {
                   id: item.id,
                   name: item.name,
                   begin_date: new Date(item.begin_date),
-                  end_date: item.end_date ? new Date(item.begin_date) : null,
+                  end_date: item.end_date ? new Date(item.end_date) : null,
                   email: item.email,
                   contacts: item.contacts,
                }

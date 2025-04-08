@@ -8,6 +8,7 @@ import { Toolbar } from "primereact/toolbar";
 import React, {useState} from "react";
 import CellTypes from "@/services/cell.types";
 import { ICalendarCell } from "@/models/ICalendar";
+import RolesHelper from "@/services/roles.helper";
 
 interface IRateCalendarCell {
    year: number,
@@ -22,7 +23,8 @@ const Calendar = () => {
    const {data: session} = useSession();
    const [refresh, setRefresh] = useState<boolean>(false);
    const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
-   const [cells, setCells] = useState<IRateCalendarCell[]>([])
+   const [cells, setCells] = useState<IRateCalendarCell[]>([]);
+   const [readOnly, setReadOnly] = useState<boolean>(true);
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -63,7 +65,11 @@ const Calendar = () => {
       });
       setCells([]);
       setRefresh(!refresh);
+      setSaveEnabled(false);
    }
+
+   if (!session) return <></>;
+   //setReadOnly(!RolesHelper.checkRoles(session.user.roles, ['master']));
 
    return (
       session ?
