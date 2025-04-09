@@ -20,11 +20,17 @@ interface IRateCalendarCell {
 //TODO - Пример использования useSession
 const Calendar = () => {
    const [date, setDate] = useState<Date>(new Date())
-   const {data: session} = useSession();
+   const {data: session, status} = useSession();
    const [refresh, setRefresh] = useState<boolean>(false);
    const [saveEnabled, setSaveEnabled] = useState<boolean>(false);
    const [cells, setCells] = useState<IRateCalendarCell[]>([]);
-   const [readOnly, setReadOnly] = useState<boolean>(true);
+
+   const spiner = (
+      <i className="pi pi-spin pi-spinner" style={{ fontSize: '10rem', color: '#326fd1'}}></i>
+   )
+
+   if (status === 'loading') return spiner;
+   if (!session) return <></>;
 
    const monthSwitch = (xdate: Date) => {
       setDate(xdate);
@@ -33,24 +39,36 @@ const Calendar = () => {
    const startContent = (
       <div>
          <Button icon="pi pi-refresh" type="button" severity="secondary" className="mr-2" onClick={() => { setCells([]); setRefresh(!refresh); }}/>
-         <Button icon="pi pi-save" type="button" severity="secondary" className="mr-2" onClick={() => { saveCells(); }} disabled={!saveEnabled}/>
+         {
+            RolesHelper.checkRoles(session.user.roles, ['master']) ?
+               <Button icon="pi pi-save" type="button" severity="secondary" className="mr-2" onClick={() => { saveCells(); }} disabled={!saveEnabled}/> :
+               <></>
+         }         
       </div>
    );
    const centerContent = (
       <ItrCalendarSwitch xdate={date} onClick={monthSwitch}/>
    );
 
-   const changeDayType = (e: ICalendarCell, rate_id: number, val: number) => {
-      setSaveEnabled(true);
+   const changeDayType = (e: ICalendarCell, rate_id: number, is_clear: boolean, val: number) => {      
       let _cells = cells.map(i => i);
-      _cells.push({
-         year: date.getFullYear(), 
-         month: date.getMonth()+1, 
-         day: e.day,
-         rate_id: rate_id, 
-         type: e.type})
+      if (is_clear) {
+         const exists = _cells.find((i) => i.day === e.day);
+         if (exists) {
+            const index = _cells.indexOf(exists, 0);
+            if (index > -1)
+               _cells.splice(index, 1);
+         }
+      } else {
+         _cells.push({
+            year: date.getFullYear(), 
+            month: date.getMonth()+1, 
+            day: e.day,
+            rate_id: rate_id, 
+            type: e.type})
+      }      
       setCells(_cells);
-      console.log(_cells);
+      setSaveEnabled(_cells.length > 0);
    }
 
    const saveCells = async () => {
@@ -67,9 +85,6 @@ const Calendar = () => {
       setRefresh(!refresh);
       setSaveEnabled(false);
    }
-
-   if (!session) return <></>;
-   //setReadOnly(!RolesHelper.checkRoles(session.user.roles, ['master']));
 
    return (
       session ?
