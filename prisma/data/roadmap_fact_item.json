@@ -5,7 +5,8 @@
       "roadmap_item_id": 4,
       "day": 10,
       "month": 3,
-      "ratio": 2,
+      "work_type": 0,
+      "hours": 2,
       "note": "Работы в рамках дорожной карты ЦТ"
    },
    {
@@ -14,7 +15,8 @@
       "roadmap_item_id": 5,
       "day": 10,
       "month": 3,
-      "ratio": 5,
+      "work_type": 0,
+      "hours": 5,
       "note": "Работы в рамках дорожной карты ЦТ"
    },
    {
@@ -23,7 +25,8 @@
       "roadmap_item_id": 6,
       "day": 10,
       "month": 3,
-      "ratio": 4,
+      "work_type": 0,
+      "hours": 4,
       "note": "Работы в рамках дорожной карты ЦТ"
    }
  ]

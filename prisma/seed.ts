@@ -344,7 +344,8 @@ async function main() {
                   id: item.id,
                   month: item.month,
                   day: item.day,
-                  ratio: item.ratio,
+                  hours: item.hours,
+                  work_type: item.work_type,
                   note: item.note,
                   employee_id: item.employee_id,
                   roadmap_item_id: item.roadmap_item_id
