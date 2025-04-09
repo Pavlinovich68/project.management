@@ -215,7 +215,7 @@ const saveMethod = async () => {
 //#endregion //!SECTION CRUD
 
    return (
-      <div className="grid">
+      <div className="grid w-full">
          <div className="col-12">
             <div className="card">
                <h3>Сотрудники организации</h3>

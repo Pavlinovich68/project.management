@@ -87,8 +87,7 @@ const Calendar = () => {
    }
 
    return (
-      session ?
-      <div className="grid">
+      <div className="grid w-full">
          <div className="col-12">
             <div className="card pt-1">
                <h3>Рабочий календарь</h3>
@@ -103,7 +102,7 @@ const Calendar = () => {
                />               
             </div>
          </div>
-      </div> : <React.Fragment/>
+      </div>
    );
 };
 

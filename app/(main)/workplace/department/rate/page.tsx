@@ -230,7 +230,7 @@ const StuffUnit = () => {
 
    return (
       session ?
-      <div className="grid">
+      <div className="grid w-full">
          <div className="col-12">
             <div className="card">
                <h3>Ставки</h3>

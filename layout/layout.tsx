@@ -154,7 +154,7 @@ const Layout = ({ children }: ChildContainerProps) => {
             <AppSidebar />
          </div>
          <div className="layout-main-container">
-            <div className="layout-main">{children}</div>
+            <div className="layout-main flex justify-content-center flex-wrap">{children}</div>
             <AppFooter />
          </div>
          <div className="layout-mask"></div>

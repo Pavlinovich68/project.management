@@ -17,6 +17,7 @@ import ItrCard from "@/components/ItrCard";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { Calendar } from "primereact/calendar";
 import DateHelper from "@/services/date.helpers";
+import styles from '@/app/(main)/workplace/department/calendar/styles.module.scss';
 
 const ProductionCalendar = () => {
    const controllerName = 'calendar/production';
@@ -201,7 +202,7 @@ const saveMethod = async () => {
 //#endregion
 
    return (
-      <div className="grid">
+      <div className="grid w-full">
          <div className="col-12">
             <div className="card">
                <h3>Производственный календарь</h3>

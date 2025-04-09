@@ -246,7 +246,7 @@ const saveMethod = async () => {
 
    return (
       session ?
-      <div className="grid">
+      <div className="grid w-full">
          <div className="col-12">
             <div className={classNames('card', styles.vacationsPage)}>
                <h3>График отпусков</h3>

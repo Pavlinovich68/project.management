@@ -4,8 +4,12 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 
 const Wiki = () => {
-   const {data: session} = useSession();
+   const {data: session, status} = useSession();
    const [content, setContent] = useState<string>('');
+
+   const spiner = (
+      <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center" style={{ fontSize: '10rem', color: '#326fd1'}}></i>
+   )
 
    useEffect(() => {
       readWiki().then((str) => {
@@ -25,9 +29,11 @@ const Wiki = () => {
       return data.data.data.pages.single.content;
    }
 
+   if (status === 'loading') return spiner;
+   if (!session) return <React.Fragment></React.Fragment>;
+
    return (
-      session ?
-      <MarkdownPreview source={content} style={{ padding: 16 }} /> : <React.Fragment></React.Fragment>
+      <MarkdownPreview source={content} style={{ padding: 16, width: '100%' }} />
    );
 };
 

@@ -144,7 +144,7 @@ const Post = () => {
 //#endregion
 
    return (
-      <div className="grid">
+      <div className="grid w-full">
          <div className="col-12">
             <div className="card">
                <h3>Должности</h3>

@@ -19,7 +19,12 @@ const Dashboard = () => {
    const [year, setYear] = useState<number>(new Date().getFullYear());
    const [balanceData, setBalanceData] = useState<IBalanceData>()
    const [projectsData, setProjectsData] = useState<IDashboardProjectItem[]>()
-   const {data: session} = useSession();
+   const {data: session, status} = useSession();
+   const [loading, setLoading] = useState<boolean>(true);
+   
+   const spiner = (
+      <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center" style={{ fontSize: '10rem', color: '#326fd1'}}></i>
+   )
 
    useEffect(() => {
       changeYear(year);
@@ -27,8 +32,15 @@ const Dashboard = () => {
 
    const changeYear = (val: number) => {
       setYear(val);
-      getBalanceData(val).then((i) => setBalanceData(i));
-      getProjectsData(val).then((i) => setProjectsData(i))
+      setLoading(true);
+      getBalanceData(val).then((i) => {
+         setBalanceData(i)
+         setLoading(false);
+      });
+      getProjectsData(val).then((i) => {
+         setProjectsData(i)
+         setLoading(false);
+      })
    }
 
    const getBalanceData = async (_year: number): Promise<IBalanceData> => {
@@ -64,7 +76,6 @@ const Dashboard = () => {
       return response.data;
    }
 
-   if (!session) return;
    if (!projectsData) return;
 
    const balanceWidget = (_year: number) => {
@@ -149,6 +160,10 @@ const Dashboard = () => {
          </>         
       ) 
    }
+      
+   if (status === 'loading') return spiner;
+   if (!session) return <React.Fragment></React.Fragment>;
+   if (loading) return spiner;
 
    return (
       <React.Fragment>
