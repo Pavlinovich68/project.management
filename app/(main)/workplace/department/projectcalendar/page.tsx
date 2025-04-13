@@ -1,25 +1,29 @@
 'use client'
 import ItrDivisionCalendar from "@/components/ItrDivisionCalendar";
 import ItrCalendarSwitch from "@/components/ItrMonthSwitch";
-import { IBaseEntity } from "@/models/IBaseEntity";
 import { ICalendarCell } from "@/models/ICalendar";
 import DateHelper from "@/services/date.helpers";
 import RolesHelper from "@/services/roles.helper";
 import { useSession } from "next-auth/react";
+import { DataView } from "primereact/dataview";
 import { Toolbar } from "primereact/toolbar";
 import { classNames } from "primereact/utils";
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
-import { DataView } from "primereact/dataview";
+import { IBaseEntity } from "@/models/IBaseEntity";
+import { Dropdown } from "primereact/dropdown";
 
 interface IFactJobReport {
-   month             :number,
-   day               :number,
-   hours             :number,
-   work_type         :number,
-   note              :string,
-   employee          :IBaseEntity,
-   roadmap_item      :IBaseEntity
+   id: number,
+   month: number,
+   day: number,
+   hours: number,
+   work_type: number,
+   note: string,
+   project: {
+      id: number,
+      name: string
+   }
 }
 
 const ProjectCalendar = () => {
@@ -28,32 +32,16 @@ const ProjectCalendar = () => {
    const [selectedCell, setSelectedCell] = useState<ICalendarCell|undefined>()
 
    const items: IFactJobReport[] = [
-      {month: 4, day: 12, hours: 2, work_type: 0, note: '', employee: {id: 1, name: 'Aкопян Левон Дмитриевич'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 3, work_type: 0, note: '', employee: {id: 1, name: 'Aкопян Левон Дмитриевич'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 3, work_type: 0, note: '', employee: {id: 1, name: 'Aкопян Левон Дмитриевич'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 2, work_type: 0, note: '', employee: {id: 2, name: 'Гажа Константин Владимирович'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 3, work_type: 0, note: '', employee: {id: 2, name: 'Гажа Константин Владимирович'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 3, work_type: 0, note: '', employee: {id: 2, name: 'Гажа Константин Владимирович'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 2, work_type: 0, note: '', employee: {id: 3, name: 'Гореньков Аркадий Юрьевич'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 3, work_type: 0, note: '', employee: {id: 3, name: 'Гореньков Аркадий Юрьевич'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 3, work_type: 0, note: '', employee: {id: 3, name: 'Гореньков Аркадий Юрьевич'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 4, work_type: 0, note: '', employee: {id: 4, name: 'Яхин Никита Артемович'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
-      {month: 4, day: 12, hours: 4, work_type: 0, note: '', employee: {id: 4, name: 'Яхин Никита Артемович'}, roadmap_item: {id: 1, name: 'Работы в рамках доработок по ЦТ за 2024 год'}},
+      {id: 1, month: 4, day: 12, hours: 2, work_type: 0, note: 'Работа "1', project: {id: 1, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}},
+      {id: 1, month: 4, day: 12, hours: 3, work_type: 0, note: 'Работа №2', project: {id: 1, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}},
+      {id: 1, month: 4, day: 12, hours: 3, work_type: 0, note: 'Работа №3', project: {id: 1, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}}
    ]
 
-/*
-id                Int         @id @default(autoincrement())
-   month             Int
-   day               Int
-   hours             Int
-   work_type         Int
-   note              String
-   employee_id       Int
-   employee          employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-   roadmap_item_id   Int
-   roadmap_item      roadmap_item @relation(fields: [roadmap_item_id], references: [id])
-   parent_id         Int?  // Идентификатор строки из которой 
-*/   
+   const projects: IBaseEntity[] = [
+      {id: 36, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'},
+      {id: 37, name: 'Модуль \"Банк данных результатов экспертных исследований информационных материалов экстремистской направленности\"'},
+      {id: 38, name: 'Модуль \"Составление отчетности о результатах контрольной деятельности\"'}
+   ]
 
    const spiner = (
       <i className="pi pi-spin pi-spinner flex align-items-center justify-content-center" style={{ fontSize: '10rem', color: '#326fd1'}}></i>
@@ -74,42 +62,22 @@ id                Int         @id @default(autoincrement())
       setSelectedCell(cell);
    }
 
-   const itemTemplate = (item: IFactWorkReport, index: number) => {
+   const itemTemplate = (item: IFactJobReport, index: number) => {
       return (
-          <div className="col-12" key={product.id}>
-              <div className={classNames('flex flex-column xl:flex-row xl:align-items-start p-4 gap-4', { 'border-top-1 surface-border': index !== 0 })}>
-                  <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" src={`https://primefaces.org/cdn/primereact/images/product/${product.image}`} alt={product.name} />
-                  <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
-                      <div className="flex flex-column align-items-center sm:align-items-start gap-3">
-                          <div className="text-2xl font-bold text-900">{product.name}</div>
-                          <Rating value={product.rating} readOnly cancel={false}></Rating>
-                          <div className="flex align-items-center gap-3">
-                              <span className="flex align-items-center gap-2">
-                                  <i className="pi pi-tag"></i>
-                                  <span className="font-semibold">{product.category}</span>
-                              </span>
-                              <Tag value={product.inventoryStatus} severity={getSeverity(product)}></Tag>
-                          </div>
-                      </div>
-                      <div className="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                          <span className="text-2xl font-semibold">${product.price}</span>
-                          <Button icon="pi pi-shopping-cart" className="p-button-rounded" disabled={product.inventoryStatus === 'OUTOFSTOCK'}></Button>
-                      </div>
-                  </div>
-              </div>
-          </div>
+         <div className="col-12" key={index}>
+            <Dropdown value={item.project} options={projects} optionValue="id" optionLabel="name" placeholder="Выберите проект" className="w-full" />
+         </div>
       );
-  };
+   };
 
-   const listTemplate = (items: Product[]) => {
+   const listTemplate = (items: IFactJobReport[]) => {
       if (!items || items.length === 0) return null;
 
-      let list = items.map((product, index) => {
-          return itemTemplate(product, index);
+      let list = items.map((job, index) => {
+         return itemTemplate(job, index);
       });
-
       return <div className="grid grid-nogutter">{list}</div>;
-  };
+   };
 
    return (
       <React.Fragment>
@@ -120,9 +88,8 @@ id                Int         @id @default(autoincrement())
                   <Toolbar center={centerContent}/>
                   <div className={classNames("card mt-2", RolesHelper.checkRoles(session?.user.roles, ['developer']) ? styles.workerWorkPlace : styles.masterWorkPlace)}>
                      <ItrDivisionCalendar year={date?.getFullYear()} month={date?.getMonth()+1} user_id={session.user.id} dayClick={changeDate} needReload={true}/>
-                        <div className={classNames(styles.projectsList)}>
-                        {/* </div><div className={classNames(styles.projectsList)} hidden={!selectedCell}> */}
-                        <p>Выполненные работы на дату: <h6 style={{display: "contents"}}>{DateHelper.formatDate(new Date(date.getFullYear(), date.getMonth(), selectedCell?.day))}<sup> *</sup></h6></p>                        
+                        <div className={classNames(styles.projectsList)}>                        
+                        <p>Выполненные работы на дату: <h6 style={{display: "contents"}}>{DateHelper.formatDate(date)}<sup> *</sup></h6></p>                        
                         <DataView value={items} listTemplate={listTemplate} />
                      </div>                     
                   </div>
