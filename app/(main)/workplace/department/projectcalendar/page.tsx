@@ -8,39 +8,38 @@ import { useSession } from "next-auth/react";
 import { DataView } from "primereact/dataview";
 import { Toolbar } from "primereact/toolbar";
 import { classNames } from "primereact/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { IBaseEntity } from "@/models/IBaseEntity";
 import { Dropdown } from "primereact/dropdown";
-
-interface IFactJobReport {
-   id: number,
-   month: number,
-   day: number,
-   hours: number,
-   work_type: number,
-   note: string,
-   project: {
-      id: number,
-      name: string
-   }
-}
+import { IInProgressReport } from "@/models/IInProgressReport";
+import ItrInProgressItem from "@/components/ItrInProgressItem";
 
 const ProjectCalendar = () => {
    const {data: session, status} = useSession()
    const [date, setDate] = useState<Date>(new Date())
    const [selectedCell, setSelectedCell] = useState<ICalendarCell|undefined>()
+   const [projects, setProjects] = useState<IBaseEntity[]>();
+   
+   const readProjects = async () => {
+      const res = await fetch(`/api/project/list`, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+         }
+      });
+      const data = await res.json();
+      setProjects(data.data);
+   }
 
-   const items: IFactJobReport[] = [
-      {id: 1, month: 4, day: 12, hours: 2, work_type: 0, note: 'Работа "1', project: {id: 1, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}},
-      {id: 1, month: 4, day: 12, hours: 3, work_type: 0, note: 'Работа №2', project: {id: 1, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}},
-      {id: 1, month: 4, day: 12, hours: 3, work_type: 0, note: 'Работа №3', project: {id: 1, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}}
-   ]
+   useEffect(() => {
+      readProjects();
+   }, [])
 
-   const projects: IBaseEntity[] = [
-      {id: 36, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'},
-      {id: 37, name: 'Модуль \"Банк данных результатов экспертных исследований информационных материалов экстремистской направленности\"'},
-      {id: 38, name: 'Модуль \"Составление отчетности о результатах контрольной деятельности\"'}
+   const items: IInProgressReport[] = [
+      {id: 1, month: 4, day: 12, hours: 2, work_type: 0, note: 'Работа "1', project: {id: 36, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}},
+      {id: 1, month: 4, day: 12, hours: 3, work_type: 0, note: 'Работа №2', project: {id: 37, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}},
+      {id: 1, month: 4, day: 12, hours: 3, work_type: 0, note: 'Работа №3', project: {id: 38, name: 'Модуль \"Порядок отнесения субъектов контроля к определённой категории риска\"'}}
    ]
 
    const spiner = (
@@ -62,15 +61,11 @@ const ProjectCalendar = () => {
       setSelectedCell(cell);
    }
 
-   const itemTemplate = (item: IFactJobReport, index: number) => {
-      return (
-         <div className="col-12" key={index}>
-            <Dropdown value={item.project} options={projects} optionValue="id" optionLabel="name" placeholder="Выберите проект" className="w-full" />
-         </div>
-      );
+   const itemTemplate = (item: IInProgressReport, index: number) => {
+      return (<ItrInProgressItem elem={item} projects={projects}/>);
    };
 
-   const listTemplate = (items: IFactJobReport[]) => {
+   const listTemplate = (items: IInProgressReport[]) => {
       if (!items || items.length === 0) return null;
 
       let list = items.map((job, index) => {
