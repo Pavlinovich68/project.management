@@ -5,6 +5,16 @@
       border: solid 1px #3F4B5B;
       padding: 5px;
       border-radius: 4px;
+      small {
+         color: #7F8B9B
+      }
+      .right {
+         float: right;
+      }
+      label {
+         font-size: 13px;
+         color: #7F8B9B
+      }
       .project {
          padding-bottom: 0;
          .dropdown {
@@ -57,12 +67,15 @@
          display: grid;
          grid-template-columns: auto 50px;
          margin-bottom: 10px;
+         .projectNote {
+            width: 100%;         
+         }
          .ratio {
-            margin-left: 5px;
             input {
+               text-align: right;
                width: 45px !important;
             }            
          }
-      }
+      }      
    }
 }

@@ -49,16 +49,16 @@ const ProjectCalendar = () => {
                   <Toolbar center={centerContent}/>
                   <div className={classNames("card mt-2", RolesHelper.checkRoles(session?.user.roles, ['developer']) ? styles.workerWorkPlace : styles.masterWorkPlace)}>
                      <ItrDivisionCalendar year={date?.getFullYear()} month={date?.getMonth()+1} user_id={session.user.id} dayClick={changeDate} needReload={true}/>
-                        <div className={classNames(styles.projectsList)}>                        
-                        <p>Выполненные работы на дату: <h6 style={{display: "contents"}}>{DateHelper.formatDate(date)}<sup> *</sup></h6></p>                        
-                        <ItrProjectsInWork 
-                           year={date.getFullYear()} 
-                           month={date.getMonth()+1} 
-                           cell={selectedCell} 
-                           user_id={session.user.id} 
-                           readOnly={!RolesHelper.checkRoles(session.user.roles, ['master', 'developer'])}
-                           saveEvent={saveWorks}
-                        />
+                        <div className={classNames(styles.projectsList)} hidden={!selectedCell}>                        
+                           <p>Выполненные работы на дату: <h6 style={{display: "contents"}}>{DateHelper.formatDate(new Date(date.getFullYear(), date.getMonth(), selectedCell?.day))}<sup> *</sup></h6></p>                        
+                           <ItrProjectsInWork 
+                              year={date.getFullYear()} 
+                              month={date.getMonth()+1} 
+                              cell={selectedCell} 
+                              user_id={session.user.id} 
+                              readOnly={!RolesHelper.checkRoles(session.user.roles, ['master', 'developer'])}
+                              saveEvent={saveWorks}
+                           />
                      </div>                     
                   </div>
                   <small style={RolesHelper.checkRoles(session.user.roles, ['developer']) ? {display: "block"} : {display: "none"}}><sup>*</sup> Для выбора кликните с удерданием клавиши Ctrl в календаре по требуемой дате</small>

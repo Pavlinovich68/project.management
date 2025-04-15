@@ -100,8 +100,9 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
          month: params.month,
          day: params.cell?.day??-1,
          note: undefined,
+         work_type: 0,
          roadmap_item_id: undefined,
-         ratio: undefined,
+         hours: undefined,
          project_id: undefined,
          employee_id: employeeId,
          project_name: undefined,
@@ -140,8 +141,8 @@ const ItrProjectsInWork = (params: IProjectsInWork) => {
          for (const item of data) {
             if (!item.project_id) throw Error('Не указан проект')
             if (item.note === '' || item.note === undefined) throw Error('Не указанны выполненные работы')
-            if (!item.ratio || item.ratio === 0) throw Error('Не указанно затраченное на выполнение работ время')
-            hours += item.ratio;
+            if (!item.hours || item.hours === 0) throw Error('Не указанно затраченное на выполнение работ время')
+            hours += item.hours;
             if (hours > total) throw Error('Превышено рабочее время')
          }
       } catch (error) {

@@ -8,6 +8,8 @@ import { Tooltip } from "primereact/tooltip";
 import { classNames } from "primereact/utils";
 import { useState } from "react";
 import styles from "./styles.module.scss";
+import { InputSwitch } from "primereact/inputswitch";
+import { RadioButton } from "primereact/radiobutton";
 
 type ItemChangeCallback = (data: IRoadmapFactItem) => void;
 
@@ -15,12 +17,18 @@ const ItrItemInWork = ({params, dropdownList, onChange}: {params: IRoadmapFactIt
    const [item, setItem] = useState<IRoadmapFactItem>(params)
    const [changed, setChanged] = useState<boolean>(false)
 
+   const setWorkType = (t: number) => {
+      let _item = {...item};
+      _item.work_type = t;
+      setItem(_item);
+   }
+
    return (
       <div className={classNames(styles.workGridItem)}>
          <Tooltip target=".custom-target-icon" />         
          <div className={classNames(styles.project)}>            
             <div className={classNames(styles.itemToolbar)}>
-               <small style={{color:"#7F8B9B"}}>Проект</small>
+               <small>Проект</small>
                <div 
                   className={classNames('pi pi-times custom-target-icon', styles.toolButton, styles.dropButton)}
                   data-pr-tooltip="Удалить"
@@ -52,7 +60,7 @@ const ItrItemInWork = ({params, dropdownList, onChange}: {params: IRoadmapFactIt
                }}
             />
          </div>
-         <small style={{color:"#7F8B9B"}}>Выполненные работы</small>
+         <small>Выполненные работы</small>
          <div className={classNames(styles.workValue)}>
             <InputText 
                className={classNames(styles.projectNote)} 
@@ -67,15 +75,29 @@ const ItrItemInWork = ({params, dropdownList, onChange}: {params: IRoadmapFactIt
             />
             <InputNumber 
                className={classNames(styles.ratio)} 
-               value={item.ratio}
+               value={item.hours}
                onChange={(e) => {
-                  let _item = {...item, ratio: e.value??0};
+                  let _item = {...item, hours: e.value??0};
                   setItem(_item);
                   onChange(_item);
                   setChanged(true);
                }}
-            />               
-         </div>         
+            />
+         </div>
+         <div className="flex flex-wrap gap-3">
+            <div className="flex align-items-center">
+               <RadioButton inputId="ingredient1" name="pizza" value="0" onChange={(e) => setWorkType(Number(e.value))} checked={item.work_type === 0} />
+               <label htmlFor="ingredient1" className="ml-2">Разработка</label>
+            </div>
+            <div className="flex align-items-center">
+               <RadioButton inputId="ingredient2" name="pizza" value="1" onChange={(e) => setWorkType(Number(e.value))} checked={item.work_type === 1} />
+               <label htmlFor="ingredient2" className="ml-2">Техническая поддержка</label>
+            </div>
+            <div className="flex align-items-center">
+               <RadioButton inputId="ingredient3" name="pizza" value="2" onChange={(e) => setWorkType(Number(e.value))} checked={item.work_type === 2} />
+               <label htmlFor="ingredient3" className="ml-2">Прочее</label>
+            </div>
+         </div>
       </div>      
    );
 };

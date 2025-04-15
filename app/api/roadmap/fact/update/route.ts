@@ -85,7 +85,8 @@ export const POST = async (request: NextRequest) => {
                   data: {
                      month: item.month,
                      day: item.day,
-                     ratio: item.ratio??0,
+                     hours: item.hours??0,
+                     work_type: item.work_type??0,
                      note: item.note??'',
                      employee_id: item.employee_id??0,
                      roadmap_item_id: _item?.id??0
@@ -96,7 +97,8 @@ export const POST = async (request: NextRequest) => {
                      data: {
                         month: resultItem.month,
                         day: resultItem.day,
-                        ratio: resultItem.ratio,
+                        hours: resultItem.hours,
+                        work_type: resultItem.work_type,
                         note: resultItem.note,
                         employee_id: np.id,
                         roadmap_item_id: resultItem.roadmap_item_id,
@@ -110,7 +112,8 @@ export const POST = async (request: NextRequest) => {
                      id: item.id
                   },
                   data: {
-                     ratio: item.ratio??0,
+                     hours: item.hours,
+                     work_type: item.work_type,
                      note: item.note??'',
                      roadmap_item_id: _item?.id??0
                }});
@@ -120,7 +123,8 @@ export const POST = async (request: NextRequest) => {
                      parent_id: item.id
                   },
                   data: {
-                     ratio: resultItem.ratio,
+                     hours: resultItem.hours,
+                     work_type: resultItem.work_type,
                      note: resultItem.note,
                      roadmap_item_id: resultItem.roadmap_item_id
                }});
@@ -133,7 +137,8 @@ export const POST = async (request: NextRequest) => {
                day: resultItem.day,
                note: resultItem.note,
                roadmap_item_id: resultItem.roadmap_item_id,
-               ratio: resultItem.ratio,
+               hours: resultItem.hours,
+               work_type: resultItem.work_type,
                project_id: item.project_id,
                employee_id: resultItem.employee_id,
                project_name: item.project_name,
