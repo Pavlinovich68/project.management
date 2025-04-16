@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
    try {
-      const res = await fetch(`http://localhost:80/graphql`, {
+      const res = await fetch(`http://localhost:8080/graphql`, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",

@@ -87,8 +87,9 @@ docker run -p 9000:9000 -p 9001:9001 \
 mc mirror d:\MinIO\backup myminio/projectman
 ```
 ### **WikiJS**
+Создать базу данных wiki
 ```
-docker run -d -p 8080:3000 --name wiki --restart unless-stopped -e "DB_TYPE=postgres" -e "DB_HOST=db" -e "DB_PORT=5432" -e "DB_USER=wikijs" -e "DB_PASS=wikijsrocks" -e "DB_NAME=wiki" ghcr.io/requarks/wiki:2
+docker run -d -p 8080:3000 --name wiki --restart unless-stopped -e "DB_TYPE=postgres" -e "DB_HOST=host.docker.internal" -e "DB_PORT=5432" -e "DB_USER=postgres" -e "DB_PASS=123456qwerty" -e "DB_NAME=wiki" ghcr.io/requarks/wiki:2
 ```
 ### **В случае если порт 3000 занят**
 
