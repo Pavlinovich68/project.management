@@ -44,6 +44,7 @@ export const authOptions = {
                }
             });
 
+            console.table(preUser);
             if (!preUser) return null;
 
             const currentDate = new Date();

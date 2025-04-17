@@ -26,7 +26,7 @@ const Wiki = () => {
          }
       });
       const data = await res.json();
-      return data.data.data.pages.single.content;
+      return data.result.content;
    }
 
    if (status === 'loading') return spiner;

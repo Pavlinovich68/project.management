@@ -25,7 +25,7 @@ export const POST = async (request: NextRequest) => {
       });
       const result = await res.json();
       
-      return await NextResponse.json({status: 'success', data: result});
+      return await NextResponse.json({status: 'success', result : result.data.pages.single});
    } catch (error) {
       return await NextResponse.json({status: 'error', data: (error as Error).stack });
    }
